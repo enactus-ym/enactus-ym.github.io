@@ -898,7 +898,7 @@ function showMap(){
   const [tx,ty]=ptile();
   const labels=[[9,1,'동아리방'],[29,1,'SC 강당'],[50,1,'박람회 광장'],[8,19,'카페'],[26,17,'시장'],[42,17,'밭'],[56,17,'골목'],[20,32,'벤처 거리'],[47,32,'사무국'],[54,32,'놀GM'],[58,41,'버스']];
   openOv(`<span class="lab">Map · Wonju</span><div style="position:relative"><img class="mini" src="${mc.toDataURL()}" alt="원주 지도"><div id="lbls" style="position:absolute;inset:0;pointer-events:none"></div></div>
-    <div class="legend"><span><i style="background:#FFC222;border:2px solid #15223B;box-sizing:border-box"></i>나 (맥박)</span><span><i style="background:#FFC222"></i>할 일 있는 곳</span><span><i style="background:#F3EEE2;border:1px solid #999"></i>사람</span></div>
+    <div class="legend"><span><i style="background:#FFC222;border:2px solid #15223B;box-sizing:border-box"></i>나</span><span><i style="background:#FFC222"></i>할 일 있는 곳</span><span><i style="background:#F3EEE2;border:1px solid #999"></i>사람</span></div>
     <div class="row end"><button class="btn ghost" data-close>닫기</button></div>`,true);
   const lb=panel.querySelector('#lbls');labels.forEach(l=>{const s=document.createElement('span');s.textContent=l[2];s.style.cssText=`position:absolute;left:${l[0]/MW*100}%;top:${l[1]/MH*100}%;font-size:10px;font-weight:700;color:#F3EEE2;text-shadow:0 0 3px #000,0 0 3px #000;transform:translate(-20%,0)`;lb.appendChild(s);});
   const me=document.createElement('div');me.className='memark';me.style.left=((tx+0.5)/MW*100)+'%';me.style.top=((ty+0.5)/MH*100)+'%';me.innerHTML='<i></i><b></b><span>나</span>';lb.appendChild(me);

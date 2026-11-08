@@ -191,6 +191,11 @@ tr:first-child td,tr:first-child th{border-top:0}
 .mini{width:100%;image-rendering:pixelated;border-radius:8px;border:1px solid var(--line)}
 .legend{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12px;color:var(--muted)}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.memark{position:absolute;width:0;height:0}
+.memark i{position:absolute;left:-13px;top:-13px;width:26px;height:26px;border-radius:50%;border:2px solid #FFC222;animation:mepulse 1.4s ease-out infinite}
+.memark b{position:absolute;left:-7px;top:-7px;width:14px;height:14px;border-radius:50%;background:#FFC222;border:3px solid #15223B;box-shadow:0 0 0 2px #F3EEE2}
+.memark span{position:absolute;left:10px;top:-9px;font-size:11px;font-weight:900;color:#15223B;background:#FFC222;padding:1px 6px;border-radius:999px;box-shadow:0 1px 3px rgba(0,0,0,.4);white-space:nowrap}
+@keyframes mepulse{0%{transform:scale(.5);opacity:1}100%{transform:scale(1.6);opacity:0}}
 .qlist{display:flex;flex-direction:column;gap:6px}
 .qi{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--paper)}
 .qi .pin{flex:0 0 auto}
@@ -885,12 +890,13 @@ function showMap(){
   for(let y=0;y<MH;y++)for(let x=0;x<MW;x++){c.fillStyle=col[map[y][x]]||'#86B85C';c.fillRect(x*2,y*2,2,2);}
   ENT.forEach(e=>{if(e.kind==='shop'||e.kind==='booth'||e.kind==='bus'){c.fillStyle=e.color||'#2E3A55';c.fillRect(e.x*2,e.y*2,e.w*2,e.h*2);}});
   ENT.forEach(e=>{const m=newFor(e);if(m){c.fillStyle='#FFC222';c.fillRect(e.x*2-1,e.y*2-1,4,4);}else if(e.kind==='npc'){c.fillStyle='#F3EEE2';c.fillRect(e.x*2,e.y*2,2,2);}});
-  const [tx,ty]=ptile();c.fillStyle='#D7623A';c.fillRect(tx*2-1,ty*2-1,4,4);
+  const [tx,ty]=ptile();
   const labels=[[9,1,'동아리방'],[29,1,'SC 강당'],[50,1,'박람회 광장'],[8,19,'카페'],[26,17,'시장'],[42,17,'밭'],[56,17,'골목'],[20,32,'벤처 거리'],[47,32,'사무국'],[54,32,'놀GM'],[58,41,'버스']];
   openOv(`<span class="lab">Map · Wonju</span><div style="position:relative"><img class="mini" src="${mc.toDataURL()}" alt="원주 지도"><div id="lbls" style="position:absolute;inset:0;pointer-events:none"></div></div>
-    <div class="legend"><span><i style="background:#D7623A"></i>나</span><span><i style="background:#FFC222"></i>할 일 있는 곳</span><span><i style="background:#F3EEE2;border:1px solid #999"></i>사람</span></div>
+    <div class="legend"><span><i style="background:#FFC222;border:2px solid #15223B;box-sizing:border-box"></i>나 (맥박)</span><span><i style="background:#FFC222"></i>할 일 있는 곳</span><span><i style="background:#F3EEE2;border:1px solid #999"></i>사람</span></div>
     <div class="row end"><button class="btn ghost" data-close>닫기</button></div>`,true);
   const lb=panel.querySelector('#lbls');labels.forEach(l=>{const s=document.createElement('span');s.textContent=l[2];s.style.cssText=`position:absolute;left:${l[0]/MW*100}%;top:${l[1]/MH*100}%;font-size:10px;font-weight:700;color:#F3EEE2;text-shadow:0 0 3px #000,0 0 3px #000;transform:translate(-20%,0)`;lb.appendChild(s);});
+  const me=document.createElement('div');me.className='memark';me.style.left=((tx+0.5)/MW*100)+'%';me.style.top=((ty+0.5)/MH*100)+'%';me.innerHTML='<i></i><b></b><span>나</span>';lb.appendChild(me);
 }
 function report(){
   state.flags.reported=true;save();

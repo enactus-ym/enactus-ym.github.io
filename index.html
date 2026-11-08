@@ -74,6 +74,9 @@ tr:first-child td,tr:first-child th{border-top:0}
 .tools{display:flex;gap:6px;margin-left:auto}
 .hb{appearance:none;border:1px solid rgba(243,238,226,.45);background:rgba(11,19,36,.55);color:#F3EEE2;border-radius:999px;padding:5px 11px;font-size:12.5px;font-weight:700}
 .hb:active{background:#FFC222;color:#15223B}
+.hb{position:relative}
+.badge{position:absolute;top:-7px;right:-6px;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:#FFC222;color:#15223B;font-size:11px;font-weight:900;line-height:18px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.4);animation:badgepop .5s ease}
+@keyframes badgepop{0%{transform:scale(.4)}70%{transform:scale(1.2)}100%{transform:scale(1)}}
 .obj{display:flex;gap:8px;align-items:flex-start;background:rgba(252,250,244,.94);color:#15223B;border-radius:10px;padding:6px 10px;font-size:12.5px;line-height:1.4;max-width:min(100%,520px);min-width:0}
 .obj b{color:#15223B;font-size:10px;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;padding-top:2px}
 .obj span{min-width:0}
@@ -227,7 +230,7 @@ tr:first-child td,tr:first-child th{border-top:0}
     <div class="hudrow">
       <div class="brand">First Footprint</div>
       <div class="pins" id="pins"></div>
-      <div class="tools"><button class="hb" id="bQuest">퀘스트</button><button class="hb" id="bMap">지도</button><button class="hb" id="bSound">소리</button><button class="hb" id="bMenu">메뉴</button></div>
+      <div class="tools"><button class="hb" id="bQuest">퀘스트<span class="badge" id="qBadge" hidden>!</span></button><button class="hb" id="bMap">지도</button><button class="hb" id="bSound">소리</button><button class="hb" id="bMenu">메뉴</button></div>
     </div>
   </div>
   <div class="toast" id="toast"></div>
@@ -677,6 +680,7 @@ function act(){if(!state.started)return;const e=target();if(!e){toast('말을 �
 /* HUD */
 function hud(){
   recalc();
+  {const n=state.started?ENT.filter(e=>newFor(e)).length:0;const bd=document.getElementById('qBadge');if(bd){bd.hidden=n===0;bd.textContent=n>1?String(n):'!';}}
   document.getElementById('pins').innerHTML=CH.map(c=>`<span class="pin ${state.ch[c.id]&&state.ch[c.id].done?'':'off'}" title="${esc(c.ko)}">${state.ch[c.id]&&state.ch[c.id].done?'!':'?'}</span>`).join('');
 }
 function statsHtml(s){return [['대상자 신뢰',s.trust],['지속가능성',s.sustain],['팀 에너지',s.energy]].map(r=>`<div class="stat"><div class="t"><span>${r[0]}</span><span class="v num">${r[1]}</span></div><div class="bar"><i style="width:${r[1]}%"></i></div></div>`).join('');}
@@ -880,6 +884,7 @@ function simEnd(){
 }
 function questList(){
   openOv(`<span class="lab">Quests</span><div class="h3">물음표 여섯 장</div><div class="qlist">${CH.map(c=>{const d=state.ch[c.id]||{score:0,done:false};return `<div class="qi"><span class="pin ${d.done?'':'off'}">${d.done?'!':'?'}</span><div><b>Ch.${c.num} ${esc(c.ko)}</b> <span class="small muted num">${d.score} / ${c.max}</span><div class="small muted">${esc(c.where)}</div></div></div>`;}).join('')}</div>
+    ${(()=>{const a=ENT.filter(e=>newFor(e));return a.length?`<div class="card" style="gap:4px"><span class="lab">지금 할 수 있는 일 ${a.length}</span>${a.slice(0,8).map(e=>`<div class="small">• ${esc(e.name)}</div>`).join('')}${a.length>8?`<div class="small muted">외 ${a.length-8}곳</div>`:''}</div>`:'';})()}
     <div class="small muted">지금: ${esc(objective())}${state.carrying?`<br>들고 있는 말풍선: “${esc(BUBBLES[state.carrying-1].t)}”`:''}<br>포스터 ${state.posters.length}/6</div>
     ${allDone()?'<div class="row"><button class="btn primary" id="rep">리포트 보기</button></div>':''}<div class="row end"><button class="btn ghost" data-close>닫기</button></div>`,true);
   const r=panel.querySelector('#rep');if(r)r.addEventListener('click',report);

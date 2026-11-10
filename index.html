@@ -429,7 +429,7 @@ const SIM={
    {t:'직접 인터뷰하고, 하루를 따라다녀 본다',ok:true,d:{trust:15,sustain:5,energy:-5},fb:'제제손손 팀이 복지시설 인터뷰부터 시작한 이유예요. 대상자는 \'도와주는 대상\'이 아니라 함께 검증하는 파트너예요.'}]},
  r3:{type:'simq',key:'sim.r3',round:3,principle:'사업으로 푼다',scene:'인터뷰에서 들은 문제가 또렷해졌어요. 화이트보드 앞. 해결 방식을 정할 차례예요.',options:[
    {t:'모금해서 필요한 물품을 사 드린다',d:{trust:5,sustain:-15,energy:0},fb:'한 번은 고마운 일이지만, 돈이 떨어지면 끝나요. 인액터스는 모금·자선 없이 비즈니스로만 풀어요.'},
-   {t:'SNS 캠페인으로 문제를 널리 알린다',d:{trust:0,sustain:-5,energy:5},fb:'알리는 것은 해결이 아니에요. 10기 선배의 말처럼, 사회문제를 분석하는 데서 끝나지 않고 해결하는 비즈니스를 직접 만드는 게 인액터스예요.'},
+   {t:'SNS 캠페인으로 문제를 널리 알린다',d:{trust:0,sustain:-5,energy:5},fb:'알리는 것은 해결이 아니에요. 16기 선배의 말처럼, 사회문제를 분석하는 데서 끝나지 않고 해결하는 비즈니스를 직접 만드는 게 인액터스예요.'},
    {t:'{who}이 참여하는 제품·서비스로 수익 구조를 만든다',ok:true,d:{trust:5,sustain:15,energy:0},fb:'사업으로 푼다. YM의 모든 프로젝트가 BM과 시제품을 갖고 공모전·투자로 검증해요.'}]},
  r5:{type:'simq',key:'sim.r5',round:5,principle:'멘토링',scene:'멘토의 질문. “그걸 왜 굳이 너희가 해야 하죠? 그리고 돈은 벌 수 있나요?”',options:[
    {t:'“좋은 일이니까요. 돈은… 나중에 생각하려고요.”',d:{trust:0,sustain:-5,energy:-5},fb:'10기 선배의 말이 있어요. “돈을 벌 수 있나요?”라는 말에 좌절할 때 “우리는 왜 이 문제를 해결하려고 했을까?”를 떠올려라. 다만 이유와 숫자, 둘 다 있어야 해요.'},
@@ -437,7 +437,7 @@ const SIM={
    {t:'멘토 의견에 맞춰 그 자리에서 BM을 전부 뒤집는다',d:{trust:-10,sustain:-5,energy:0},fb:'피드백은 재료지 정답이 아니에요. 현장에서 들은 것보다 회의실 의견을 앞세우면 대상자와 멀어져요.'}]},
  r6:{type:'simq',key:'sim.r6',round:6,principle:'시행착오',scene:'씨앗 프로그램 서류에서 떨어졌어요. 시제품 첫 테스트에서 {who}의 반응도 미지근했고요. 단톡방이 조용해요.',options:[
    {t:'“여기까지인가 봐요. 아쉽게도…”',d:{trust:0,sustain:-10,energy:-20},fb:'인액터스 출신 창업가들이 꼽은 가장 큰 장점이 \'마음껏 실패할 기회\'예요. 여기서 멈추면 실패가 아니라 중단이에요. 실패 뒤 다음 장면은 반드시 다시 움직이는 팀.'},
-   {t:'무엇이 안 통했는지 {who}에게 직접 다시 묻는다',ok:true,d:{trust:10,sustain:10,energy:5},fb:'10기 선배는 씨앗 프로그램에 한 번 떨어진 뒤 부산까지 가서 사람들을 만나 결국 합격했어요. 막힌 곳에서 다시 움직이는 방법은 늘 현장에 있어요.'},
+   {t:'무엇이 안 통했는지 {who}에게 직접 다시 묻는다',ok:true,d:{trust:10,sustain:10,energy:5},fb:'16기 선배는 씨앗 프로그램에 한 번 떨어진 뒤 부산까지 가서 사람들을 만나 결국 합격했어요. 막힌 곳에서 다시 움직이는 방법은 늘 현장에 있어요.'},
    {t:'우리끼리 밤새워 다시 만든다. 대상자 의견은 다음에',d:{trust:-5,sustain:0,energy:-10},fb:'열정은 좋지만 방향이 없으면 같은 벽에 다시 부딪혀요. “치열하게 고민하고, 시원하게 실패를 맞이하고, 뜨겁게 일어나십쇼.”(10기 선배) 일어나는 방향은 현장이에요.'}]},
  r7:{type:'simq',key:'sim.r7',round:7,principle:'팀 에너지',scene:'중간고사, 내부 PIC, 연합 PIC가 한 달에 겹쳤어요. 놀GM 장소 앞. 팀은 어떻게 할까요?',options:[
    {t:'“일만 한다. 놀 시간이 어딨어.”',d:{trust:0,sustain:0,energy:-15},fb:'진지함 30, 에너지 70. 고생도 웃으면서 하는 팀이 오래 가요. 번아웃은 프로젝트보다 먼저 사람을 멈추게 해요.'},
@@ -792,7 +792,7 @@ function drawEntity(c,e,ox,oy,t){
   }
 }
 function drawCarry(c,x,y,t){const b=Math.round(Math.sin(t/220)*1);px(c,'#15223B',x+1,y-13+b,14,10);px(c,'#F3EEE2',x+2,y-12+b,12,8);px(c,'#F3EEE2',x+6,y-4+b,3,2);px(c,'#15223B',x+4,y-9+b,2,2);px(c,'#15223B',x+7,y-9+b,2,2);px(c,'#15223B',x+10,y-9+b,2,2);}
-function drawMarker(c,e,ox,oy,t){const x=Math.round(e.x*T-ox+e.w*T/2),y=e.y*T-oy-8+Math.round(Math.sin(t/250)*2);px(c,'#15223B',x-4,y-5,8,9);px(c,'#FFC222',x-3,y-4,6,7);px(c,'#15223B',x-1,y-3,2,3);px(c,'#15223B',x-1,y+1,2,1);}
+function drawMarker(c,e,ox,oy,t){const x=Math.round(e.x*T-ox+e.w*T/2),y=e.y*T-oy-(e.kind==='bus'&&isPlane(e)?19:8)+Math.round(Math.sin(t/250)*2);px(c,'#15223B',x-4,y-5,8,9);px(c,'#FFC222',x-3,y-4,6,7);px(c,'#15223B',x-1,y-3,2,3);px(c,'#15223B',x-1,y+1,2,1);}
 /* ================= STATE ================= */
 let state=null;
 function fresh(){return {v:3,name:'',started:false,map:'wonju',x:50*T,y:12*T,dir:'u',parts:{},ch:{},miss:{},sim:{stage:0,trust:40,sustain:40,energy:60,problem:null,best:{}},posters:[],delivered:{},btried:{},carrying:null,feet:[],nc:{met:false,q:{},perfect:false},flags:{}};}
@@ -815,6 +815,8 @@ function hiddenReady(){return state.feet.length>=5;}
 function judgesLeft(){return [1,2,3].filter(j=>!state.nc.q[j]).length;}
 function M(){return MAPS[state.map];}
 function isPlane(e){return e.map==='wonju'&&!!(state&&state.flags.ncWon);}
+/* the plane boards only after the club room welcome (older saves that already saw the ending skip the wait) */
+function planeReady(){return !!(state.flags.ncWon&&(state.flags.cheered||state.flags.endingSeen));}
 function npcPal(e){return e.id==='driver'&&isPlane(e)?'pilot':e.pal;}
 function entRole(e){return e.id==='driver'&&isPlane(e)?'인액터스 월드컵행':(e.role||'');}
 function entName(e){if(e.map==='wonju'&&isPlane(e)){if(e.id==='bus')return 'WC행 비행기';if(e.id==='driver')return '기장';if(e.id==='s8')return '월드컵 탑승구';}return e.name;}
@@ -898,10 +900,10 @@ function updateLabels(camx,camy){
 }
 function loop(t){const dt=Math.min(40,t-(lastT||t));lastT=t;if(state){update(dt);draw(t);}requestAnimationFrame(loop);}
 /* travel between maps with a short fade */
-function travel(mapId,tx,ty,dir,msg){
+function travel(mapId,tx,ty,dir,msg,then){
   if(traveling)return;traveling=true;for(const k in keys)keys[k]=false;const f=$('fade');f.classList.add('on');sfx('travel');
   setTimeout(()=>{state.map=mapId;state.x=tx*T;state.y=ty*T;state.dir=dir||'u';save();hud();
-    setTimeout(()=>{f.classList.remove('on');traveling=false;if(msg)toast(msg,3200);afterClose();},260);},380);
+    setTimeout(()=>{f.classList.remove('on');traveling=false;if(msg)toast(msg,3200);if(then)then();else afterClose();},260);},380);
 }
 /* input */
 const KM={ArrowUp:'u',ArrowDown:'d',ArrowLeft:'l',ArrowRight:'r',w:'u',s:'d',a:'l',d:'r',W:'u',S:'d',A:'l',D:'r'};
@@ -949,7 +951,9 @@ function objective(){
     return {k:'free-'+c.id,t};}
   if(!state.flags.reported)return m==='wonju'?{k:'report',t:'동아리방 포스트잇 벽에서 리포트 보기'}:back;
   if(state.flags.endingSeen)return {k:'end',t:'모든 발자국을 찍었어요. 자유롭게 둘러보세요'};
-  if(state.flags.ncWon)return m==='wonju'?{k:'plane',t:'정류장의 WC행 비행기 타기'}:back;
+  if(state.flags.ncWon){
+    if(!planeReady())return m==='wonju'?{k:'cheer',t:'동아리방에서 기다리는 부원들 만나기'}:{k:'home',t:'부원들이 기다리는 원주 동아리방으로 돌아가기'};
+    return m==='wonju'?{k:'plane',t:'정류장의 WC행 비행기 앞에서 말 걸어 탑승하기'}:back;}
   if(state.feet.length<5)return m==='wonju'?{k:'feet',t:`??? 원주 곳곳의 노란 발자국 찾기 (${state.feet.length}/5)`}:back;
   if(m!=='nc')return m==='wonju'?{k:'tonc',t:'??? 발자국이 가리키는 곳, 버스 정류장으로'}:back;
   if(!state.nc.met)return {k:'nc0',t:'대회장의 사무국 직원과 이야기하기'};
@@ -1072,13 +1076,15 @@ function newFor(e){
   const st=state.sim.stage,P=state.parts;
   switch(e.key){
     case 'booth':return (!chDone('three')&&state.carrying!==null)?'!':null;
-    case 'bus':if(e.kind!=='npc')return null;
-      if(e.map==='wonju')return ((chDone('three')&&!chDone('what'))||(hiddenReady()&&!state.flags.ncWon)||(state.flags.ncWon&&!state.flags.endingSeen))?'!':null;
+    case 'bus':
+      if(isPlane(e))return (e.kind==='bus'&&planeReady()&&!state.flags.endingSeen)?'!':null;   /* the plane itself, not the pilot */
+      if(e.kind!=='npc')return null;
+      if(e.map==='wonju')return ((chDone('three')&&!chDone('what'))||hiddenReady())?'!':null;
       if(e.map==='sc')return chDone('what')?'!':null;
-      return state.flags.ncWon?'!':null;
+      return (state.flags.ncWon&&!planeReady())?'!':null;
     case 'alum':return P['what.def']?null:'!';
     case 'ob':return P['what.word']?null:'!';
-    case 'pres':return (st===1||st===6)?'!':null;
+    case 'pres':return (st===1||st===6||(state.flags.ncWon&&!planeReady()))?'!':null;
     case 'field':return st===2?'!':null;
     case 'whiteboard':return (st===3||st===4)?'!':null;
     case 'mentor':return st===5?'!':null;
@@ -1091,7 +1097,7 @@ function newFor(e){
     case 'shop':return freeRoam()&&!P['venture.'+e.v]?'!':null;
     case 'pboard':return freeRoam()&&[1,2,3,4,5].every(n=>P['venture.'+n])&&!P['venture.pipe']?'!':null;
     case 'bboard':return freeRoam()&&state.posters.length===5&&!P['rhythm.order']?'!':null;
-    case 'nchost':return (!state.nc.met||(state.nc.perfect&&!state.flags.ncWon))?'!':null;
+    case 'nchost':return (!state.nc.met||(state.nc.perfect&&!state.flags.ncWon)||(state.flags.ncWon&&!planeReady()))?'!':null;
     case 'judge':return state.nc.met&&!state.nc.q[e.j]?'!':null;
     case 'podium':return state.nc.met&&!judgesLeft()&&!state.nc.perfect?'!':null;
   }
@@ -1122,11 +1128,14 @@ function giveBubble(e,b){
 function busTalk(e){
   const d=e.kind==='npc'?e:M().ents.find(x=>x.kind==='npc'&&x.key==='bus');
   if(state.map!=='wonju'){
+    const home=state.map==='nc'&&state.flags.ncWon&&!planeReady();
     const pending=state.map==='sc'?!chDone('what'):!state.flags.ncWon;
-    const line=pending?(state.map==='sc'?'아직 선배들 이야기를 다 못 들은 것 같은데, 그래도 원주로 갈까요?':'대회가 아직 안 끝났는데, 그래도 원주로 갈까요?'):'원주까지 1시간 반. 돌아갈까요?';
+    const line=home?'우승 축하해요! 원주 동아리방 앞까지 바로 모실게요. 다들 기다린대요.':pending?(state.map==='sc'?'아직 선배들 이야기를 다 못 들은 것 같은데, 그래도 원주로 갈까요?':'대회가 아직 안 끝났는데, 그래도 원주로 갈까요?'):'원주까지 1시간 반. 돌아갈까요?';
     openOv(`${who(d)}<p class="say">${line}</p><div class="row end"><button class="btn ghost" data-close>더 있을게요</button><button class="btn primary" id="goW">원주로</button></div>`,true);
-    panel.querySelector('#goW').addEventListener('click',()=>{closeOv();travel('wonju',57,39,'d','원주 · 버스 정류장');});return;}
+    panel.querySelector('#goW').addEventListener('click',()=>{closeOv();if(home)goHome();else travel('wonju',57,39,'d','원주 · 버스 정류장');});return;}
   if(state.flags.ncWon){
+    if(!planeReady()){simple(d,'탑승 수속은 조금 뒤에 시작해요. 동아리방에서 부원들이 기다린대요. 먼저 다녀와요.');return;}
+    if(e.kind==='npc'){simple(d,'탑승 준비는 끝났어요. 바로 옆 <b>WC행 비행기</b> 앞에 서서 말을 걸면 탑승할 수 있어요.');return;}
     openOv(`${who(d)}<p class="say">인액터스 월드컵행, 탑승 수속을 시작합니다. 36개국 챔피언이 모이는 무대예요. 한국 대표 인액터스 YM, 탑승할까요?</p><div class="row end"><button class="btn ghost" data-close>조금 이따가</button><button class="btn primary" id="fly">탑승하기</button></div>`,true);
     panel.querySelector('#fly').addEventListener('click',()=>{closeOv();ending();});return;}
   const opts=[];
@@ -1141,9 +1150,25 @@ function ncWin(e){
   runEnc([
     {e,say:'심사 결과를 발표하겠습니다. 올해의 National Champion은…'},
     ()=>{state.flags.ncWon=true;save();sfx('done');hud();},
-    {e,say:'<b>연세대학교 미래캠퍼스, 인액터스 YM!</b> 월드컵 한국 대표로 선정되었습니다.',extra:'<p class="small muted">게임 속 가상의 결말이에요. 진짜 NC는 매년 7월, 진짜 무대는 이제부터.</p>'},
-    {e,say:'원주로 돌아가 보세요. 정류장에서 기다리는 건 이제 버스가 아닐 거예요.'},
-  ],null);
+    {e,say:'<b>연세대학교 미래캠퍼스, 인액터스 YM!</b> 월드컵 한국 대표로 선정되었습니다.'},
+    {e,say:'축하합니다. 원주 동아리방에서 부원들이 기다리고 있대요. 돌아가는 버스를 준비해 뒀어요.',btn:'원주로 돌아가기'},
+  ],goHome);
+}
+/* after the NC win: straight back to the club room, where everyone is waiting */
+function goHome(){travel('wonju',10,9,'u',null,cheer);}
+function cheer(){
+  const n=esc(state.name);
+  [['pres','d'],['phyco','r'],['jeje','l'],['mush','l'],['pr','d']].forEach(([id,d])=>{const x=E(id);if(x)x.dir=d;});
+  runEnc([
+    {e:{name:'원주',role:'인액터스 YM 동아리방',pal:'player'},say:'동아리방 문을 열자마자 박수가 터져요. 다들 자리에서 일어나 기다리고 있었어요.'},
+    {e:E('pres'),say:`왔다! ${n}, 진짜 고생했어. 발표 다섯 장, 한 장도 안 흔들리더라. 객석에서 깃발 흔들다가 팔 빠지는 줄 알았어.`},
+    {e:E('phyco'),say:'심사위원 질문에 답할 때 소름 돋았어요. 현장에서 들은 얘기가 그대로 답이 되더라고요. 정말 수고했어요.'},
+    {e:E('mush'),say:'밤늦게까지 대본 고치던 거 다 봤어요. 그 시간이 무대에서 전부 보였어요. 자랑스러워요.'},
+    {e:E('jeje'),say:'많이 떨렸을 텐데 끝까지 해냈네요. 우리 다 같이 울 뻔했어요. 오늘만큼은 푹 쉬어요.'},
+    {e:E('pr'),say:`우승 순간은 제가 다 찍어 뒀어요. 릴스 제목도 정했어요. “네 옆자리 ${n}${josa(state.name,'이','가')} 해냈다.”`},
+    {e:E('pres'),say:'1년 동안 현장 다니고, BM 고치고, 떨어져도 다시 일어난 거. 그게 오늘 무대에 다 있었어. 고맙고, 축하해.'},
+    {e:E('pres'),say:'근데 아직 한 걸음 남았어. 큰길 오른쪽 끝 정류장에 가 봐. 버스 대신 <b>WC행 비행기</b>가 와 있대. 우리가 여기서 제일 크게 응원할게.',btn:'다녀올게요'},
+  ],()=>{state.flags.cheered=true;save();hud();});
 }
 function interact(e){
   const st=state.sim.stage,P=state.parts;
@@ -1172,7 +1197,7 @@ function interact(e){
       if(st===6){runEnc([{e,say:'소식 두 개. 씨앗 프로그램 서류에서 떨어졌어. 그리고 시제품 첫 테스트, 반응이 미지근했대. 단톡방이 조용하네.'},{e,step:SIM.r6},{e,say:'시험 끝나는 날 놀GM이야. 벤처 거리 끝 놀GM 간판 앞에서 보자. 총무가 기다릴 거야.'}],()=>setStage(7));return;}
       if(!chDone('three')){simple(e,'어, 처음 보는 얼굴이네. 지금 광장에서 동아리 박람회 하는 중이야. 구경하고 와!');return;}
       if(!chDone('what')){simple(e,'SC부터 다녀와. 큰길 오른쪽 끝 정류장에서 서울행 버스를 타면 돼. 다녀오면 첫 회의 하자.');return;}
-      if(state.flags.ncWon){simple(e,state.flags.endingSeen?'월드컵 이야기는 다음 GM에서 천천히 들려줘.':'국가대표라니. 비행기 타기 전에 사진 한 장 찍자.');return;}
+      if(state.flags.ncWon){if(!planeReady()){cheer();return;}simple(e,state.flags.endingSeen?'월드컵 이야기는 다음 GM에서 천천히 들려줘.':'국가대표라니. 다시 생각해도 고생했어. 비행기 타기 전에 사진 한 장 찍자.');return;}
       if(state.flags.reported){simple(e,hiddenReady()?'발자국을 다 찾았다고? 그럼 정류장으로 가 봐. 기사님이 알아볼 거야.':'소문 들었어? 요즘 원주 곳곳에 <b>노란 발자국</b>이 찍혀 있대. 다섯 개를 다 찾으면 버스 기사님이 특별한 데로 데려다준다던데.');return;}
       simple(e,`지금 할 일: <b>${esc(objective().t)}</b><br><span class="small muted">퀘스트 버튼을 누르면 여섯 장의 상태가 다 보여.</span>`);return;
     case 'field':{
@@ -1200,11 +1225,11 @@ function interact(e){
       runEnc([{step:Q.rhythm},{step:Q.sc}],null);return;}
     case 'phyco':
       if(freeRoam()&&!P['community.phyco']){runEnc([{e,say:'Phyco-Lab이에요. 우리 팀이 무슨 문제를 다루는지 알아요?'},{e,step:Q.phyco}],null);return;}
-      simple(e,freeRoam()?'11월 현장 실험 준비 중이에요. 양식장에 같이 갈래요?':'Phyco-Lab이에요. 지금은 시제품 데이터 정리 중이라 정신이 없네요. 팀 프로젝트 한 바퀴 돌고 오면 우리 얘기도 들려줄게요.');return;
+      simple(e,state.flags.ncWon?'무대에서 정말 멋있었어요. 고생 많았어요. 월드컵 다녀오면 양식장 현장도 같이 가요.':freeRoam()?'11월 현장 실험 준비 중이에요. 양식장에 같이 갈래요?':'Phyco-Lab이에요. 지금은 시제품 데이터 정리 중이라 정신이 없네요. 팀 프로젝트 한 바퀴 돌고 오면 우리 얘기도 들려줄게요.');return;
     case 'jeje':
       if(freeRoam()&&!P['community.jeje']){runEnc([{e,say:'제제손손, NP1이에요. 우리가 다루는 문제는요?'},{e,step:Q.jeje}],null);return;}
-      simple(e,freeRoam()?'다음 주에 복지시설 인터뷰가 또 있어요. 질문지 같이 만들래요?':'제제손손이에요. 인터뷰 녹취 푸는 중이에요. 네 프로젝트부터 한 바퀴 돌고 와요, 그다음에 얘기해요.');return;
-    case 'mush':simple(e,'Mushpot이에요. 지금은 시제품 제작하고 제조 공정 구체화하는 중. 우리가 어떤 문제를 푸는지는 직접 물어봐요, 길어지니까.');return;
+      simple(e,state.flags.ncWon?'끝까지 해낸 거 다들 봤어요. 정말 수고했어요. 월드컵에서도 평소처럼만 해요.':freeRoam()?'다음 주에 복지시설 인터뷰가 또 있어요. 질문지 같이 만들래요?':'제제손손이에요. 인터뷰 녹취 푸는 중이에요. 네 프로젝트부터 한 바퀴 돌고 와요, 그다음에 얘기해요.');return;
+    case 'mush':simple(e,state.flags.ncWon?'수고했어요, 진짜로. 우리 팀도 자극 많이 받았어요. 다음 무대는 같이 서요.':'Mushpot이에요. 지금은 시제품 제작하고 제조 공정 구체화하는 중. 우리가 어떤 문제를 푸는지는 직접 물어봐요, 길어지니까.');return;
     case 'shop':{
       const v=VENTURES[e.v-1];
       if(!freeRoam()){simple(e,`${esc(v.name)}이에요. ${esc(v.sub)}에서 시작한 회사죠. 프로젝트를 한 바퀴 돌고 다시 와요. 그때 우리 얘기가 더 잘 들릴 거예요.`);return;}
@@ -1223,13 +1248,16 @@ function interact(e){
       simple(e,st<7?'놀GM은 시험 끝나고! 지금은 프로젝트 하러 가요.':'다음 놀GM 메뉴는 네가 정해.');return;
     case 'pr':
       if(st===8){runEnc([{e,say:'학기 말 성과 리포트, 네가 써 볼래? 매출은 작고 현장 실험은 진행 중이야. 어떻게 쓸까?'},{e,step:SIM.r8},{e,say:'좋아, 올릴게. 이제 포스트잇 벽 앞에서 1년을 돌아봐.'}],()=>setStage(9));return;}
-      simple(e,'릴스 소재 있으면 DM 줘요. 현장 사진, 웃음소리, 뭐든.');return;
+      simple(e,state.flags.ncWon?'우승 순간 영상, 지금 편집 중이에요. 정말 고생했어요. 월드컵 현장 사진도 부탁해요.':'릴스 소재 있으면 DM 줘요. 현장 사진, 웃음소리, 뭐든.');return;
     case 'postwall':
       if(st===9){simEnd();return;}
       if(allDone()){report();return;}
       questList(true);return;
     case 'nchost':
-      if(state.flags.ncWon){simple(e,'축하해요, National Champion. 원주로 돌아가 보세요. 정류장에 다른 탈것이 기다리고 있을 거예요.');return;}
+      if(state.flags.ncWon){
+        if(planeReady()){simple(e,'축하해요, National Champion. 월드컵에서도 오늘처럼만 해요.');return;}
+        openOv(`${who(e)}<p class="say">축하해요, National Champion. 원주 동아리방에서 부원들이 기다리고 있대요. 지금 돌아갈까요?</p><div class="row end"><button class="btn ghost" data-close>조금 이따가</button><button class="btn primary" id="goH">원주로 돌아가기</button></div>`,true);
+        panel.querySelector('#goH').addEventListener('click',()=>{closeOv();goHome();});return;}
       if(state.nc.perfect){ncWin(e);return;}
       if(!state.nc.met){runEnc([
         {e,say:'National Competition에 오신 걸 환영합니다. 1년에 한 번, 인액터스 코리아의 팀들이 한 해의 성과를 발표하는 자리예요. 올해도 800여 명이 모였어요.'},
@@ -1258,15 +1286,16 @@ function simEnd(){
   const energyLine=s.energy<30?'<p><b>다만 팀 에너지가 바닥이에요.</b> 다음 놀GM은 꼭 가세요. 프로젝트는 사람이 하니까요.</p>':s.energy>=80?'<p>팀 에너지가 가득해요. 고생도 웃으면서 하는 팀이 오래 가요.</p>':'';
   const pipe=['01 Solution Coaching','02 Incubation','03 Accelerating'];
   runEnc([{html:`<span class="lab">One year later · ${tier}</span><div class="h3">${esc(title)}</div><p>${esc(body)}</p>${energyLine}<div class="stats">${statsHtml(s)}</div><div class="pipe">${pipe.map((n,i)=>`<span class="${i===stage?'on':''}">${n}</span>${i<2?'<i>→</i>':''}`).join('')}</div><p class="small muted">인액터스 코리아의 Venture Pipeline 기준으로 팀이 선 자리예요. 한 학기가 Incubation 한 바퀴와 같아요.</p>`},
-    {html:`<p class="quote">“'이게 될까?' 싶을 때도 많지만, 직접 부딪혀 도전했을 때 얻는 게 가장 많았습니다.”<span>10기 선배의 말</span></p>`,btn:'포스트잇 뒤집기'}],
+    {html:`<p class="quote">“'이게 될까?' 싶을 때도 많지만, 직접 부딪혀 도전했을 때 얻는 게 가장 많았습니다.”<span>16기 선배의 말</span></p>`,btn:'포스트잇 뒤집기'}],
     ()=>{state.sim.stage=10;addPart('sim.end',0,0);save();hud();});
 }
 /* ================= PANELS: quests, map, report, cover, menu ================= */
 function hiddenRow(){
   if(!state.flags.reported)return '';
   let t,sub;
-  if(state.flags.endingSeen){t='히든 엔딩 · 월드컵으로';sub='메뉴에서 히든 엔딩을 다시 볼 수 있어요.';}
-  else if(state.flags.ncWon){t='??? · WC행 비행기';sub='원주 정류장에 버스 대신 비행기가 서 있어요.';}
+  if(state.flags.endingSeen){t='히든 엔딩 · 월드컵으로';sub='정류장의 WC행 비행기에 다시 타면 또 볼 수 있어요.';}
+  else if(state.flags.ncWon&&!planeReady()){t='??? · 동아리방';sub='부원들이 동아리방에서 기다리고 있어요.';}
+  else if(state.flags.ncWon){t='??? · WC행 비행기';sub='원주 정류장에 버스 대신 비행기가 서 있어요. 비행기 앞에서 말을 걸어요.';}
   else if(hiddenReady()){t='??? · NC';sub=state.map==='nc'?objective().t:'발자국 다섯 개가 버스 정류장을 가리켜요.';}
   else{t='??? · 노란 발자국';sub=`원주 곳곳에 찍힌 노란 발자국 ${state.feet.length} / 5`;}
   const hint=(!hiddenReady()&&!state.flags.ncWon)?`<div class="small muted">지나온 자리들에 찍혀 있어요: ${FEET.map(f=>state.feet.includes(f.n)?`<s>${esc(f.where)}</s>`:esc(f.where)).join(' · ')}</div>`:'';
@@ -1356,10 +1385,10 @@ function menu(){
     ${state.started?`<div class="obj"><b>Next</b><span>${esc(objective().t)}</span></div>`:''}
     ${state.started&&st>=1&&st<10?`<div class="stats">${statsHtml(state.sim)}</div><p class="small muted">대상자 신뢰는 문제를 겪는 분들과의 관계, 지속가능성은 우리가 떠나도 돌아가는 구조, 팀 에너지는 팀의 공기예요. 신뢰 40 · 지속 40 · 에너지 60에서 시작하고 최대는 100이에요.</p>`:''}
     <p class="small muted">이동: 방향키·WASD 또는 화면 왼쪽 패드. 말하기: Space·Enter·E 또는 노란 버튼. 사람이나 물건 앞에 서서 눌러요. 머리 위에 노란 느낌표가 뜬 사람에게 할 일이 있어요.</p>
-    <div class="row"><button class="btn ghost" id="rs">처음부터 다시</button><button class="btn ghost" id="snd">소리 ${SND.on?'끄기':'켜기'}</button>${state.started&&allDone()?'<button class="btn" id="rep">리포트 보기</button>':''}${state.flags.endingSeen?'<button class="btn" id="endBtn">히든 엔딩 다시 보기</button>':''}</div>
+    <div class="row"><button class="btn ghost" id="rs">처음부터 다시</button><button class="btn ghost" id="snd">소리 ${SND.on?'끄기':'켜기'}</button>${state.started&&allDone()?'<button class="btn" id="rep">리포트 보기</button>':''}</div>
     <div class="row end"><button class="btn ghost" data-close>닫기</button></div>`,true);
   panel.querySelector('#rs').addEventListener('click',()=>{panel.querySelector('#rs').outerHTML='<button class="btn" id="rs2">정말 처음부터</button>';panel.querySelector('#rs2').addEventListener('click',()=>{state=fresh();lastObjKey=null;objDirty=false;cardQ.length=0;save();closeOv();hud();cover();});});
-  const r=panel.querySelector('#rep');if(r)r.addEventListener('click',report);const eb=panel.querySelector('#endBtn');if(eb)eb.addEventListener('click',()=>{closeOv();ending();});panel.querySelector('#snd').addEventListener('click',()=>{toggleSound();closeOv();menu();});
+  const r=panel.querySelector('#rep');if(r)r.addEventListener('click',report);panel.querySelector('#snd').addEventListener('click',()=>{toggleSound();closeOv();menu();});
 }
 const hudFree=()=>!(ovOpen&&!ovClosable)&&!traveling;
 $('bSound').addEventListener('click',()=>{audioInit();toggleSound();});
@@ -1457,7 +1486,7 @@ function startEnding(box){
     arcs.forEach(a=>{const k=ease((t-a.t0)/a.dur);a.g.setDrawRange(0,Math.floor(k*a.n));if(k>=1){a.dot.visible=true;a.dot.scale.setScalar(kk);}});
     if(t>=F0){const u=Math.min(1,(t-F0)/(F1-F0)),ue=ease(u);const p=curve.getPointAt(Math.min(0.999,ue)),q=curve.getPointAt(Math.min(1,ue+0.001));plane.visible=u<1;plane.position.copy(p);plane.up.copy(p).normalize();plane.lookAt(q);plane.scale.setScalar(Math.max(1,d*0.85));tg.setDrawRange(0,Math.floor(ue*TRAIL)+1);}
     let ci=-1;caps.forEach((c,i)=>{if(t>=c[0])ci=i;});if(ci!==capI){capI=ci;cap.classList.remove('show');setTimeout(()=>{if(!END||card)return;cap.innerHTML=esc(caps[ci][1])+'<small>'+esc(caps[ci][2])+'</small>';cap.classList.add('show');},180);}
-    if(t>=10.8&&!card){card=true;cap.classList.remove('show');const ec=document.createElement('div');ec.className='endcard';ec.innerHTML=`<div class="band"><span>World Cup Bound</span><span>Enactus YM</span></div><div class="body"><div class="hand" style="font-size:30px">네 옆자리 ${esc(nm)}${josa(state.name,'이','가')} 세상을 바꾼다</div><div class="h-en" style="font-size:28px">Enactus YM</div><p>원주에서 전국 26개 대학으로, 세계 36개국의 무대로</p><p class="small" style="color:#5E6779">A head for business. A heart for the world.</p><p class="small" style="color:#5E6779">히든 엔딩 · 게임 속 가상의 결말이에요. 진짜 발자국은 지금부터.</p><div class="row" style="justify-content:center;margin-top:6px"><button class="btn" id="endAgain">다시 보기</button><button class="btn ghost" id="endDone">닫기</button></div></div>`;box.appendChild(ec);ec.querySelector('#endDone').addEventListener('click',endClose);ec.querySelector('#endAgain').addEventListener('click',()=>{endClose();ending();});sfx('done');if(!state.flags.endingSeen){state.flags.endingSeen=true;save();}}
+    if(t>=10.8&&!card){card=true;cap.classList.remove('show');const ec=document.createElement('div');ec.className='endcard';ec.innerHTML=`<div class="band"><span>World Cup Bound</span><span>Enactus YM</span></div><div class="body"><div class="hand" style="font-size:30px">네 옆자리 ${esc(nm)}${josa(state.name,'이','가')} 세상을 바꾼다</div><div class="h-en" style="font-size:28px">Enactus YM</div><p>원주에서 전국 26개 대학으로, 세계 36개국의 무대로</p><p class="small" style="color:#5E6779">A head for business. A heart for the world.</p><p class="small" style="color:#5E6779">히든 엔딩 · 진짜 발자국은 지금부터.</p><div class="row" style="justify-content:center;margin-top:6px"><button class="btn" id="endAgain">다시 보기</button><button class="btn ghost" id="endDone">닫기</button></div></div>`;box.appendChild(ec);ec.querySelector('#endDone').addEventListener('click',endClose);ec.querySelector('#endAgain').addEventListener('click',()=>{endClose();ending();});sfx('done');if(!state.flags.endingSeen){state.flags.endingSeen=true;save();}}
     if(Math.abs(box.clientWidth-renderer.domElement.width/renderer.getPixelRatio())>2)resize();
     renderer.render(scene,camera);END.raf=requestAnimationFrame(tick);};
   tick();

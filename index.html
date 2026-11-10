@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#0B1324">
-<meta name="description" content="인액터스 YM 신입부원을 위한 2D 모험 게임. 원주를 걸어 다니며 인액터스를 배워요.">
+<meta name="description" content="인액터스 YM 신입부원을 위한 2D 모험 게임. 동아리 박람회에서 시작해 원주를 걸어 다니며 인액터스를 배워요.">
 <style>:root{padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px);background:#0B1324;color-scheme:light}[hidden]{display:none!important}</style>
 <title>YM 첫 발자국</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,600;1,500&family=Noto+Sans+KR:wght@400;500;700;900&family=Nanum+Pen+Script&display=swap">
@@ -219,6 +219,69 @@ tr:first-child td,tr:first-child th{border-top:0}
 .endclose{position:absolute;top:max(12px,env(safe-area-inset-top,0px));right:max(12px,env(safe-area-inset-right,0px));z-index:2}
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
 @media (max-width:420px){.match{gap:6px}.mi{font-size:12px;padding:7px 8px;min-height:40px;line-height:1.35}}
+
+/* ---- v3: travel fade, banners, on-screen stats, carried bubble, pickup card, post-its, mini-game ---- */
+.fade{position:absolute;inset:0;background:#0B1324;opacity:0;pointer-events:none;transition:opacity .35s;z-index:4}
+.fade.on{opacity:1;pointer-events:auto}
+.lbl.bn{font-size:10px;color:#15223B;letter-spacing:.14em;font-family:var(--serif);font-weight:600}
+@media (min-width:900px){.lbl.bn{font-size:14px}}
+button.pins{appearance:none;border:0;background:transparent;padding:2px;margin:0;cursor:pointer}
+.statw{appearance:none;text-align:left;background:rgba(11,19,36,.74);border:1px solid rgba(243,238,226,.28);border-radius:10px;padding:6px 10px 7px;display:flex;flex-direction:column;gap:3px;color:#F3EEE2;width:168px;flex:0 0 auto}
+.statw .st-h{font-size:10px;letter-spacing:.06em;color:#B9C2D4;font-weight:700;display:flex;justify-content:space-between;gap:8px}
+.statw .st-h i{font-style:normal;opacity:.8}
+.statw .st-r{display:grid;grid-template-columns:38px 1fr 26px;align-items:center;gap:6px;font-size:11px;font-weight:700;position:relative}
+.statw .st-r b{font-weight:700}
+.statw .st-bar{height:6px;background:rgba(243,238,226,.2);border-radius:3px;overflow:hidden}
+.statw .st-bar i{display:block;height:100%;background:#FFC222;transition:width .5s ease}
+.statw em{font-style:normal;font-variant-numeric:tabular-nums;text-align:right}
+.statw .st-d{position:absolute;left:calc(100% + 16px);top:-3px;font-size:12px;font-weight:900;text-decoration:none;opacity:0;transition:opacity .25s;white-space:nowrap;text-shadow:0 1px 3px rgba(0,0,0,.8)}
+.statw .st-d.show{opacity:1}
+.statw .st-d.up{color:#86D4AD}
+.statw .st-d.down{color:#F2A08C}
+.stat .v small{font-size:.75em;font-weight:500;opacity:.6}
+.carry{display:flex;gap:8px;align-items:flex-start;background:#F3EEE2;color:#15223B;border-radius:12px;padding:7px 11px;font-size:13.5px;line-height:1.4;font-weight:700;box-shadow:0 3px 10px rgba(0,0,0,.3);max-width:min(100%,480px);border:2px solid #FFC222;min-width:0}
+.carry b{flex:0 0 auto;font-size:10px;letter-spacing:.08em;background:#15223B;color:#F3EEE2;padding:2px 8px;border-radius:999px;margin-top:2px;white-space:nowrap}
+.carry span{min-width:0}
+.float{position:absolute;left:50%;top:31%;transform:translate(-50%,-50%) scale(.6);width:min(86%,440px);background:#F3EEE2;color:#15223B;border-radius:16px;padding:16px 18px;box-shadow:0 18px 50px rgba(0,0,0,.45);z-index:4;opacity:0;pointer-events:none;transition:opacity .2s,transform .28s cubic-bezier(.2,1.4,.4,1);text-align:center;display:flex;flex-direction:column;gap:6px;border:3px solid #FFC222}
+.float.show{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:auto}
+.float .fk{font-size:11px;letter-spacing:.12em;font-weight:900;color:#5E6779}
+.float .ft{font-size:clamp(18px,4.8vw,24px);font-weight:900;line-height:1.35}
+.float .fs{font-size:13px;color:#5E6779;line-height:1.45}
+.bubblebig{background:var(--soft);border-radius:14px;padding:14px 16px;font-size:18px;font-weight:800;line-height:1.4}
+.pcard{align-self:center;width:min(100%,320px);min-height:240px;background:#FFC222;color:#15223B;transform:rotate(-1.5deg);box-shadow:0 10px 24px rgba(21,34,59,.3);padding:20px 20px 14px;display:flex;flex-direction:column;gap:6px;font-family:var(--hand);position:relative;animation:pflip .7s cubic-bezier(.2,.8,.2,1);margin-block:10px 6px}
+.pcard::before{content:"";position:absolute;left:32%;right:32%;top:-9px;height:18px;background:rgba(255,255,255,.55)}
+.pcard .pm{font-size:60px;line-height:.7}
+.pcard .pt{font-size:29px;line-height:1.1;margin-bottom:2px}
+.pcard .pl{font-size:21px;line-height:1.2}
+.pcard .pc{margin-top:auto;padding-top:8px;font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.06em;opacity:.7}
+@keyframes pflip{0%{transform:rotate(-1.5deg) rotateY(90deg)}100%{transform:rotate(-1.5deg) rotateY(0)}}
+.pnote{margin-top:6px;background:#FFC222;color:#15223B;font-family:var(--hand);font-size:18px;line-height:1.2;padding:8px 10px;display:flex;flex-direction:column;gap:1px;box-shadow:0 2px 5px rgba(21,34,59,.2);transform:rotate(-.5deg)}
+.pnote b{font-size:20px;font-weight:400}
+.qi.lock{opacity:.55}
+.qi.hid{border-style:dashed}
+.mg-list{display:flex;flex-direction:column;gap:3px;font-size:13.5px;background:var(--soft);border-radius:10px;padding:10px 12px}
+.mg-slide{background:var(--navy);color:var(--on-navy);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:3px}
+.mg-en{font-family:var(--serif);letter-spacing:.14em;font-size:13px;color:#FFC222}
+.mg-ko{font-size:20px;font-weight:900}
+.mg-track{position:relative;height:48px;background:var(--soft);border-radius:10px;overflow:hidden;border:1.5px solid var(--line)}
+.mg-zone{position:absolute;top:0;bottom:0;background:#FFC222}
+.mg-zone.hit{background:var(--good)}
+.mg-zone.miss{background:var(--bad)}
+.mg-cur{position:absolute;top:0;bottom:0;width:6px;margin-left:-3px;background:var(--fg);border-radius:3px;left:0}
+.mg-dots{display:flex;gap:8px;justify-content:center}
+.mg-dots i{width:14px;height:14px;border-radius:50%;border:2px solid var(--line);display:block}
+.mg-dots i.ok{background:var(--good);border-color:var(--good)}
+.mg-dots i.no{background:var(--bad);border-color:var(--bad)}
+@media (max-width:420px){.statw{width:150px}.carry{font-size:13px}}
+@media (pointer:coarse){.toast{bottom:max(170px,calc(env(safe-area-inset-bottom,0px) + 170px))}}
+@media (max-width:560px){
+.tbl.fit table{min-width:0;table-layout:fixed;font-size:12px}
+.tbl.fit td,.tbl.fit th{padding:6px 5px;word-break:keep-all;overflow-wrap:anywhere}
+.tbl.fit th{font-size:10px;letter-spacing:0}
+.tbl.fit.c4 th:first-child{width:17%}
+.tbl.fit.r3 th:nth-child(1){width:24%}
+.tbl.fit.r3 th:nth-child(2){width:27%}
+}
 </style>
 
 </head>
@@ -229,10 +292,15 @@ tr:first-child td,tr:first-child th{border-top:0}
   <div class="hud">
     <div class="hudrow">
       <div class="brand">First Footprint</div>
-      <div class="pins" id="pins"></div>
+      <button class="pins" id="pins" aria-label="포스트잇 여섯 장 보기"></button>
       <div class="tools"><button class="hb" id="bQuest">퀘스트<span class="badge" id="qBadge" hidden>!</span></button><button class="hb" id="bMap">지도</button><button class="hb" id="bSound">소리</button><button class="hb" id="bMenu">메뉴</button></div>
     </div>
+    <div class="hudrow sub">
+      <button class="statw" id="statw" aria-label="프로젝트 스탯 설명 보기" hidden></button>
+      <div class="carry" id="carry" hidden><b>들고 있는 말</b><span id="carryText"></span></div>
+    </div>
   </div>
+  <div class="float" id="float"></div>
   <div class="toast" id="toast"></div>
   <div class="pad" id="pad">
     <button class="e"></button><button data-k="u" aria-label="위">▲</button><button class="e"></button>
@@ -240,35 +308,51 @@ tr:first-child td,tr:first-child th{border-top:0}
     <button class="e"></button><button data-k="d" aria-label="아래">▼</button><button class="e"></button>
   </div>
   <button class="abtn" id="abtn">말하기</button>
+  <div class="fade" id="fade"></div>
   <div class="ov" id="ov" hidden><div class="panel" id="panel"></div></div>
 </div>
 
 <script>
 (function(){
 'use strict';
-const KEY='ym-first-footprint-v2';
+const KEY='ym-first-footprint-v3';
 const T=16;
 /* ================= CONTENT ================= */
 const CH=[
- {id:'what',num:'01',en:'What is Enactus',ko:'인액터스가 뭐예요?',where:'SC 강당의 알럼나이·OB 선배',max:5,parts:['what.name','what.def','what.word']},
- {id:'three',num:'02',en:'Three Clubs',ko:'이건 누구의 말일까?',where:'동아리 박람회 광장의 말풍선 8개를 맞는 부스로',max:8,parts:['three.1','three.2','three.3','three.4','three.5','three.6','three.7','three.8']},
+ {id:'three',num:'01',en:'Three Clubs',ko:'이건 누구의 말일까?',where:'동아리 박람회 광장의 말풍선 8개를 맞는 부스로',max:8,parts:['three.1','three.2','three.3','three.4','three.5','three.6','three.7','three.8']},
+ {id:'what',num:'02',en:'What is Enactus',ko:'인액터스가 뭐예요?',where:'서울행 버스를 타고 SC 강당의 10기 선배 · OB 선배에게',max:5,parts:['what.name','what.def','what.word']},
  {id:'year',num:'03',en:'One Year in Wonju',ko:'원주에서의 1년',where:'회장 → 현장 → 화이트보드(BM) → 시크한 멘토 선배 → 회장 → 놀GM → 홍보부원 → 포스트잇 벽',max:10,parts:['sim.r1','sim.r2','sim.r3','sim.build','sim.r5','sim.r6','sim.r7','sim.r8','sim.end']},
- {id:'rhythm',num:'04',en:'The Calendar',ko:'1년의 리듬',where:'포스터 6장을 모아 동아리방 앞 게시판으로',max:7,parts:['rhythm.order','rhythm.sc']},
- {id:'community',num:'05',en:'The Community',ko:'셋이 모여야 인액터스',where:'카페 사장, 그리고 동아리방의 Phyco-Lab·제제손손 팀원',max:5,parts:['community.roles','community.phyco','community.jeje']},
- {id:'venture',num:'06',en:'Impact Ventures',ko:'프로젝트가 회사가 되면',where:'벤처 거리의 다섯 가게, 그리고 인액터스 코리아 사무국',max:6,parts:['venture.1','venture.2','venture.3','venture.4','venture.5','venture.pipe']},
+ {id:'community',num:'04',en:'The Community',ko:'셋이 모여야 인액터스',where:'멘토링 카페 사장, 그리고 동아리방의 Phyco-Lab · 제제손손 팀원',max:5,parts:['community.roles','community.phyco','community.jeje']},
+ {id:'venture',num:'05',en:'Impact Ventures',ko:'프로젝트가 회사가 되면',where:'벤처 거리의 다섯 가게, 그리고 거리 끝 Venture Pipeline 안내판',max:6,parts:['venture.1','venture.2','venture.3','venture.4','venture.5','venture.pipe']},
+ {id:'rhythm',num:'06',en:'The Calendar',ko:'1년의 리듬',where:'원주 곳곳의 포스터 5장을 모아 캠퍼스 게시판으로',max:6,parts:['rhythm.order','rhythm.sc']},
 ];
 const TOTAL_MAX=CH.reduce((a,c)=>a+c.max,0);
+/* what each post-it says once it flips to '!' */
+const SUMMARY={
+ three:{t:'봉사도, 그냥 창업도 아니다',l:['출발점: 사회문제와 그 대상자','수단: 대상자가 들어간 수익 구조(BM)','남는 것: 우리가 떠나도 돌아가는 구조']},
+ what:{t:'EN · ACT · US',l:['Entrepreneurial · Act-oriented · Us','사회문제를 사업으로 풀고 시장에서 증명','제일 중요한 한 단어: 자립']},
+ year:{t:'프로젝트의 4대 원칙',l:['문제가 먼저 → 대상자와 함께','→ 사업으로 푼다 → 증명한다','BM 한 장: 누가 돈을 내나 · 무엇이 남나 · 우리가 떠나면?']},
+ community:{t:'셋이 모여야 인액터스',l:['Student · Business · Academic Leader','YM의 세 현장: Phyco-Lab · Mushpot · 제제손손','학생만 나오면 동아리, 셋이 나오면 인액터스']},
+ venture:{t:'프로젝트가 회사가 되는 길',l:['고요한M · 동구밭 · 두핸즈 · 119REO · 네모의 꿈','Coaching → Incubation → Accelerating → Seed','한 학기 = Incubation 한 바퀴(6개월)']},
+ rhythm:{t:'한 해의 리듬',l:['SC → PIC → ETC·씨앗 → NC → 월드컵','SC는 신입의 첫 행사, NC는 1년의 성과 발표','가을 학기에 한 바퀴 더']},
+};
 
-const COMPARE=`<div class="tbl"><table>
+const COMPARE=`<div class="tbl fit c4"><table>
 <tr><th></th><th>봉사동아리</th><th>창업동아리</th><th>인액터스</th></tr>
 <tr><td><b>출발점</b></td><td>도움이 필요한 사람</td><td>돈이 되는 아이디어</td><td>해결해야 할 사회문제와 그 대상자</td></tr>
 <tr><td><b>해결 수단</b></td><td>시간·물품·모금</td><td>제품·서비스</td><td>대상자를 포함한 수익 구조(BM)</td></tr>
 <tr><td><b>성공 기준</b></td><td>얼마나 도왔는가</td><td>얼마나 벌었는가</td><td>대상자의 삶이 지속적으로 나아졌는가 + 사업이 스스로 굴러가는가</td></tr>
 <tr><td><b>대상자</b></td><td>수혜자</td><td>고객</td><td>파트너이자 주인공</td></tr>
 <tr><td><b>끝났을 때 남는 것</b></td><td>활동 기록</td><td>회사</td><td>우리가 떠나도 계속 돌아가는 구조</td></tr></table></div>`;
-const RHYTHM_TABLE=`<div class="tbl"><table>
+const POSTERS=[
+ {n:1,title:'SC 스타팅 세레머니',when:'3월 말 · 9월 말',line:'신입 회원의 첫 공식 행사. 인액터스 소개, 알럼나이·OB 이야기',label:'SC 스타팅 세레머니 (3월 말)'},
+ {n:2,title:'내부 PIC → 연합 PIC',when:'학기 중',line:'프로젝트 아이디어 경쟁. 내부 선발팀이 여러 학교가 모이는 연합 무대로',label:'내부 PIC → 연합 PIC'},
+ {n:3,title:'ETC + 현대해상 씨앗 프로그램',when:'5월 중순 · 11월 중순',line:'26개 대학 300여 명이 비즈니스 리더에게 배우는 자리. 씨앗은 신생 프로젝트 5팀의 피칭',label:'ETC + 현대해상 씨앗 프로그램 (5월 중순)'},
+ {n:4,title:'NC 국내대회',when:'7월',line:'800여 명이 모이는 연중 최대 행사. 1년의 성과 발표(영어), 우승팀은 월드컵 국가대표',label:'NC 국내대회 (7월, 발표는 영어)'},
+ {n:5,title:'인액터스 월드컵',when:'보통 10월',line:'36개국 챔피언 팀의 2박 3일',label:'인액터스 월드컵 (보통 10월)'},
+];
+const RHYTHM_TABLE=`<div class="tbl fit r3"><table>
 <tr><th>시기</th><th>프로그램</th><th>무슨 자리</th></tr>
-<tr><td>2월 초 · 8월 초</td><td>LT (1박 2일)</td><td>회장단과 프로젝트 리더의 리더십 워크숍</td></tr>
 <tr><td>3월 말 · 9월 말</td><td>SC (4시간)</td><td>신입 회원의 첫 공식 행사. 인액터스 소개, 알럼나이·OB 이야기</td></tr>
 <tr><td>학기 중</td><td>내부 PIC → 연합 PIC</td><td>프로젝트 아이디어 경쟁. 내부 선발팀이 여러 학교가 모이는 연합 무대로</td></tr>
 <tr><td>5월 중순 · 11월 중순</td><td>ETC + 씨앗 프로그램</td><td>26개 대학 300여 명이 비즈니스 리더에게 배우는 자리. 씨앗은 신생 프로젝트 5팀의 피칭</td></tr>
@@ -308,14 +392,13 @@ const Q={
    {t:'자립 (Empowerment)',ok:true,fb:'대상자가 자기 성공의 주인공이 되도록 구조를 만드는 것. 이게 인액터스가 하는 일이에요.'},
    {t:'수익 (Profit)',fb:'수익은 수단이에요. 그 수익 구조가 대상자의 삶을 계속 바꾸는지가 기준이에요.'}],
    after:`<p><b>인액터스의 평가 기준</b><br>경제·사회·환경적으로 지속가능한 방식으로, 기업가적 행동을 통해 사람들이 <b>스스로</b> 삶을 개선하도록 얼마나 효과적으로 힘을 실어줬는가.</p>`},
- rhythm:{type:'order',key:'rhythm.order',title:'한 해의 리듬',prompt:'모아 온 포스터 여섯 장이에요. 봄 학기 기준으로 이른 것부터 순서대로 눌러 게시판에 붙여요.',
-   pool:['NC 국내대회 (7월, 발표는 영어)','SC 스타팅 세레머니 (3월 말)','인액터스 월드컵 (보통 10월)','LT 리더십 트레이닝 (2월 초)','ETC + 현대해상 씨앗 프로그램 (5월 중순)','내부 PIC → 연합 PIC'],
-   answer:['LT 리더십 트레이닝 (2월 초)','SC 스타팅 세레머니 (3월 말)','내부 PIC → 연합 PIC','ETC + 현대해상 씨앗 프로그램 (5월 중순)','NC 국내대회 (7월, 발표는 영어)','인액터스 월드컵 (보통 10월)'],
+ rhythm:{type:'order',key:'rhythm.order',title:'한 해의 리듬',prompt:'모아 온 포스터 다섯 장이에요. 봄 학기 기준으로 이른 것부터 순서대로 눌러 게시판에 붙여요.',
+   pool:POSTERS.map(p=>p.label),answer:POSTERS.map(p=>p.label),
    fb:`<p>가을 학기도 같은 리듬으로 한 바퀴 더 돌아요. YM의 실제 일정이 정해지면 그 날짜가 우선이에요.</p>${RHYTHM_TABLE}`},
  sc:{type:'quiz',key:'rhythm.sc',q:'신입 부원이 처음 서는 공식 커뮤니티 행사는?',options:[
    {t:'NC 국내대회',fb:'NC는 1년의 성과를 발표하는 7월의 가장 큰 무대예요. 800여 명이 모여요.'},
    {t:'SC 스타팅 세레머니',ok:true,fb:'맞아요. 3월 말과 9월 말에 열리는 신입 회원의 첫 공식 행사예요. 인액터스 소개를 듣고, 알럼나이와 OB 선배의 이야기를 직접 들어요.'},
-   {t:'LT 리더십 트레이닝',fb:'LT는 회장단과 프로젝트 리더의 워크숍이에요.'}],after:GLOSSARY},
+   {t:'ETC 트레이닝',fb:'ETC는 26개 대학 300여 명이 모여 비즈니스 리더에게 배우는 자리예요. 5월 중순과 11월 중순에 열려요.'}],after:GLOSSARY},
  roles:{type:'match',key:'community.roles',title:'셋이 모여야 인액터스',prompt:'카페에 앉은 세 사람. 역할과 설명을 짝지어 보세요.',pairs:[
    ['Student Leader','대학생. 팀 구성과 프로젝트 실행, 사회적 임팩트 창출, 비즈니스 경험'],
    ['Business Leader','후원기업 & 알럼나이. 비즈니스 전략 조언, 공식 후원, 대회 심사위원'],
@@ -336,7 +419,7 @@ const Q={
    after:`<p><b>프로젝트가 회사가 되는 길</b></p>${PIPE}<p class="small muted">알럼나이 창업가 29명의 2024년 총 연매출은 2,500억 원, 5년 이상 생존율은 90%. 모두 대학생 때 '대상자가 포함된 수익 구조' 하나에서 시작했어요.</p>`},
 };
 const SIM={
- r1:{type:'simq',key:'sim.r1',round:1,principle:'문제가 먼저',scene:'첫 회의. 화이트보드는 비어 있고, 다들 마커만 만지작거려요. 무엇부터 할까요?',options:[
+ r1:{type:'simq',key:'sim.r1',round:1,principle:'문제가 먼저',scene:'첫 회의. 화이트보드는 비어 있고, 다들 마커만 만지작거려요. 내부 PIC에 낼 프로젝트, 무엇부터 할까요?',options:[
    {t:'“요즘 뜨는 AI 앱 아이디어가 있어요. 이걸로 가요!”',d:{trust:-10,sustain:-5,energy:5},fb:'인액터스는 아이디어가 아니라 사회문제에서 시작해요. 아이디어부터 잡으면 문제를 아이디어에 끼워 맞추게 돼요. 4대 원칙의 첫째, 문제가 먼저.'},
    {t:'“현장에 가서 사람들이 진짜 겪는 문제가 뭔지부터 확인하죠.”',ok:true,d:{trust:10,sustain:5,energy:0},fb:'YM의 모든 팀은 대상자 설정과 문제 인식부터 시작해요. GM 신입 교육의 로직 구조도 이 순서예요.'},
    {t:'“공모전 일정부터 보고, 심사 기준에 맞는 주제를 고르죠.”',d:{trust:-5,sustain:-5,energy:5},fb:'무대는 검증받는 자리지 출발점이 아니에요. 심사 기준에 맞춘 문제는 현장에서 금방 티가 나요.'}]},
@@ -346,17 +429,17 @@ const SIM={
    {t:'직접 인터뷰하고, 하루를 따라다녀 본다',ok:true,d:{trust:15,sustain:5,energy:-5},fb:'제제손손 팀이 복지시설 인터뷰부터 시작한 이유예요. 대상자는 \'도와주는 대상\'이 아니라 함께 검증하는 파트너예요.'}]},
  r3:{type:'simq',key:'sim.r3',round:3,principle:'사업으로 푼다',scene:'인터뷰에서 들은 문제가 또렷해졌어요. 화이트보드 앞. 해결 방식을 정할 차례예요.',options:[
    {t:'모금해서 필요한 물품을 사 드린다',d:{trust:5,sustain:-15,energy:0},fb:'한 번은 고마운 일이지만, 돈이 떨어지면 끝나요. 인액터스는 모금·자선 없이 비즈니스로만 풀어요.'},
-   {t:'SNS 캠페인으로 문제를 널리 알린다',d:{trust:0,sustain:-5,energy:5},fb:'알리는 것은 해결이 아니에요. 회장 서동건 선배의 말처럼, 사회문제를 분석하는 데서 끝나지 않고 해결하는 비즈니스를 직접 만드는 게 인액터스예요.'},
+   {t:'SNS 캠페인으로 문제를 널리 알린다',d:{trust:0,sustain:-5,energy:5},fb:'알리는 것은 해결이 아니에요. 10기 선배의 말처럼, 사회문제를 분석하는 데서 끝나지 않고 해결하는 비즈니스를 직접 만드는 게 인액터스예요.'},
    {t:'{who}이 참여하는 제품·서비스로 수익 구조를 만든다',ok:true,d:{trust:5,sustain:15,energy:0},fb:'사업으로 푼다. YM의 모든 프로젝트가 BM과 시제품을 갖고 공모전·투자로 검증해요.'}]},
  r5:{type:'simq',key:'sim.r5',round:5,principle:'멘토링',scene:'멘토의 질문. “그걸 왜 굳이 너희가 해야 하죠? 그리고 돈은 벌 수 있나요?”',options:[
-   {t:'“좋은 일이니까요. 돈은… 나중에 생각하려고요.”',d:{trust:0,sustain:-5,energy:-5},fb:'알럼나이 서우현 선배의 말이 있어요. “돈을 벌 수 있나요?”라는 말에 좌절할 때 “우리는 왜 이 문제를 해결하려고 했을까?”를 떠올려라. 다만 이유와 숫자, 둘 다 있어야 해요.'},
+   {t:'“좋은 일이니까요. 돈은… 나중에 생각하려고요.”',d:{trust:0,sustain:-5,energy:-5},fb:'10기 선배의 말이 있어요. “돈을 벌 수 있나요?”라는 말에 좌절할 때 “우리는 왜 이 문제를 해결하려고 했을까?”를 떠올려라. 다만 이유와 숫자, 둘 다 있어야 해요.'},
    {t:'인터뷰 데이터와 BM 가설을 꺼내, 어디까지 검증됐고 어디가 아직인지 말한다',ok:true,d:{trust:5,sustain:10,energy:5},fb:'멘토링은 조언을 받는 시간이 아니라 토론 시간이에요. 자료와 논리로 답하고, 모르는 건 모른다고 말하는 팀이 다듬어져요.'},
    {t:'멘토 의견에 맞춰 그 자리에서 BM을 전부 뒤집는다',d:{trust:-10,sustain:-5,energy:0},fb:'피드백은 재료지 정답이 아니에요. 현장에서 들은 것보다 회의실 의견을 앞세우면 대상자와 멀어져요.'}]},
  r6:{type:'simq',key:'sim.r6',round:6,principle:'시행착오',scene:'씨앗 프로그램 서류에서 떨어졌어요. 시제품 첫 테스트에서 {who}의 반응도 미지근했고요. 단톡방이 조용해요.',options:[
    {t:'“여기까지인가 봐요. 아쉽게도…”',d:{trust:0,sustain:-10,energy:-20},fb:'인액터스 출신 창업가들이 꼽은 가장 큰 장점이 \'마음껏 실패할 기회\'예요. 여기서 멈추면 실패가 아니라 중단이에요. 실패 뒤 다음 장면은 반드시 다시 움직이는 팀.'},
-   {t:'무엇이 안 통했는지 {who}에게 직접 다시 묻는다',ok:true,d:{trust:10,sustain:10,energy:5},fb:'서동건 선배는 씨앗 프로그램에 한 번 떨어진 뒤 부산까지 가서 사람들을 만나 결국 합격했어요. 막힌 곳에서 다시 움직이는 방법은 늘 현장에 있어요.'},
-   {t:'우리끼리 밤새워 다시 만든다. 대상자 의견은 다음에',d:{trust:-5,sustain:0,energy:-10},fb:'열정은 좋지만 방향이 없으면 같은 벽에 다시 부딪혀요. “치열하게 고민하고, 시원하게 실패를 맞이하고, 뜨겁게 일어나십쇼.”(서우현) 일어나는 방향은 현장이에요.'}]},
- r7:{type:'simq',key:'sim.r7',round:7,principle:'팀 에너지',scene:'중간고사, 내부 PIC, 연합 PIC가 한 달에 겹쳤어요. 치킨집 앞. 팀은 어떻게 할까요?',options:[
+   {t:'무엇이 안 통했는지 {who}에게 직접 다시 묻는다',ok:true,d:{trust:10,sustain:10,energy:5},fb:'10기 선배는 씨앗 프로그램에 한 번 떨어진 뒤 부산까지 가서 사람들을 만나 결국 합격했어요. 막힌 곳에서 다시 움직이는 방법은 늘 현장에 있어요.'},
+   {t:'우리끼리 밤새워 다시 만든다. 대상자 의견은 다음에',d:{trust:-5,sustain:0,energy:-10},fb:'열정은 좋지만 방향이 없으면 같은 벽에 다시 부딪혀요. “치열하게 고민하고, 시원하게 실패를 맞이하고, 뜨겁게 일어나십쇼.”(10기 선배) 일어나는 방향은 현장이에요.'}]},
+ r7:{type:'simq',key:'sim.r7',round:7,principle:'팀 에너지',scene:'중간고사, 내부 PIC, 연합 PIC가 한 달에 겹쳤어요. 놀GM 장소 앞. 팀은 어떻게 할까요?',options:[
    {t:'“일만 한다. 놀 시간이 어딨어.”',d:{trust:0,sustain:0,energy:-15},fb:'진지함 30, 에너지 70. 고생도 웃으면서 하는 팀이 오래 가요. 번아웃은 프로젝트보다 먼저 사람을 멈추게 해요.'},
    {t:'시험 끝나는 날 놀GM. 영화 보고 배달음식, 뒷풀이까지',ok:true,d:{trust:0,sustain:0,energy:15},fb:'일할 때는 제대로 일하고, 놀 때는 제대로 노는 동아리. 그게 인액터스 YM이에요. 랜덤배달은 각자 판단.'},
    {t:'프로젝트를 한 달 멈춘다',d:{trust:-5,sustain:-10,energy:5},fb:'현장은 우리 시험 일정을 기다려 주지 않아요. 속도를 줄이되 멈추지는 않기. 짧은 연락 한 통이 신뢰를 지켜요.'}]},
@@ -389,12 +472,48 @@ const BUBBLES=[
  {id:8,t:'끝났을 때 남는 건 우리가 떠나도 계속 돌아가는 구조예요.',a:2,why:'인액터스예요. 이 한 줄이 셋을 가르는 가장 큰 차이예요.'},
 ];
 const BOOTHS=['봉사동아리','창업동아리','인액터스'];
+const BOOTH_HINT=[
+ '우리는 도움이 필요한 분들을 찾아가 시간과 물품을 나눠요. 모금도 하고요. 얼마나 도왔는지가 우리의 보람이고, 끝나면 활동 기록이 남아요.',
+ '우리는 돈이 되는 아이디어로 제품과 서비스를 만들어요. 얼마나 벌었는지가 성적표고, 잘되면 회사가 남죠. 우리한테 사람들은 고객이에요.',
+ '우리는 사회문제와 그 문제를 겪는 분들에게서 출발해요. 그분들이 파트너로 들어간 수익 구조를 만들어서, 우리가 떠나도 계속 돌아가게 하는 게 목표예요.'];
+const BOOTH_NO=['음, 이건 우리 봉사동아리가 할 말은 아닌 것 같아요.','이건 우리 창업동아리 얘기가 아닌데요?','이건 인액터스가 하는 말이 아니에요.'];
+const BOOTH_AFTER=['다음 박람회 때 또 봐요. 봉사도 언제든 환영이에요!','창업 얘기 하고 싶으면 언제든 와요.','동아리방은 캠퍼스 왼쪽 끝이에요. 거기서 또 봐요!'];
 const VENTURES=[
  {n:1,name:'고요한M',sub:'동국대 인액터스, 2017',desc:'청각장애인 기사와 승객이 소통하는 택시 앱. 지금은 유니버설 모빌리티 플랫폼',more:'한국 최초로 청각장애인 택시 기사를 양성했고, 직원 60명 중 30명이 장애인이에요. 누적 투자 45억 원.'},
  {n:2,name:'동구밭',sub:'홍익대 인액터스, 2014',desc:'발달장애 청년을 고용해 친환경 비누를 만들고 판다',more:'직원 87명 중 절반이 발달장애인, 별도 투자 없이 연매출 120억 원.'},
  {n:3,name:'두핸즈',sub:'성균관대 인액터스, 2011',desc:'노숙인·취약계층을 고용한 물류 대행 \'품고\'',more:'직원 30%가 취약계층, 연매출 400억 원(2024), 시리즈 B 누적 투자 320억 원.'},
  {n:4,name:'119REO',sub:'건국대 인액터스, 2013',desc:'폐방화복 업사이클링 제품, 수익 일부를 소방관 지원에',more:'버려지던 방화복과 암 투병 소방관, 두 문제를 한 제품으로 이었어요.'},
  {n:5,name:'네모의 꿈',sub:'건국대 인액터스, 2026 NC 우승',desc:'세라믹 폐기물로 만든 투수 보도블록',more:'2026 국내대회 우승팀. 11월 브라질 월드컵에 한국 대표로 나가요.'},
+];
+/* hidden quest: five yellow footprints, each with one NC / World Cup fact */
+const FEET=[
+ {n:1,where:'박람회 광장',t:'NC는 National Competition, 국내대회예요. 매년 7월에 열려요.'},
+ {n:2,where:'시장 한가운데',t:'NC에는 800여 명이 모여요. 1년 중 가장 큰 커뮤니티 행사예요.'},
+ {n:3,where:'카페 가는 길',t:'NC에서는 1년의 성과를 발표해요. 발표는 전부 영어, 심사는 기업인과 알럼나이.'},
+ {n:4,where:'벤처 거리',t:'NC 우승팀은 그해 인액터스 월드컵의 한국 국가대표가 돼요.'},
+ {n:5,where:'동아리방 문 앞',t:'인액터스 월드컵은 36개국 챔피언 팀이 모이는 2박 3일의 무대예요.'},
+];
+const NCQ={
+ 1:{open:'첫 질문입니다. 이 대회가 어떤 자리인지부터 확인하죠.',q:'NC(National Competition)는 어떤 자리인가요?',options:[
+   {t:'1년의 성과를 발표하는 국내대회. 우승팀은 월드컵 한국 국가대표',ok:true,fb:'맞아요. 매년 7월, 800여 명이 모이는 연중 최대 행사예요.'},
+   {t:'신입 회원이 처음 서는 공식 행사',fb:'그건 SC(Starting Ceremony)예요.'},
+   {t:'프로젝트 아이디어를 겨루는 대회',fb:'그건 PIC(Project Idea Contest)예요. NC는 1년의 성과를 발표해요.'}]},
+ 2:{open:'저는 알럼나이 심사위원이에요. 발표 준비는 됐나요?',q:'NC 발표에 대한 설명으로 맞는 것은?',options:[
+   {t:'발표는 전부 영어로 하고, 기업인과 알럼나이가 심사한다',ok:true,fb:'맞아요. 월드컵 무대와 같은 언어로 준비하는 거예요.'},
+   {t:'발표 없이 서류로만 심사한다',fb:'NC는 무대 위에서 1년의 성과를 직접 발표하는 자리예요.'},
+   {t:'신입 회원만 발표할 수 있다',fb:'NC는 프로젝트 팀이 1년의 성과를 발표하는 자리예요.'}]},
+ 3:{open:'마지막 질문은 이 무대 다음에 대한 겁니다.',q:'NC 우승팀이 나가는 인액터스 월드컵에는 누가 모일까요?',options:[
+   {t:'36개국의 국가 챔피언 팀',ok:true,fb:'맞아요. 나라별 국내대회 우승팀이 모이는 2박 3일의 무대예요.'},
+   {t:'한국의 26개 대학 팀',fb:'26개 대학이 모이는 건 국내 행사예요. 월드컵은 나라별 챔피언이 모여요.'},
+   {t:'후원 기업의 임직원',fb:'기업인은 심사위원과 멘토로 함께하지만, 무대의 주인공은 각국 챔피언 팀이에요.'}]},
+};
+/* NC presentation mini-game: five slides, one per principle */
+const SLIDES=[
+ {en:'PROBLEM',ko:'문제가 먼저',line:'누가, 어떤 문제를 겪고 있는가',w:28,sec:1.6},
+ {en:'PEOPLE',ko:'대상자와 함께',line:'현장에서 직접 들은 목소리',w:24,sec:1.45},
+ {en:'BUSINESS MODEL',ko:'사업으로 푼다',line:'누가 돈을 내고, 대상자에게 무엇이 남는가',w:21,sec:1.3},
+ {en:'IMPACT',ko:'증명한다',line:'확인된 숫자 하나',w:18,sec:1.2},
+ {en:'NEXT STEP',ko:'우리가 떠나도 돌아가는 구조',line:'다음 무대와 다음 걸음',w:16,sec:1.1},
 ];
 const ASK={
  'what.def':'인액터스가 봉사동아리와 뭐가 다른지, 선배의 말로 들어볼 수 있을까요?','what.word':'\'자립(Empowerment)\'이 우리 프로젝트에서는 구체적으로 뭘 뜻하나요?','what.name':'굳이, 우리가. 이 말은 어디서 나온 건가요?',
@@ -405,41 +524,57 @@ const ASK={
  'venture':'선배들이 만든 회사 중 우리 프로젝트와 가장 닮은 곳은 어디예요?','venture.pipe':'우리 프로젝트는 지금 Venture Pipeline의 어느 단계인가요?',
 };
 const ASK_DEFAULT=['처음 실패했을 때 어떻게 다시 일어났나요?','\'이게 될까?\' 싶었던 순간은 언제였나요?','인액터스 전과 후, 면접에서 할 말이 달라졌나요?'];
-/* ================= WORLD ================= */
-const MW=64,MH=50;
-const map=[];for(let y=0;y<MH;y++){map.push(new Array(MW).fill('g'));}
-const SOLID=new Set(['w','T','s','c','h','b','t','k','e','q','S']);
-function setT(x,y,c){if(x>=0&&y>=0&&x<MW&&y<MH)map[y][x]=c;}
-function rect(c,x,y,w,h){for(let j=y;j<y+h;j++)for(let i=x;i<x+w;i++)setT(i,j,c);}
-function room(x,y,w,h,doors){rect('w',x,y,w,h);rect('i',x+1,y+1,w-2,h-2);doors.forEach(d=>setT(d[0],d[1],'x'));}
-function line(c,x1,y1,x2,y2){for(let y=Math.min(y1,y2);y<=Math.max(y1,y2);y++)for(let x=Math.min(x1,x2);x<=Math.max(x1,x2);x++)setT(x,y,c);}
+/* ================= WORLD (three maps: wonju, sc, nc) ================= */
+const SOLID=new Set(['w','T','s','c','h','b','t','k','e','q','v','u','U','J']);
+const MAPS={};
+function makeMap(id,name,w,h,fill){
+  const g=[];for(let y=0;y<h;y++)g.push(new Array(w).fill(fill));
+  const m={id,name,w,h,g,ents:[],esol:{},labels:[]};MAPS[id]=m;
+  m.set=(x,y,c)=>{if(x>=0&&y>=0&&x<w&&y<h)g[y][x]=c;};
+  m.rect=(c,x,y,ww,hh)=>{for(let j=y;j<y+hh;j++)for(let i=x;i<x+ww;i++)m.set(i,j,c);};
+  m.line=(c,x1,y1,x2,y2)=>{for(let y=Math.min(y1,y2);y<=Math.max(y1,y2);y++)for(let x=Math.min(x1,x2);x<=Math.max(x1,x2);x++)m.set(x,y,c);};
+  m.room=(x,y,ww,hh,doors,floor)=>{m.rect('w',x,y,ww,hh);m.rect(floor||'i',x+1,y+1,ww-2,hh-2);doors.forEach(d=>m.set(d[0],d[1],'x'));};
+  return m;
+}
 let seed=7;const rnd=()=>{seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;};
-/* campus */
-room(2,2,16,10,[[9,11]]);line('t',7,6,9,6);
-room(22,2,14,10,[[29,11]]);rect('m',24,3,11,2);[[24,7],[26,7],[32,7],[34,7],[24,9],[34,9]].forEach(p=>setT(p[0],p[1],'e'));
-line('p',3,15,61,15);line('p',9,12,9,14);line('p',29,12,29,14);
-/* plaza */
-rect('z',40,2,22,13);
-/* cafe */
-room(2,20,14,9,[[8,20]]);line('k',3,21,6,21);[[5,25],[9,24],[12,22],[12,26]].forEach(p=>setT(p[0],p[1],'t'));line('p',8,16,8,19);
-/* market */
-rect('z',20,18,14,11);[[21,19],[24,19],[27,19],[30,19],[21,25],[24,25],[27,25],[30,25]].forEach(p=>setT(p[0],p[1],'s'));line('p',26,16,26,17);
-/* farm */
-rect('d',37,18,12,11);for(const y of [19,21,23,25,27])line('c',38,y,47,y);line('p',42,16,42,17);
-/* alley */
-rect('z',51,18,11,11);[[52,19,3,2],[57,19,3,2],[52,24,3,2],[57,24,3,2]].forEach(r=>rect('h',r[0],r[1],r[2],r[3]));[[55,21],[56,27],[51,23],[60,22]].forEach(p=>setT(p[0],p[1],'b'));line('p',56,16,56,17);
-/* lower path + street */
-line('p',3,30,61,30);[[26,29],[42,29],[56,29]].forEach(p=>setT(p[0],p[1],'p'));
-line('z',2,35,61,35);line('r',2,36,61,36);line('R',2,37,61,37);line('r',2,38,61,38);line('z',2,39,61,39);
-[9,25,42,59].forEach(x=>line('p',x,31,x,34));
-rect('q',20,42,6,4);
-/* flowers + trees */
-for(let i=0;i<60;i++){const x=Math.floor(rnd()*MW),y=Math.floor(rnd()*MH);if(map[y][x]==='g')map[y][x]='f';}
-const RESERVED=new Set();
-function reserve(x,y,w,h){for(let j=y;j<y+(h||1);j++)for(let i=x;i<x+(w||1);i++)RESERVED.add(i+','+j);}
+
+/* ---- Wonju: campus (top), fields (middle), venture street (bottom) ---- */
+const W=makeMap('wonju','원주',64,50,'g');
+W.room(2,2,16,10,[[9,11]]);W.line('t',7,6,9,6);                 /* club room */
+W.rect('z',24,5,11,7);                                          /* bulletin square */
+W.line('p',3,15,61,15);W.line('p',9,12,9,14);W.line('p',29,12,29,14);
+W.rect('z',40,2,22,13);                                         /* club fair plaza */
+W.room(2,20,14,9,[[8,20]]);W.line('k',3,21,6,21);[[5,25],[9,24],[12,22],[12,26]].forEach(p=>W.set(p[0],p[1],'t'));W.line('p',8,16,8,19);   /* cafe */
+W.rect('z',20,18,14,11);[[21,19],[24,19],[27,19],[30,19],[21,25],[24,25],[27,25],[30,25]].forEach(p=>W.set(p[0],p[1],'s'));W.line('p',26,16,26,17);   /* market */
+W.rect('d',37,18,12,11);for(const y of [19,21,23,25,27])W.line('c',38,y,47,y);W.line('p',42,16,42,17);   /* farm */
+W.rect('z',51,18,11,11);[[52,19,3,2],[57,19,3,2],[52,24,3,2],[57,24,3,2]].forEach(r=>W.rect('h',r[0],r[1],r[2],r[3]));[[55,21],[56,27],[51,23],[60,22]].forEach(p=>W.set(p[0],p[1],'b'));W.line('p',56,16,56,17);   /* alley */
+W.line('p',3,30,61,30);[[26,29],[42,29],[56,29]].forEach(p=>W.set(p[0],p[1],'p'));
+W.line('z',2,35,61,35);W.line('r',2,36,61,36);W.line('R',2,37,61,37);W.line('r',2,38,61,38);W.line('z',2,39,61,39);
+[9,25,42,59].forEach(x=>W.line('p',x,31,x,34));
+W.rect('q',20,42,6,4);
+for(let i=0;i<60;i++){const x=Math.floor(rnd()*W.w),y=Math.floor(rnd()*W.h);if(W.g[y][x]==='g')W.g[y][x]='f';}
+W.labels=[[9,1,'동아리방'],[29,4,'게시판'],[50,1,'박람회 광장'],[8,19,'카페'],[26,17,'시장'],[42,17,'밭'],[56,17,'골목'],[16,32,'벤처 거리'],[44,32,'안내판'],[51,32,'놀GM'],[57,41,'정류장']];
+
+/* ---- SC: a small hall in Seoul, reached by bus ---- */
+const S=makeMap('sc','SC 강당',24,20,'v');
+S.room(2,1,20,14,[[11,14],[12,14]],'a');
+S.rect('m',3,2,18,3);
+for(const y of [8,10,12]){S.line('u',5,y,9,y);S.line('u',14,y,18,y);}
+S.rect('z',0,15,24,1);S.rect('r',0,16,24,1);S.line('R',0,17,23,17);S.rect('r',0,18,24,1);S.rect('z',0,19,24,1);
+S.labels=[[11,2,'무대'],[10,18,'버스']];
+
+/* ---- NC: the national competition hall (hidden quest) ---- */
+const N=makeMap('nc','NC 대회장',30,23,'v');
+N.room(2,1,26,17,[[14,17],[15,17]],'n');
+N.rect('m',3,2,24,4);
+N.line('J',9,9,20,9);
+for(const y of [12,14]){N.line('U',5,y,11,y);N.line('U',18,y,24,y);}
+N.rect('z',0,18,30,1);N.rect('r',0,19,30,1);N.line('R',0,20,29,20);N.rect('r',0,21,30,1);N.rect('z',0,22,30,1);
+N.labels=[[14,2,'무대'],[13,8,'심사위원석'],[13,21,'버스']];
+
 /* ================= ENTITIES ================= */
 const PAL={
- player:{hair:'#1F1A17',skin:'#F1C9A5',top:'#0E4A84',sleeve:'#F3EEE2',bottom:'#3B4A6B',lanyard:true,jacket:true},
+ player:{hair:'#1F1A17',skin:'#F1C9A5',top:'#0E4A84',sleeve:'#F3EEE2',bottom:'#3B4A6B',lanyard:false,jacket:true},
  pres:{hair:'#2A1E16',skin:'#EFC3A0',top:'#FFC222',bottom:'#2B2F3A',lanyard:true},
  ym1:{hair:'#1F1A17',skin:'#F3D2B3',top:'#5B7FA6',bottom:'#2B2F3A',lanyard:true},
  ym2:{hair:'#3A2A20',skin:'#EFC3A0',top:'#C9553D',bottom:'#3B4A6B',lanyard:true},
@@ -462,31 +597,44 @@ const PAL={
  office:{hair:'#1F1A17',skin:'#EFC3A0',top:'#FFC222',bottom:'#15223B',lanyard:false},
  treasurer:{hair:'#3A2A20',skin:'#F3D2B3',top:'#D7623A',bottom:'#2B2F3A',lanyard:true},
  driver:{hair:'#4A4A4A',skin:'#EFC3A0',top:'#2E4A7A',bottom:'#2B2F3A',lanyard:false},
+ pilot:{hair:'#1F1A17',skin:'#EFC3A0',top:'#F3EEE2',bottom:'#15223B',lanyard:false},
+ judge1:{hair:'#5A5A5A',skin:'#F1C9A5',top:'#1F2A44',bottom:'#1F2A44',lanyard:false},
+ judge2:{hair:'#1F1A17',skin:'#EFC3A0',top:'#5A4632',bottom:'#2B2F3A',lanyard:false},
+ judge3:{hair:'#3A2A20',skin:'#F3D2B3',top:'#3D4A5E',bottom:'#2B2F3A',lanyard:false},
+ new1:{hair:'#2A1E16',skin:'#F3D2B3',top:'#6E8B5E',bottom:'#3B4A6B',lanyard:false},
+ new2:{hair:'#1F1A17',skin:'#EFC3A0',top:'#B06A8E',bottom:'#2B2F3A',lanyard:false},
+ team1:{hair:'#1F1A17',skin:'#F1C9A5',top:'#2E6E8E',bottom:'#2B2F3A',lanyard:false},
+ team2:{hair:'#4A3222',skin:'#F3D2B3',top:'#8E3B46',bottom:'#2B2F3A',lanyard:false},
 };
-const ENT=[
+const ENT=[];
+const SOLID_KINDS=new Set(['npc','sign','whiteboard','postwall','bboard','pboard','podium','bus','booth','shop','desk']);
+const RESERVED={wonju:new Set(),sc:new Set(),nc:new Set()};
+function add(mapId,list){const m=MAPS[mapId];list.forEach(e=>{e.map=mapId;e.w=e.w||1;e.h=e.h||1;if(SOLID_KINDS.has(e.kind))e.solid=true;if(e.kind==='npc')e.dir=e.face||'d';
+  for(let j=e.y;j<e.y+e.h;j++)for(let i=e.x;i<e.x+e.w;i++){RESERVED[mapId].add(i+','+j);if(e.solid)m.esol[i+','+j]=e;}
+  m.ents.push(e);ENT.push(e);});}
+const E=id=>ENT.find(e=>e.id===id);
+
+add('wonju',[
  /* club room */
  {id:'board',kind:'whiteboard',x:4,y:3,w:3,h:1,name:'화이트보드',key:'whiteboard'},
  {id:'wall',kind:'postwall',x:9,y:3,w:3,h:1,name:'포스트잇 벽',key:'postwall'},
- {id:'desk',kind:'desk',x:13,y:3,w:2,h:1,name:'홍보부 책상',solid:true},
+ {id:'desk',kind:'desk',x:13,y:3,w:2,h:1,name:'홍보부 책상'},
  {id:'pres',kind:'npc',x:10,y:7,name:'회장',role:'인액터스 YM 회장',pal:'pres',key:'pres',face:'d'},
  {id:'pr',kind:'npc',x:15,y:4,name:'홍보부원',role:'홍보부',pal:'pr',key:'pr',face:'l'},
  {id:'phyco',kind:'npc',x:4,y:8,name:'Phyco-Lab 팀원',role:'벤처 프로젝트',pal:'ym1',key:'phyco',face:'r'},
  {id:'jeje',kind:'npc',x:15,y:8,name:'제제손손 팀원',role:'벤처 프로젝트 NP1',pal:'ym2',key:'jeje',face:'l'},
  {id:'mush',kind:'npc',x:13,y:9,name:'Mushpot 팀원',role:'벤처 프로젝트',pal:'ym3',key:'mush',face:'u'},
- {id:'bb',kind:'bboard',x:12,y:13,w:2,h:1,name:'게시판',key:'bboard'},
  {id:'s1',kind:'sign',x:5,y:13,name:'인액터스 YM 동아리방',key:'sign',text:'연세대 미래캠퍼스. 인액터스 YM 동아리방. 벽에 옐로 포스트잇이 붙어 있어요.'},
- /* SC hall */
- {id:'alum',kind:'npc',x:29,y:4,name:'알럼나이 선배',role:'10기 · Business Leader',pal:'alum',key:'alum',face:'d'},
- {id:'ob',kind:'npc',x:25,y:8,name:'OB 선배',role:'먼저 활동한 선배',pal:'ob',key:'ob',face:'r'},
- {id:'s2',kind:'sign',x:33,y:13,name:'SC 강당',key:'sign',text:'Starting Ceremony. 신입 회원의 첫 공식 행사장이에요.'},
- /* plaza */
- {id:'bo0',kind:'booth',x:42,y:3,w:3,h:2,name:'봉사동아리 부스',color:'#7A9E6D',solid:true},
- {id:'bo1',kind:'booth',x:49,y:3,w:3,h:2,name:'창업동아리 부스',color:'#B06A3B',solid:true},
- {id:'bo2',kind:'booth',x:56,y:3,w:3,h:2,name:'인액터스 부스',color:'#15223B',solid:true},
+ /* bulletin square */
+ {id:'bb',kind:'bboard',x:28,y:6,w:2,h:1,name:'게시판',key:'bboard'},
+ /* club fair plaza */
+ {id:'bo0',kind:'booth',x:42,y:3,w:3,h:2,name:'봉사동아리 부스',color:'#7A9E6D'},
+ {id:'bo1',kind:'booth',x:49,y:3,w:3,h:2,name:'창업동아리 부스',color:'#B06A3B'},
+ {id:'bo2',kind:'booth',x:56,y:3,w:3,h:2,name:'인액터스 부스',color:'#15223B'},
  {id:'bn0',kind:'npc',x:43,y:6,name:'봉사동아리 부스',role:'동아리 박람회',pal:'booth0',key:'booth',booth:0,face:'d'},
  {id:'bn1',kind:'npc',x:50,y:6,name:'창업동아리 부스',role:'동아리 박람회',pal:'booth1',key:'booth',booth:1,face:'d'},
  {id:'bn2',kind:'npc',x:57,y:6,name:'인액터스 부스',role:'동아리 박람회',pal:'booth2',key:'booth',booth:2,face:'d'},
- {id:'s3',kind:'sign',x:41,y:13,name:'동아리 박람회 광장',key:'sign',text:'동아리 박람회. 바닥에 떨어진 말풍선을 주워, 그 말을 할 법한 부스에 가져다주세요.'},
+ {id:'s3',kind:'sign',x:41,y:13,name:'동아리 박람회 광장',key:'sign',text:'동아리 박람회. 바닥에 떨어진 말풍선을 주워, 그 말을 할 법한 부스에 건네 보세요. 부스 사람에게 먼저 말을 걸면 어떤 동아리인지 알려 줘요.'},
  /* cafe */
  {id:'owner',kind:'npc',x:7,y:21,name:'카페 사장',role:'멘토링 카페',pal:'owner',key:'owner',face:'d'},
  {id:'mentor',kind:'npc',x:8,y:26,name:'시크한 멘토 선배',role:'알럼나이 · Business Leader',pal:'mentor',key:'mentor',face:'u'},
@@ -501,34 +649,54 @@ const ENT=[
  {id:'s5',kind:'sign',x:24,y:17,name:'원주 전통시장',key:'sign',text:'현장 1. 전통시장. (연습용 가상 설정이에요)'},
  {id:'s6',kind:'sign',x:44,y:17,name:'치악산 자락 밭',key:'sign',text:'현장 2. 소농가의 밭. (연습용 가상 설정이에요)'},
  {id:'s7',kind:'sign',x:58,y:17,name:'자취촌 골목',key:'sign',text:'현장 3. 자취생이 많은 골목. (연습용 가상 설정이에요)'},
- /* street */
- {id:'v1',kind:'shop',x:3,y:33,w:5,h:2,name:'고요한M',solid:true},
- {id:'v2',kind:'shop',x:11,y:33,w:5,h:2,name:'동구밭',solid:true},
- {id:'v3',kind:'shop',x:19,y:33,w:5,h:2,name:'두핸즈',solid:true},
- {id:'v4',kind:'shop',x:27,y:33,w:5,h:2,name:'119REO',solid:true},
- {id:'v5',kind:'shop',x:35,y:33,w:5,h:2,name:'네모의 꿈',solid:true},
- {id:'hq',kind:'shop',x:45,y:33,w:6,h:2,name:'인액터스 코리아 사무국',short:'사무국',solid:true,color:'#FFC222'},
- {id:'chk',kind:'shop',x:52,y:33,w:5,h:2,name:'치킨집',short:'놀GM',solid:true,color:'#D7623A'},
+ /* venture street */
+ {id:'v1',kind:'shop',x:3,y:33,w:5,h:2,name:'고요한M'},
+ {id:'v2',kind:'shop',x:11,y:33,w:5,h:2,name:'동구밭'},
+ {id:'v3',kind:'shop',x:19,y:33,w:5,h:2,name:'두핸즈'},
+ {id:'v4',kind:'shop',x:27,y:33,w:5,h:2,name:'119REO'},
+ {id:'v5',kind:'shop',x:35,y:33,w:5,h:2,name:'네모의 꿈'},
  {id:'vn1',kind:'npc',x:5,y:35,name:'고요한M 직원',role:'임팩트 벤처',pal:'shop',key:'shop',v:1,face:'d'},
  {id:'vn2',kind:'npc',x:13,y:35,name:'동구밭 직원',role:'임팩트 벤처',pal:'shop',key:'shop',v:2,face:'d'},
  {id:'vn3',kind:'npc',x:21,y:35,name:'두핸즈 직원',role:'임팩트 벤처',pal:'shop',key:'shop',v:3,face:'d'},
  {id:'vn4',kind:'npc',x:29,y:35,name:'119REO 직원',role:'임팩트 벤처',pal:'shop',key:'shop',v:4,face:'d'},
  {id:'vn5',kind:'npc',x:37,y:35,name:'네모의 꿈 팀원',role:'2026 NC 우승팀',pal:'shop',key:'shop',v:5,face:'d'},
- {id:'office',kind:'npc',x:47,y:35,name:'사무국 직원',role:'인액터스 코리아',pal:'office',key:'office',face:'d'},
- {id:'treasurer',kind:'npc',x:54,y:35,name:'총무',role:'인액터스 YM',pal:'treasurer',key:'treasurer',face:'d'},
- {id:'bus',kind:'bus',x:56,y:36,w:4,h:2,name:'서울행 버스',solid:true},
- {id:'driver',kind:'npc',x:58,y:39,name:'버스 기사',role:'서울행',pal:'driver',key:'driver',face:'u'},
+ {id:'pb',kind:'pboard',x:44,y:34,w:3,h:1,name:'Venture Pipeline 안내판',key:'pboard'},
+ {id:'chk',kind:'shop',x:50,y:33,w:5,h:2,name:'놀GM',short:'놀GM',color:'#D7623A'},
+ {id:'treasurer',kind:'npc',x:52,y:35,name:'총무',role:'인액터스 YM',pal:'treasurer',key:'treasurer',face:'d'},
+ {id:'bus',kind:'bus',x:56,y:36,w:4,h:2,name:'서울행 버스',key:'bus'},
+ {id:'driver',kind:'npc',x:58,y:39,name:'버스 기사',role:'서울행',pal:'driver',key:'bus',face:'u'},
  {id:'s8',kind:'sign',x:60,y:39,name:'서울행 정류장',key:'sign',text:'서울까지 1시간 반. 멀죠? 그래서 현장이 가까워요.'},
- /* items */
- {id:'po1',kind:'poster',x:5,y:17,item:'poster',n:1},{id:'po2',kind:'poster',x:46,y:11,item:'poster',n:2},{id:'po3',kind:'poster',x:11,y:27,item:'poster',n:3},
- {id:'po4',kind:'poster',x:23,y:27,item:'poster',n:4},{id:'po5',kind:'poster',x:39,y:24,item:'poster',n:5},{id:'po6',kind:'poster',x:33,y:39,item:'poster',n:6},
- {id:'bu1',kind:'bubble',x:44,y:9,item:'bubble',n:1},{id:'bu2',kind:'bubble',x:47,y:11,item:'bubble',n:2},{id:'bu3',kind:'bubble',x:52,y:8,item:'bubble',n:3},{id:'bu4',kind:'bubble',x:55,y:12,item:'bubble',n:4},
- {id:'bu5',kind:'bubble',x:59,y:9,item:'bubble',n:5},{id:'bu6',kind:'bubble',x:43,y:12,item:'bubble',n:6},{id:'bu7',kind:'bubble',x:50,y:10,item:'bubble',n:7},{id:'bu8',kind:'bubble',x:58,y:8,item:'bubble',n:8},
-];
-ENT.forEach(e=>{e.w=e.w||1;e.h=e.h||1;if(e.kind==='npc'||e.kind==='sign'||e.kind==='whiteboard'||e.kind==='postwall'||e.kind==='bboard')e.solid=true;reserve(e.x,e.y,e.w,e.h);if(e.kind==='npc')e.dir=e.face||'d';});
-/* trees on free grass */
-for(let i=0;i<170;i++){const x=1+Math.floor(rnd()*(MW-2)),y=1+Math.floor(rnd()*(MH-2));if((map[y][x]==='g'||map[y][x]==='f')&&!RESERVED.has(x+','+y)){let nearPath=false;for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const c=map[y+dy]&&map[y+dy][x+dx];if(c==='p'||c==='x')nearPath=true;}if(!nearPath)map[y][x]='T';}}
-const isSolidTile=(x,y)=>x<0||y<0||x>=MW||y>=MH||SOLID.has(map[y][x]);
+ /* pickups */
+ {id:'po1',kind:'poster',x:5,y:17,n:1},{id:'po2',kind:'poster',x:11,y:27,n:2},{id:'po3',kind:'poster',x:23,y:27,n:3},{id:'po4',kind:'poster',x:39,y:24,n:4},{id:'po5',kind:'poster',x:33,y:39,n:5},
+ {id:'bu1',kind:'bubble',x:44,y:9,n:1},{id:'bu2',kind:'bubble',x:47,y:11,n:2},{id:'bu3',kind:'bubble',x:52,y:8,n:3},{id:'bu4',kind:'bubble',x:55,y:12,n:4},
+ {id:'bu5',kind:'bubble',x:59,y:9,n:5},{id:'bu6',kind:'bubble',x:43,y:12,n:6},{id:'bu7',kind:'bubble',x:50,y:10,n:7},{id:'bu8',kind:'bubble',x:58,y:8,n:8},
+ {id:'ft1',kind:'foot',x:53,y:13,n:1},{id:'ft2',kind:'foot',x:28,y:23,n:2},{id:'ft3',kind:'foot',x:8,y:18,n:3},{id:'ft4',kind:'foot',x:41,y:35,n:4},{id:'ft5',kind:'foot',x:9,y:13,n:5},
+]);
+add('sc',[
+ {id:'scban',kind:'banner',x:6,y:1,w:12,h:1,name:'STARTING CEREMONY'},
+ {id:'alum',kind:'npc',x:11,y:4,name:'10기 선배',role:'알럼나이 · Business Leader',pal:'alum',key:'alum',face:'d'},
+ {id:'ob',kind:'npc',x:18,y:6,name:'OB 선배',role:'먼저 활동한 선배',pal:'ob',key:'ob',face:'l'},
+ {id:'scn1',kind:'npc',x:4,y:6,name:'다른 학교 신입 회원',role:'SC 참가자',pal:'new1',key:'seat',line:'저도 오늘이 첫 행사예요. 전국 26개 대학에서 다 모였대요. 원주에서 왔어요? 멀리서 왔네요!',face:'r'},
+ {id:'scn2',kind:'npc',x:13,y:11,name:'다른 학교 신입 회원',role:'SC 참가자',pal:'new2',key:'seat',line:'알럼나이 선배가 4,000명이 넘는대요. 오늘 무대에 선 분도 그중 한 분이고요.',face:'u'},
+ {id:'scbus',kind:'bus',x:9,y:16,w:4,h:2,name:'원주행 버스',key:'bus'},
+ {id:'scdrv',kind:'npc',x:14,y:15,name:'버스 기사',role:'원주행',pal:'driver',key:'bus',face:'l'},
+ {id:'scs',kind:'sign',x:7,y:15,name:'SC 강당',key:'sign',text:'Starting Ceremony. 신입 회원의 첫 공식 행사장이에요. 문은 바로 위쪽.'},
+]);
+add('nc',[
+ {id:'ncban',kind:'banner',x:7,y:1,w:16,h:1,name:'ENACTUS KOREA · NATIONAL COMPETITION'},
+ {id:'podium',kind:'podium',x:14,y:3,w:2,h:1,name:'발표대',key:'podium'},
+ {id:'nchost',kind:'npc',x:5,y:7,name:'사무국 직원',role:'인액터스 코리아',pal:'office',key:'nchost',face:'r'},
+ {id:'j1',kind:'npc',x:11,y:10,name:'심사위원 (기업인)',role:'Business Leader',pal:'judge1',key:'judge',j:1,face:'u'},
+ {id:'j2',kind:'npc',x:14,y:10,name:'심사위원 (알럼나이)',role:'Business Leader',pal:'judge2',key:'judge',j:2,face:'u'},
+ {id:'j3',kind:'npc',x:17,y:10,name:'심사위원 (기업인)',role:'Business Leader',pal:'judge3',key:'judge',j:3,face:'u'},
+ {id:'nct1',kind:'npc',x:23,y:7,name:'다른 대학 팀원',role:'NC 참가팀',pal:'team1',key:'seat',line:'떨려요. 1년 동안 한 걸 전부 영어로 발표해야 하거든요. 그래도 현장에서 만난 분들 이야기를 전하러 왔어요.',face:'l'},
+ {id:'nct2',kind:'npc',x:24,y:13,name:'다른 대학 팀원',role:'NC 참가팀',pal:'team2',key:'seat',line:'800명 앞이라니… 우승팀은 월드컵에 한국 대표로 나간대요. 서로 잘해 봐요.',face:'l'},
+ {id:'ncbus',kind:'bus',x:13,y:19,w:4,h:2,name:'원주행 버스',key:'bus'},
+ {id:'ncdrv',kind:'npc',x:18,y:18,name:'버스 기사',role:'원주행',pal:'driver',key:'bus',face:'l'},
+ {id:'ncs',kind:'sign',x:11,y:18,name:'NC 대회장',key:'sign',text:'National Competition. 매년 7월, 800여 명이 모이는 연중 최대 행사.'},
+]);
+/* trees on free grass (Wonju only) */
+for(let i=0;i<170;i++){const x=1+Math.floor(rnd()*(W.w-2)),y=1+Math.floor(rnd()*(W.h-2));if((W.g[y][x]==='g'||W.g[y][x]==='f')&&!RESERVED.wonju.has(x+','+y)){let near=false;for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const c=W.g[y+dy]&&W.g[y+dy][x+dx];if(c==='p'||c==='x'||c==='z')near=true;}if(!near)W.g[y][x]='T';}}
 /* ================= TILE ART ================= */
 const tileCache={};
 function px(c,color,x,y,w,h){c.fillStyle=color;c.fillRect(x,y,w||1,h||1);}
@@ -538,6 +706,9 @@ function tile(ch){
   const grass=()=>{px(c,'#86B85C',0,0,16,16);px(c,'#79AB50',3,4);px(c,'#79AB50',11,9);px(c,'#92C266',7,12);px(c,'#92C266',13,2);};
   const plaza=()=>{px(c,'#CFC9BB',0,0,16,16);px(c,'#C2BCAD',0,0,16,1);px(c,'#C2BCAD',0,0,1,16);px(c,'#C2BCAD',8,0,1,16);px(c,'#C2BCAD',0,8,16,1);};
   const indoor=()=>{px(c,'#CDA97A',0,0,16,16);px(c,'#BF9A6B',0,5,16,1);px(c,'#BF9A6B',0,11,16,1);px(c,'#BF9A6B',7,0,1,5);px(c,'#BF9A6B',3,6,1,5);px(c,'#BF9A6B',11,12,1,4);};
+  const carpetA=()=>{px(c,'#22406A',0,0,16,16);px(c,'#1D3860',0,0,16,1);px(c,'#1D3860',0,8,16,1);px(c,'#2C4F80',4,4);px(c,'#2C4F80',12,12);};
+  const carpetN=()=>{px(c,'#6A2433',0,0,16,16);px(c,'#5C1E2C',0,0,16,1);px(c,'#5C1E2C',0,8,16,1);px(c,'#C9A14A',4,4);px(c,'#C9A14A',12,12);};
+  const chair=(back,seat)=>{px(c,back,3,2,10,5);px(c,seat,3,7,10,5);px(c,'rgba(0,0,0,.35)',4,12,2,3);px(c,'rgba(0,0,0,.35)',10,12,2,3);px(c,'rgba(255,255,255,.18)',3,7,10,1);};
   switch(ch){
     case 'g':grass();break;
     case 'f':grass();px(c,'#FFC222',4,5,2,2);px(c,'#FFC222',10,10,2,2);px(c,'#F3EEE2',12,4,1,1);break;
@@ -559,6 +730,12 @@ function tile(ch){
     case 't':indoor();px(c,'#7A5A3A',1,3,14,9);px(c,'#8E6B47',2,4,12,7);px(c,'#F3EEE2',5,6,6,3);break;
     case 'k':indoor();px(c,'#15223B',0,2,16,10);px(c,'#263148',0,2,16,2);px(c,'#C9A777',0,11,16,2);px(c,'#F3EEE2',3,5,3,3);px(c,'#D7623A',10,5,3,3);break;
     case 'e':grass();px(c,'#7A5A3A',1,5,14,4);px(c,'#7A5A3A',2,9,2,5);px(c,'#7A5A3A',12,9,2,5);px(c,'#9E7A50',1,5,14,1);break;
+    case 'v':px(c,'#0B1324',0,0,16,16);break;
+    case 'a':carpetA();break;
+    case 'n':carpetN();break;
+    case 'u':carpetA();chair('#15223B','#3B5F94');break;
+    case 'U':carpetN();chair('#2A0F16','#8E3B46');break;
+    case 'J':carpetN();px(c,'#F3EEE2',0,3,16,9);px(c,'#D8D0BD',0,11,16,1);px(c,'#C9A14A',0,3,16,1);px(c,'#15223B',6,6,4,2);break;
     default:grass();
   }
   tileCache[ch]=cv;return cv;
@@ -580,130 +757,214 @@ function drawPerson(c,x,y,p,f,dir){
   if(dir==='u'){px(c,p.hair,x+5,y+2,6,4);px(c,p.skin,x+5,y+5,6,1);px(c,'#3A2E27',x+8,y+1,1,1);}else{px(c,p.hair,x+5,y+2,1,2);px(c,p.hair,x+10,y+2,1,2);}
   if(dir!=='u'){if(dir==='l'){px(c,'#222',x+6,y+3);}else if(dir==='r'){px(c,'#222',x+9,y+3);}else{px(c,'#222',x+6,y+3);px(c,'#222',x+9,y+3);}}
 }
-function drawText(c,txt,x,y,color,size,align){c.font=`bold ${size||7}px "Noto Sans KR",sans-serif`;c.textAlign=align||'center';c.textBaseline='top';c.fillStyle=color;c.fillText(txt,x,y);}
+function drawPlane(c,x,y,w,h){
+  /* a small airliner seen from the side, nose to the right */
+  px(c,'#D8D0BD',x+18,y+2,16,7);px(c,'#C9C0AA',x+20,y+3,12,5);            /* far wing */
+  px(c,'#F3EEE2',x+4,y+11,w-12,10);px(c,'#F3EEE2',x+w-8,y+13,4,6);px(c,'#F3EEE2',x+w-4,y+15,2,3); /* fuselage + nose */
+  px(c,'#FFC222',x+2,y+3,8,10);px(c,'#FFC222',x+4,y+1,5,3);                 /* tail */
+  px(c,'#15223B',x+4,y+19,w-12,2);                                          /* belly line */
+  for(let i=0;i<6;i++)px(c,'#5B9BD5',x+14+i*6,y+13,3,3);                    /* windows */
+  px(c,'#5B9BD5',x+w-10,y+13,4,3);
+  px(c,'#D8D0BD',x+18,y+21,18,6);px(c,'#C9C0AA',x+20,y+22,14,4);            /* near wing */
+  px(c,'#2B2F3A',x+14,y+27,4,3);px(c,'#2B2F3A',x+w-18,y+27,4,3);            /* wheels */
+}
 function drawEntity(c,e,ox,oy,t){
   const x=e.x*T-ox,y=e.y*T-oy;
   switch(e.kind){
-    case 'npc':drawPerson(c,x,y,PAL[e.pal],0,e.dir);break;
+    case 'npc':drawPerson(c,x,y,PAL[npcPal(e)],0,e.dir);break;
     case 'whiteboard':px(c,'#F3EEE2',x+1,y+1,e.w*T-2,13);px(c,'#15223B',x+1,y+1,e.w*T-2,1);px(c,'#15223B',x+1,y+13,e.w*T-2,1);px(c,'#15223B',x+1,y+1,1,13);px(c,'#15223B',x+e.w*T-2,y+1,1,13);px(c,'#5E6779',x+5,y+4,14,1);px(c,'#5E6779',x+5,y+7,22,1);px(c,'#D7623A',x+5,y+10,9,1);px(c,'#FFC222',x+30,y+4,8,8);break;
-    case 'postwall':{px(c,'#263148',x,y,e.w*T,T);const d=state?state.ch:{};CH.forEach((ch,i)=>{const done=d&&d[ch.id]&&d[ch.id].done;px(c,'#FFC222',x+2+i*8,y+(i%2?6:3),6,6);c.fillStyle='#15223B';c.font='bold 6px sans-serif';c.textAlign='center';c.textBaseline='top';c.fillText(done?'!':'?',x+5+i*8,y+(i%2?6:3));});break;}
+    case 'postwall':{px(c,'#263148',x,y,e.w*T,T);CH.forEach((ch,i)=>{const done=state&&state.ch[ch.id]&&state.ch[ch.id].done;px(c,'#FFC222',x+2+i*8,y+(i%2?6:3),6,6);c.fillStyle='#15223B';c.font='bold 6px sans-serif';c.textAlign='center';c.textBaseline='top';c.fillText(done?'!':'?',x+5+i*8,y+(i%2?6:3));});break;}
     case 'desk':px(c,'#7A5A3A',x+1,y+5,e.w*T-2,9);px(c,'#8E6B47',x+2,y+6,e.w*T-4,6);px(c,'#2B2F3A',x+6,y+3,12,7);px(c,'#8FBCE6',x+7,y+4,10,5);px(c,'#FFC222',x+22,y+7,6,5);break;
-    case 'bboard':px(c,'#5A4632',x+2,y+8,2,8);px(c,'#5A4632',x+e.w*T-4,y+8,2,8);px(c,'#A47E54',x,y,e.w*T,10);px(c,'#C9A777',x+1,y+1,e.w*T-2,8);{const n=state?state.posters.length:0;for(let i=0;i<6;i++){px(c,i<n?'#F3EEE2':'#B59A72',x+3+i*5,y+3,3,4);if(i<n)px(c,'#FFC222',x+3+i*5,y+3,3,1);}}break;
+    case 'bboard':px(c,'#5A4632',x+2,y+8,2,8);px(c,'#5A4632',x+e.w*T-4,y+8,2,8);px(c,'#A47E54',x,y,e.w*T,10);px(c,'#C9A777',x+1,y+1,e.w*T-2,8);{const n=state?state.posters.length:0;for(let i=0;i<5;i++){px(c,i<n?'#F3EEE2':'#B59A72',x+3+i*6,y+3,4,4);if(i<n)px(c,'#FFC222',x+3+i*6,y+3,4,1);}}break;
+    case 'pboard':px(c,'#5A4632',x+4,y+8,2,8);px(c,'#5A4632',x+e.w*T-6,y+8,2,8);px(c,'#15223B',x,y,e.w*T,11);px(c,'#263148',x+1,y+1,e.w*T-2,9);for(let i=0;i<4;i++)px(c,i===1?'#FFC222':'#F3EEE2',x+4+i*11,y+7-i,8,2+i);break;
     case 'booth':px(c,'#7A5A3A',x+2,y+10,2,22);px(c,'#7A5A3A',x+e.w*T-4,y+10,2,22);px(c,'#C9A777',x+2,y+22,e.w*T-4,6);px(c,e.color,x,y+2,e.w*T,9);px(c,'#F3EEE2',x,y+2,e.w*T,2);for(let i=0;i<e.w*4;i++)px(c,'#F3EEE2',x+i*4,y+9,2,2);break;
     case 'shop':{const col=e.color||'#2E3A55';px(c,'#E9DFC9',x,y+6,e.w*T,e.h*T-6);px(c,col,x,y,e.w*T,8);px(c,'#15223B',x+e.w*T/2-5,y+18,10,14);px(c,'#8FBCE6',x+4,y+16,8,8);px(c,'#8FBCE6',x+e.w*T-12,y+16,8,8);break;}
-    case 'bus':px(c,'#2E4A7A',x,y+2,e.w*T,e.h*T-6);px(c,'#8FBCE6',x+4,y+5,e.w*T-8,9);px(c,'#15223B',x+6,y+e.h*T-6,8,5);px(c,'#15223B',x+e.w*T-14,y+e.h*T-6,8,5);px(c,'#FFC222',x+2,y+e.h*T-10,e.w*T-4,2);break;
+    case 'bus':if(isPlane(e)){drawPlane(c,x,y,e.w*T,e.h*T);break;}
+      px(c,'#2E4A7A',x,y+2,e.w*T,e.h*T-6);px(c,'#8FBCE6',x+4,y+5,e.w*T-8,9);px(c,'#15223B',x+6,y+e.h*T-6,8,5);px(c,'#15223B',x+e.w*T-14,y+e.h*T-6,8,5);px(c,'#FFC222',x+2,y+e.h*T-10,e.w*T-4,2);break;
     case 'sign':px(c,'#7A5A3A',x+7,y+8,2,8);px(c,'#C9A777',x+1,y+2,14,7);px(c,'#7A5A3A',x+1,y+2,14,1);break;
-    case 'poster':{if(state&&state.posters.includes(e.n))return;const b=Math.round(Math.sin(t/300)*1.5);px(c,'#F3EEE2',x+4,y+3+b,8,10);px(c,'#FFC222',x+4,y+3+b,8,2);px(c,'#15223B',x+5,y+7+b,6,1);px(c,'#15223B',x+5,y+9+b,4,1);break;}
-    case 'bubble':{if(state&&(state.delivered[e.n]||state.carrying===e.n))return;const b=Math.round(Math.sin(t/300+e.n)*1.5);px(c,'#F3EEE2',x+2,y+3+b,12,8);px(c,'#F3EEE2',x+4,y+11+b,3,2);px(c,'#15223B',x+4,y+6+b,2,2);px(c,'#15223B',x+7,y+6+b,2,2);px(c,'#15223B',x+10,y+6+b,2,2);break;}
+    case 'banner':px(c,'#15223B',x,y+2,e.w*T,12);px(c,'#FFC222',x+1,y+3,e.w*T-2,10);break;
+    case 'podium':px(c,'rgba(0,0,0,.2)',x+3,y+14,e.w*T-6,2);px(c,'#7A5A3A',x+5,y+3,e.w*T-10,12);px(c,'#8E6B47',x+3,y+1,e.w*T-6,4);px(c,'#FFC222',x+9,y+7,e.w*T-18,6);px(c,'#2B2F3A',x+e.w*T/2-1,y-4,2,5);px(c,'#2B2F3A',x+e.w*T/2-2,y-6,4,3);break;
+    case 'poster':{if(!state||!postersActive()||state.posters.includes(e.n))return;const b=Math.round(Math.sin(t/300)*1.5);px(c,'#15223B',x+3,y+2+b,10,12);px(c,'#F3EEE2',x+4,y+3+b,8,10);px(c,'#FFC222',x+4,y+3+b,8,2);px(c,'#15223B',x+5,y+7+b,6,1);px(c,'#15223B',x+5,y+9+b,4,1);break;}
+    case 'bubble':{if(!state||state.delivered[e.n]||state.carrying===e.n)return;const b=Math.round(Math.sin(t/300+e.n)*1.5);px(c,'#15223B',x+1,y+2+b,14,10);px(c,'#F3EEE2',x+2,y+3+b,12,8);px(c,'#F3EEE2',x+4,y+11+b,3,2);px(c,'#15223B',x+4,y+6+b,2,2);px(c,'#15223B',x+7,y+6+b,2,2);px(c,'#15223B',x+10,y+6+b,2,2);break;}
+    case 'foot':{if(!state||!feetActive()||state.feet.includes(e.n))return;const g=Math.sin(t/260+e.n)>0;const Y=g?'#FFC222':'#FFD866',K='#15223B';
+      px(c,K,x+4,y+5,8,10);px(c,K,x+3,y+2,4,4);px(c,K,x+7,y+1,4,4);px(c,K,x+10,y+3,4,4);
+      px(c,Y,x+5,y+6,6,8);px(c,Y,x+4,y+3,2,2);px(c,Y,x+8,y+2,2,2);px(c,Y,x+11,y+4,2,2);break;}
   }
 }
-function drawMarker(c,e,ox,oy,t,ch){const x=e.x*T-ox+e.w*T/2,y=e.y*T-oy-8+Math.round(Math.sin(t/250)*2);px(c,'#FFC222',x-3,y-4,6,7);px(c,'#15223B',x-1,y-3,2,3);px(c,'#15223B',x-1,y+1,2,1);if(ch==='?'){px(c,'#FFC222',x-3,y-4,6,7);px(c,'#15223B',x-2,y-3,4,1);px(c,'#15223B',x+1,y-2,1,2);px(c,'#15223B',x-1,y+1,2,1);}}
+function drawCarry(c,x,y,t){const b=Math.round(Math.sin(t/220)*1);px(c,'#15223B',x+1,y-13+b,14,10);px(c,'#F3EEE2',x+2,y-12+b,12,8);px(c,'#F3EEE2',x+6,y-4+b,3,2);px(c,'#15223B',x+4,y-9+b,2,2);px(c,'#15223B',x+7,y-9+b,2,2);px(c,'#15223B',x+10,y-9+b,2,2);}
+function drawMarker(c,e,ox,oy,t){const x=Math.round(e.x*T-ox+e.w*T/2),y=e.y*T-oy-8+Math.round(Math.sin(t/250)*2);px(c,'#15223B',x-4,y-5,8,9);px(c,'#FFC222',x-3,y-4,6,7);px(c,'#15223B',x-1,y-3,2,3);px(c,'#15223B',x-1,y+1,2,1);}
 /* ================= STATE ================= */
 let state=null;
-function fresh(){return {v:2,name:'',started:false,x:9*T,y:8*T,dir:'u',parts:{},ch:{},miss:{},sim:{stage:0,trust:40,sustain:40,energy:60,problem:null,best:{}},posters:[],delivered:{},carrying:null,flags:{}};}
-function load(){try{const r=localStorage.getItem(KEY);if(r){const s=JSON.parse(r);if(s&&s.v===2)return s;}}catch(e){}return null;}
+function fresh(){return {v:3,name:'',started:false,map:'wonju',x:50*T,y:12*T,dir:'u',parts:{},ch:{},miss:{},sim:{stage:0,trust:40,sustain:40,energy:60,problem:null,best:{}},posters:[],delivered:{},btried:{},carrying:null,feet:[],nc:{met:false,q:{},perfect:false},flags:{}};}
+function load(){try{const r=localStorage.getItem(KEY);if(r){const s=JSON.parse(r);if(s&&s.v===3&&MAPS[s.map])return s;}}catch(e){}return null;}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
 function recalc(){CH.forEach(c=>{let sc=0,all=true;c.parts.forEach(k=>{const p=state.parts[k];if(p)sc+=p.p;else all=false;});state.ch[c.id]={score:Math.min(sc,c.max),max:c.max,done:all};});}
-function addPart(key,p,m){if(state.parts[key])return;const before=CH.filter(c=>state.ch[c.id]&&state.ch[c.id].done).length;state.parts[key]={p:p,m:m};if(p<m)state.miss[key]=true;recalc();save();hud();const after=CH.filter(c=>state.ch[c.id]&&state.ch[c.id].done).length;if(after>before){sfx('done');toast('포스트잇 한 장이 뒤집혔어요!');}}
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function josa(name,a,b){if(!name)return a;const c=name[name.length-1].charCodeAt(0);if(c<0xAC00||c>0xD7A3)return a+'('+b+')';return (c-0xAC00)%28?a:b;}
 function fill(t){const p=state.sim.problem?PROBLEMS[state.sim.problem]:null;return t.replace(/\{who\}/g,p?p.who:'대상자').replace(/\{place\}/g,p?p.place:'현장');}
 function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
 function totalScore(){return CH.reduce((a,c)=>a+(state.ch[c.id]?state.ch[c.id].score:0),0);}
-function allDone(){return CH.every(c=>state.ch[c.id]&&state.ch[c.id].done);}
+function chDone(id){return !!(state.ch[id]&&state.ch[id].done);}
+function allDone(){return CH.every(c=>chDone(c.id));}
+function freeRoam(){return state.sim.stage>=10;}
+function chUnlocked(id){if(id==='three')return true;if(id==='what')return chDone('three');if(id==='year')return chDone('what');return freeRoam();}
+function postersActive(){return freeRoam()&&!state.parts['rhythm.order'];}
+function feetActive(){return !!state.flags.reported&&state.feet.length<5;}
+function hiddenReady(){return state.feet.length>=5;}
+function judgesLeft(){return [1,2,3].filter(j=>!state.nc.q[j]).length;}
+function M(){return MAPS[state.map];}
+function isPlane(e){return e.map==='wonju'&&!!(state&&state.flags.ncWon);}
+function npcPal(e){return e.id==='driver'&&isPlane(e)?'pilot':e.pal;}
+function entRole(e){return e.id==='driver'&&isPlane(e)?'인액터스 월드컵행':(e.role||'');}
+function entName(e){if(e.map==='wonju'&&isPlane(e)){if(e.id==='bus')return 'WC행 비행기';if(e.id==='driver')return '기장';if(e.id==='s8')return '월드컵 탑승구';}return e.name;}
+/* chapter progress: called for every scored part */
+const cardQ=[];
+function addPart(key,p,m){
+  if(state.parts[key])return;
+  const before=CH.filter(c=>chDone(c.id)).map(c=>c.id);
+  state.parts[key]={p:p,m:m};if(p<m)state.miss[key]=true;recalc();
+  CH.forEach(c=>{if(chDone(c.id)&&!before.includes(c.id)){if(c.id==='what'&&state.sim.stage<1)state.sim.stage=1;cardQ.push(()=>postitCard(c.id));}});
+  save();hud();
+}
 /* ================= ENGINE ================= */
 const frame=document.getElementById('frame'),cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+const $=id=>document.getElementById(id);
 let VW=320,VH=240,scale=2;
 function resize(){const w=frame.clientWidth||320,hh=frame.clientHeight||240;scale=w>=1400?4:w>=760?3:2;VW=Math.max(120,Math.floor(w/scale));VH=Math.max(100,Math.floor(hh/scale));cv.width=VW;cv.height=VH;cv.style.width=(VW*scale)+'px';cv.style.height=(VH*scale)+'px';ctx.imageSmoothingEnabled=false;}
 window.addEventListener('resize',resize);if(window.ResizeObserver){new ResizeObserver(resize).observe(frame);}resize();
-const keys={};let lastT=0,anim=0,animT=0,moving=false;
-const ESOL={};ENT.forEach(e=>{if(e.solid)for(let j=e.y;j<e.y+e.h;j++)for(let i=e.x;i<e.x+e.w;i++)ESOL[i+','+j]=e;});
-function blocked(px_,py_){const x1=px_+3,x2=px_+12,y1=py_+9,y2=py_+15;for(const [x,y] of [[x1,y1],[x2,y1],[x1,y2],[x2,y2]]){const tx=Math.floor(x/T),ty=Math.floor(y/T);if(isSolidTile(tx,ty)||ESOL[tx+','+ty])return true;}return false;}
+const keys={};let lastT=0,anim=0,animT=0,moving=false,traveling=false,saveT=0;
+function isSolidTile(x,y){const m=M();return x<0||y<0||x>=m.w||y>=m.h||SOLID.has(m.g[y][x]);}
+function blocked(px_,py_){const m=M();const x1=px_+3,x2=px_+12,y1=py_+9,y2=py_+15;for(const [x,y] of [[x1,y1],[x2,y1],[x1,y2],[x2,y2]]){const tx=Math.floor(x/T),ty=Math.floor(y/T);if(isSolidTile(tx,ty)||m.esol[tx+','+ty])return true;}return false;}
 function ptile(){return [Math.floor((state.x+8)/T),Math.floor((state.y+12)/T)];}
 const DIRS={u:[0,-1],d:[0,1],l:[-1,0],r:[1,0]};
-function entAt(tx,ty){for(const e of ENT){if(e.kind==='poster'||e.kind==='bubble'||e.kind==='desk'||e.kind==='booth'||e.kind==='shop'||e.kind==='bus')continue;if(tx>=e.x&&tx<e.x+e.w&&ty>=e.y&&ty<e.y+e.h)return e;}return null;}
+const NO_TALK=new Set(['poster','bubble','foot','desk','booth','shop','banner']);
+function entAt(tx,ty){for(const e of M().ents){if(NO_TALK.has(e.kind))continue;if(tx>=e.x&&tx<e.x+e.w&&ty>=e.y&&ty<e.y+e.h)return e;}return null;}
 function target(){const [tx,ty]=ptile();const d=DIRS[state.dir];let e=entAt(tx+d[0],ty+d[1]);if(e)return e;for(const k in DIRS){const dd=DIRS[k];e=entAt(tx+dd[0],ty+dd[1]);if(e)return e;}return null;}
+function pickups(){
+  const [tx,ty]=ptile();
+  for(const e of M().ents){if(e.x!==tx||e.y!==ty)continue;
+    if(e.kind==='bubble'&&!chDone('three')&&!state.delivered[e.n]&&state.carrying===null){state.carrying=e.n;sfx('pick');floatCard('말풍선을 주웠어요',`“${BUBBLES[e.n-1].t}”`,'이 말을 할 법한 부스에 건네요',3000);save();hud();}
+    else if(e.kind==='poster'&&postersActive()&&!state.posters.includes(e.n)){state.posters.push(e.n);const p=POSTERS[e.n-1];sfx('pick');floatCard(`포스터 ${state.posters.length}/5 · ${p.when}`,p.title,p.line+(state.posters.length===5?' — 다 모았어요. 캠퍼스 게시판으로!':''),4600);save();hud();}
+    else if(e.kind==='foot'&&feetActive()&&!state.feet.includes(e.n)){state.feet.push(e.n);const f=FEET[e.n-1];sfx('done');floatCard(`노란 발자국 ${state.feet.length}/5`,f.t,state.feet.length===5?'발자국 다섯 개가 한 방향을 가리켜요: 버스 정류장.':'',5200);save();hud();objDirty=false;}
+  }
+}
 function update(dt){
-  if(ovOpen||!state.started)return;
+  if(ovOpen||traveling||!state.started)return;
   let dx=0,dy=0;if(keys.u)dy-=1;if(keys.d)dy+=1;if(keys.l)dx-=1;if(keys.r)dx+=1;
   moving=!!(dx||dy);
   if(moving){
+    const m=M();
     if(dx&&dy){dx*=0.707;dy*=0.707;}
     state.dir=Math.abs(dx)>Math.abs(dy)?(dx>0?'r':'l'):(dy>0?'d':'u');
     const sp=0.085*dt;let nx=state.x+dx*sp,ny=state.y+dy*sp;
     if(!blocked(nx,state.y))state.x=nx;if(!blocked(state.x,ny))state.y=ny;
-    state.x=clamp(state.x,0,MW*T-T);state.y=clamp(state.y,0,MH*T-T);
+    state.x=clamp(state.x,0,m.w*T-T);state.y=clamp(state.y,0,m.h*T-T);
     animT+=dt;if(animT>110){animT=0;anim=(anim+1)%4;}SND.stepDist+=sp;if(SND.stepDist>13){SND.stepDist=0;sfx('step');}
-    const [tx,ty]=ptile();for(const e of ENT){if(e.x===tx&&e.y===ty){if(e.kind==='poster'&&!state.posters.includes(e.n)){state.posters.push(e.n);sfx('pick');toast(`포스터를 주웠어요 (${state.posters.length}/6). 게시판으로 가져가요.`);save();hud();}
-      else if(e.kind==='bubble'&&!state.delivered[e.n]&&state.carrying===null){state.carrying=e.n;sfx('pick');toast(`말풍선을 주웠어요: “${BUBBLES[e.n-1].t}” 맞는 부스로.`);save();hud();}}}
+    pickups();
     saveT+=dt;if(saveT>1500){saveT=0;save();}
   }else anim=0;
 }
-let saveT=0;
+function camera(){const m=M(),mw=m.w*T,mh=m.h*T;
+  const cx=mw<=VW?-Math.floor((VW-mw)/2):Math.round(clamp(state.x+8-VW/2,0,mw-VW));
+  const cy=mh<=VH?-Math.floor((VH-mh)/2):Math.round(clamp(state.y+8-VH/2,0,mh-VH));return [cx,cy];}
 function draw(t){
-  const camx=Math.round(clamp(state.x+8-VW/2,0,MW*T-VW)),camy=Math.round(clamp(state.y+8-VH/2,0,MH*T-VH));
-  const x0=Math.floor(camx/T),y0=Math.floor(camy/T),x1=Math.min(MW-1,Math.ceil((camx+VW)/T)),y1=Math.min(MH-1,Math.ceil((camy+VH)/T));
-  for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++)ctx.drawImage(tile(map[y][x]),x*T-camx,y*T-camy);
-  const list=ENT.filter(e=>e.x+e.w>x0-1&&e.x<x1+1&&e.y+e.h>y0-1&&e.y<y1+1).map(e=>({e,z:(e.y+e.h)*T}));
+  const m=M();const [camx,camy]=camera();
+  ctx.fillStyle='#0B1324';ctx.fillRect(0,0,VW,VH);
+  const x0=Math.max(0,Math.floor(camx/T)),y0=Math.max(0,Math.floor(camy/T)),x1=Math.min(m.w-1,Math.ceil((camx+VW)/T)),y1=Math.min(m.h-1,Math.ceil((camy+VH)/T));
+  for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++)ctx.drawImage(tile(m.g[y][x]),x*T-camx,y*T-camy);
+  const list=m.ents.filter(e=>e.x+e.w>x0-1&&e.x<x1+1&&e.y+e.h>y0-1&&e.y<y1+1).map(e=>({e,z:(e.y+e.h)*T}));
   list.push({player:true,z:state.y+T});list.sort((a,b)=>a.z-b.z);
-  for(const it of list){if(it.player)drawPerson(ctx,Math.round(state.x-camx),Math.round(state.y-camy),PAL.player,moving?anim:0,state.dir);else drawEntity(ctx,it.e,camx,camy,t);}
-  for(const e of ENT){const m=newFor(e);if(m)drawMarker(ctx,e,camx,camy,t,m);}
+  const pxp=Math.round(state.x-camx),pyp=Math.round(state.y-camy);
+  for(const it of list){if(it.player)drawPerson(ctx,pxp,pyp,PAL.player,moving?anim:0,state.dir);else drawEntity(ctx,it.e,camx,camy,t);}
+  if(state.carrying!==null)drawCarry(ctx,pxp,pyp,t);
+  for(const e of m.ents){if(newFor(e))drawMarker(ctx,e,camx,camy,t);}
   updateLabels(camx,camy);
 }
-const LBL=document.getElementById('labels');const lblPool={};
-function lbl(id,cls){let d=lblPool[id];if(!d){d=document.createElement('div');d.className='lbl '+cls;LBL.appendChild(d);lblPool[id]=d;}return d;}
+const LBL=$('labels');const lblPool={};
+function lbl(id,cls){let d=lblPool[id];if(!d){d=document.createElement('div');LBL.appendChild(d);lblPool[id]=d;}if(d.className!=='lbl '+cls)d.className='lbl '+cls;return d;}
+const LABEL_KINDS=new Set(['shop','booth','bus','sign','banner','pboard']);
 function updateLabels(camx,camy){
-  const k=cv.clientWidth/VW;const seen={};
-  ENT.forEach(e=>{if(e.kind!=='shop'&&e.kind!=='booth'&&e.kind!=='bus'&&e.kind!=='sign')return;
-    const cx=e.x*T+e.w*T/2-camx,cy=e.y*T-camy;if(cx<-60||cx>VW+60||cy<-30||cy>VH+30)return;
-    const d=lbl(e.id,e.kind==='sign'?'sign':'nm');seen[e.id]=1;
-    const txt=e.kind==='booth'?e.name.replace(' 부스',''):e.kind==='bus'?'서울행':(e.short||e.name);if(d.textContent!==txt)d.textContent=txt;
-    const yy=e.kind==='sign'?cy-3:e.kind==='bus'?cy+16:cy+(e.kind==='booth'?7:4);
-    d.style.transform=`translate(${Math.round(cx*k)}px,${Math.round(yy*k)}px) translate(-50%,-50%)`;d.style.display='block';});
-  const tg=(!ovOpen&&state.started)?target():null;
-  if(tg){const d=lbl('__tip','tip');seen.__tip=1;if(d.textContent!==tg.name)d.textContent=tg.name;const cx=tg.x*T+tg.w*T/2-camx,cy=tg.y*T-camy-(newFor(tg)?14:6);d.style.transform=`translate(${Math.round(cx*k)}px,${Math.round(cy*k)}px) translate(-50%,-100%)`;d.style.display='block';}
+  const k=cv.clientWidth/VW,offx=cv.offsetLeft,offy=cv.offsetTop;const seen={};
+  M().ents.forEach(e=>{if(!LABEL_KINDS.has(e.kind))return;
+    const cx=e.x*T+e.w*T/2-camx,cy=e.y*T-camy;if(cx<-80||cx>VW+80||cy<-30||cy>VH+30)return;
+    const d=lbl(e.id,e.kind==='sign'||e.kind==='pboard'?'sign':e.kind==='banner'?'bn':'nm');seen[e.id]=1;
+    const nm=entName(e);const txt=e.kind==='booth'?nm.replace(' 부스',''):e.kind==='bus'?(isPlane(e)?'WC행 비행기':nm.replace(' 버스','')):e.kind==='pboard'?'Venture Pipeline':(e.short||nm);if(d.textContent!==txt)d.textContent=txt;
+    const yy=e.kind==='sign'||e.kind==='pboard'?cy-3:e.kind==='bus'?(isPlane(e)?cy-5:cy+16):e.kind==='banner'?cy+8:cy+(e.kind==='booth'?7:4);
+    d.style.transform=`translate(${Math.round(offx+cx*k)}px,${Math.round(offy+yy*k)}px) translate(-50%,-50%)`;d.style.display='block';});
+  const tg=(!ovOpen&&!traveling&&state.started)?target():null;
+  if(tg){const d=lbl('__tip','tip');seen.__tip=1;const nm=entName(tg);if(d.textContent!==nm)d.textContent=nm;const cx=tg.x*T+tg.w*T/2-camx,cy=tg.y*T-camy-(newFor(tg)?14:6);d.style.transform=`translate(${Math.round(offx+cx*k)}px,${Math.round(offy+cy*k)}px) translate(-50%,-100%)`;d.style.display='block';}
   for(const id in lblPool)if(!seen[id])lblPool[id].style.display='none';
 }
 function loop(t){const dt=Math.min(40,t-(lastT||t));lastT=t;if(state){update(dt);draw(t);}requestAnimationFrame(loop);}
+/* travel between maps with a short fade */
+function travel(mapId,tx,ty,dir,msg){
+  if(traveling)return;traveling=true;for(const k in keys)keys[k]=false;const f=$('fade');f.classList.add('on');sfx('travel');
+  setTimeout(()=>{state.map=mapId;state.x=tx*T;state.y=ty*T;state.dir=dir||'u';save();hud();
+    setTimeout(()=>{f.classList.remove('on');traveling=false;if(msg)toast(msg,3200);afterClose();},260);},380);
+}
 /* input */
 const KM={ArrowUp:'u',ArrowDown:'d',ArrowLeft:'l',ArrowRight:'r',w:'u',s:'d',a:'l',d:'r',W:'u',S:'d',A:'l',D:'r'};
 window.addEventListener('keydown',e=>{if(e.target&&(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'))return;if(KM[e.key]){keys[KM[e.key]]=true;e.preventDefault();}
-  else if(e.key===' '||e.key==='Enter'||e.key==='e'||e.key==='E'){if(ovOpen){const b=document.querySelector('#panel .btn.primary');if(b&&!b.disabled){b.click();e.preventDefault();}}else{act();e.preventDefault();}}
+  else if(e.key===' '||e.key==='Enter'||e.key==='e'||e.key==='E'){if(e.repeat){e.preventDefault();return;}if(ovOpen){const b=document.querySelector('#panel .btn.primary');if(b&&!b.disabled){b.click();e.preventDefault();}}else{act();e.preventDefault();}}
   else if(e.key==='Escape'&&ovOpen&&ovClosable)closeOv();});
 window.addEventListener('keyup',e=>{if(KM[e.key])keys[KM[e.key]]=false;});
 window.addEventListener('blur',()=>{for(const k in keys)keys[k]=false;});
 document.querySelectorAll('#pad [data-k]').forEach(b=>{const k=b.dataset.k;const on=e=>{e.preventDefault();keys[k]=true;b.classList.add('on');try{b.setPointerCapture(e.pointerId);}catch(x){}};const off=e=>{keys[k]=false;b.classList.remove('on');};b.addEventListener('pointerdown',on);b.addEventListener('pointerup',off);b.addEventListener('pointercancel',off);b.addEventListener('pointerleave',off);b.addEventListener('contextmenu',e=>e.preventDefault());});
-document.getElementById('abtn').addEventListener('click',()=>{if(!ovOpen)act();});
-let toastT=null;function toast(m){const el=document.getElementById('toast');el.textContent=m;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),2600);}
-function act(){if(!state.started)return;const e=target();if(!e){toast('말을 걸 사람이나 물건 앞에 서서 눌러요.');return;}if(e.kind==='npc'){const [tx,ty]=ptile();e.dir=e.y>ty?'u':e.y<ty?'d':e.x>tx?'l':'r';}interact(e);}
-/* HUD */
+$('abtn').addEventListener('click',()=>{if(!ovOpen)act();});
+let toastT=null;function toast(m,ms){const el=$('toast');el.textContent=m;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),ms||2600);}
+let floatT=null;
+function floatCard(kicker,text,sub,ms){const el=$('float');el.innerHTML=`<div class="fk">${esc(kicker)}</div><div class="ft">${esc(text)}</div>${sub?`<div class="fs">${esc(sub)}</div>`:''}`;el.classList.add('show');clearTimeout(floatT);floatT=setTimeout(()=>el.classList.remove('show'),ms||3000);}
+$('float').addEventListener('click',()=>{$('float').classList.remove('show');});
+function act(){if(!state.started||traveling)return;$('float').classList.remove('show');const e=target();if(!e){toast('말을 걸 사람이나 물건 앞에 서서 눌러요.');return;}if(e.kind==='npc'){const [tx,ty]=ptile();e.dir=e.y>ty?'u':e.y<ty?'d':e.x>tx?'l':'r';}interact(e);}
+/* ================= HUD ================= */
+let lastObjKey=null,objDirty=false;
+function todoList(){return M().ents.filter(e=>newFor(e));}
+function todoCount(){let n=todoList().length;if(state.map==='wonju'){if(!chDone('three')&&state.carrying===null)n++;if(postersActive()&&state.posters.length<5)n++;if(feetActive())n++;}return n;}
+const STAT_ROWS=[['trust','신뢰'],['sustain','지속'],['energy','에너지']];
 function hud(){
   recalc();
-  {const n=state.started?ENT.filter(e=>newFor(e)).length:0;const bd=document.getElementById('qBadge');if(bd){bd.hidden=n===0;bd.textContent=n>1?String(n):'!';}}
-  document.getElementById('pins').innerHTML=CH.map(c=>`<span class="pin ${state.ch[c.id]&&state.ch[c.id].done?'':'off'}" title="${esc(c.ko)}">${state.ch[c.id]&&state.ch[c.id].done?'!':'?'}</span>`).join('');
+  PAL.player.lanyard=!!state.flags.joined;
+  const n=state.started?todoCount():0;const bd=$('qBadge');bd.hidden=n===0;bd.textContent=n>1?String(n):'!';
+  $('pins').innerHTML=CH.map(c=>`<span class="pin ${chDone(c.id)?'':'off'}" title="${esc(c.ko)}">${chDone(c.id)?'!':'?'}</span>`).join('');
+  const sw=$('statw'),st=state.sim.stage;
+  if(state.started&&st>=1&&st<10){
+    if(sw.hidden||!sw.firstChild){sw.hidden=false;sw.innerHTML=`<span class="st-h">프로젝트 스탯 <i>최대 100</i></span>`+STAT_ROWS.map(r=>`<span class="st-r" data-k="${r[0]}"><b>${r[1]}</b><span class="st-bar"><i></i></span><em></em><u class="st-d"></u></span>`).join('');}
+    STAT_ROWS.forEach(r=>{const row=sw.querySelector(`[data-k="${r[0]}"]`);row.querySelector('i').style.width=state.sim[r[0]]+'%';row.querySelector('em').textContent=state.sim[r[0]];});
+  }else{sw.hidden=true;}
+  const cr=$('carry');if(state.started&&state.carrying!==null){cr.hidden=false;$('carryText').textContent='“'+BUBBLES[state.carrying-1].t+'”';}else cr.hidden=true;
+  if(state.started){const k=objective().k;if(k!==lastObjKey){if(lastObjKey!==null)objDirty=true;lastObjKey=k;}}
 }
-function statsHtml(s){return [['대상자 신뢰',s.trust],['지속가능성',s.sustain],['팀 에너지',s.energy]].map(r=>`<div class="stat"><div class="t"><span>${r[0]}</span><span class="v num">${r[1]}</span></div><div class="bar"><i style="width:${r[1]}%"></i></div></div>`).join('');}
+function statBump(d){const sw=$('statw');if(sw.hidden)return;STAT_ROWS.forEach(r=>{const v=d[r[0]];if(!v)return;const el=sw.querySelector(`[data-k="${r[0]}"] .st-d`);if(!el)return;el.textContent=(v>0?'+':'')+v;el.className='st-d show '+(v>0?'up':'down');setTimeout(()=>{el.classList.remove('show');},2200);});}
+function statsHtml(s){return [['대상자 신뢰',s.trust],['지속가능성',s.sustain],['팀 에너지',s.energy]].map(r=>`<div class="stat"><div class="t"><span>${r[0]}</span><span class="v num">${r[1]}<small>/100</small></span></div><div class="bar"><i style="width:${r[1]}%"></i></div></div>`).join('');}
 function objective(){
-  const st=state.sim.stage;
-  if(st===1)return '동아리방의 회장과 이야기하기';
-  if(st===2)return '현장으로 가서 사람들을 만나기 (전통시장 · 밭 · 골목 중 한 곳)';
-  if(st===3)return '동아리방 화이트보드 앞에서 해결 방식 정하기';
-  if(st===4)return '화이트보드에서 BM 한 장 조립하기';
-  if(st===5)return '멘토링 카페에서 시크한 멘토 선배 만나기';
-  if(st===6)return '동아리방으로 돌아가 회장과 이야기하기';
-  if(st===7)return '시험 끝. 벤처 거리 끝 치킨집에서 총무 만나기 (놀GM)';
-  if(st===8)return '동아리방 홍보부원과 성과 리포트 쓰기';
-  if(st===9)return '동아리방 포스트잇 벽 앞에서 1년 돌아보기';
-  const left=CH.filter(c=>!(state.ch[c.id]&&state.ch[c.id].done));
-  if(!left.length)return '여섯 장 완료. 포스트잇 벽에서 리포트 보기';
-  const c=left[0];return `Ch.${c.num} ${c.ko} — ${c.where}`;
+  const P=state.parts,st=state.sim.stage,m=state.map,back={k:'back-'+m,t:'버스를 타고 원주로 돌아가기'};
+  if(!chDone('three')){const n=Object.keys(state.delivered).length;return {k:'ch1',t:state.carrying!==null?'들고 있는 말풍선을 맞는 부스에 건네기':`광장의 말풍선을 주워 맞는 부스에 건네기 (${n}/8)`};}
+  if(!chDone('what')){if(m!=='sc')return {k:'tosc',t:'큰길 오른쪽 끝 정류장에서 서울행 버스 타고 SC 가기'};return {k:'sc',t:!P['what.def']?'강당 무대 위 10기 선배와 이야기하기':'강당의 OB 선배와 이야기하기'};}
+  if(st<10){if(m!=='wonju')return back;
+    const S_={1:'동아리방의 회장과 첫 회의 하기',2:'현장으로 가서 사람들을 만나기 (전통시장 · 밭 · 골목 중 한 곳)',3:'동아리방 화이트보드에서 해결 방식 정하기',4:'화이트보드에서 BM 한 장 조립하기',5:'멘토링 카페에서 시크한 멘토 선배 만나기',6:'동아리방으로 돌아가 회장과 이야기하기',7:'시험 끝. 벤처 거리의 놀GM 앞에서 총무 만나기',8:'동아리방 홍보부원과 성과 리포트 쓰기',9:'동아리방 포스트잇 벽 앞에서 1년 돌아보기'};
+    return {k:'sim'+st,t:S_[st]||S_[1]};}
+  if(!allDone()){if(m!=='wonju')return back;const c=CH.filter(x=>!chDone(x.id))[0];let t=`Ch.${c.num} ${c.ko}: ${c.where}`;
+    if(c.id==='rhythm')t=state.posters.length<5?`Ch.06 원주 곳곳의 포스터 모으기 (${state.posters.length}/5)`:'Ch.06 캠퍼스 게시판에 포스터 붙이기';
+    return {k:'free-'+c.id,t};}
+  if(!state.flags.reported)return m==='wonju'?{k:'report',t:'동아리방 포스트잇 벽에서 리포트 보기'}:back;
+  if(state.flags.endingSeen)return {k:'end',t:'모든 발자국을 찍었어요. 자유롭게 둘러보세요'};
+  if(state.flags.ncWon)return m==='wonju'?{k:'plane',t:'정류장의 WC행 비행기 타기'}:back;
+  if(state.feet.length<5)return m==='wonju'?{k:'feet',t:`??? 원주 곳곳의 노란 발자국 찾기 (${state.feet.length}/5)`}:back;
+  if(m!=='nc')return m==='wonju'?{k:'tonc',t:'??? 발자국이 가리키는 곳, 버스 정류장으로'}:back;
+  if(!state.nc.met)return {k:'nc0',t:'대회장의 사무국 직원과 이야기하기'};
+  if(judgesLeft())return {k:'nc1',t:`심사위원 세 분의 질문에 답하기 (${3-judgesLeft()}/3)`};
+  if(!state.nc.perfect)return {k:'nc2',t:'무대 위 발표대에서 발표를 퍼펙트로 마치기'};
+  return {k:'nc3',t:'사무국 직원에게 결과 듣기'};
 }
 /* ================= OVERLAY ================= */
-let ovOpen=false,ovClosable=true;const ov=document.getElementById('ov'),panel=document.getElementById('panel');
-function openOv(html,closable){if(!ovOpen)sfx('open');ovOpen=true;ovClosable=closable!==false;ov.hidden=false;panel.innerHTML=html;panel.querySelectorAll('img.photo').forEach(i=>{const kill=()=>{PHOTO_MISSING.add(i.dataset.key);i.remove();};if(i.complete&&i.naturalWidth===0)kill();else i.addEventListener('error',kill);});for(const k in keys)keys[k]=false;panel.scrollTop=0;panel.querySelectorAll('canvas.face').forEach(c=>{c.width=16;c.height=16;const cc=c.getContext('2d');drawPerson(cc,0,0,PAL[c.dataset.pal]||PAL.player,0,'d');});panel.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',closeOv));}
-function closeOv(){ovOpen=false;ov.hidden=true;panel.innerHTML='';enc=null;}
-function who(e){return photoHtml(e)+`<div class="who"><canvas class="face" data-pal="${e.pal||'player'}"></canvas><div><div class="nm">${esc(e.name)}</div><div class="rl">${esc(e.role||'')}</div></div></div>`;}
+let ovOpen=false,ovClosable=true;const ov=$('ov'),panel=$('panel');
+function openOv(html,closable){if(!ovOpen)sfx('open');ovOpen=true;ovClosable=closable!==false;ov.hidden=false;$('float').classList.remove('show');panel.innerHTML=html;panel.querySelectorAll('img.photo').forEach(i=>{const kill=()=>{PHOTO_MISSING.add(i.dataset.key);i.remove();};if(i.complete&&i.naturalWidth===0)kill();else i.addEventListener('error',kill);});for(const k in keys)keys[k]=false;panel.scrollTop=0;drawFaces();panel.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',closeOv));}
+function drawFaces(){panel.querySelectorAll('canvas.face').forEach(c=>{if(c.dataset.done)return;c.dataset.done='1';c.width=16;c.height=16;drawPerson(c.getContext('2d'),0,0,PAL[c.dataset.pal]||PAL.player,0,'d');});}
+function closeOv(){ovOpen=false;ov.hidden=true;panel.innerHTML='';enc=null;mg=null;setTimeout(afterClose,0);}
+/* after any overlay closes: queued post-it cards first, then a one-line "next" hint */
+function afterClose(){if(ovOpen||traveling||!state||!state.started)return;if(cardQ.length){cardQ.shift()();return;}if(objDirty){objDirty=false;toast('다음: '+objective().t,4200);}}
+function who(e){return photoHtml(e)+`<div class="who"><canvas class="face" data-pal="${e.kind==='npc'?npcPal(e):(e.pal||'player')}"></canvas><div><div class="nm">${esc(e.kind?entName(e):e.name)}</div><div class="rl">${esc(e.kind?entRole(e):(e.role||''))}</div></div></div>`;}
 function nextBtn(label,id){return `<div class="row end"><button class="btn primary" id="${id||'next'}">${label||'계속'}</button></div>`;}
 function fbBox(ok,title,body,extra){return `<div class="fb ${ok===null?'':ok?'good':'bad'}"><div class="head"><span class="postit">${ok===false?'?':'!'}</span><span class="verdict">${esc(title)}</span></div>${body||''}${extra||''}</div>`;}
 let enc=null;
@@ -711,17 +972,24 @@ function runEnc(pages,onEnd){enc={pages,i:0,onEnd,sub:null};showPage();}
 function showPage(){
   if(!enc)return;const pg=enc.pages[enc.i];
   if(pg===undefined){const f=enc.onEnd;enc=null;closeOv();if(f)f();hud();return;}
-  if(typeof pg==='function'){pg();enc.i++;showPage();return;}
+  if(typeof pg==='function'){pg();if(!enc)return;enc.i++;showPage();return;}
   enc.sub=null;
   if(pg.say){openOv(`${who(pg.e)}<p class="say">${pg.say}</p>${pg.extra||''}${nextBtn(pg.btn)}`,false);panel.querySelector('#next').addEventListener('click',()=>{enc.i++;showPage();});}
-  else if(pg.step){openOv(`${pg.e?who(pg.e):''}<div id="step"></div>`,false);renderStep(panel.querySelector('#step'),pg.step,(p,m)=>{if(pg.step.key)addPart(pg.step.key,p,m);enc.i++;showPage();});}
+  else if(pg.step){openOv(`${pg.e?who(pg.e):''}<div id="step"></div>`,false);renderStep(panel.querySelector('#step'),pg.step,(p,m)=>{if(pg.step.key)addPart(pg.step.key,p,m);if(pg.onDone)pg.onDone(p,m);enc.i++;showPage();});}
   else if(pg.html){openOv(pg.html+nextBtn(pg.btn),false);panel.querySelector('#next').addEventListener('click',()=>{enc.i++;showPage();});}
 }
 function simple(e,text,extra){openOv(`${who(e)}<p class="say">${text}</p>${extra||''}<div class="row end"><button class="btn primary" data-close>닫기</button></div>`,true);}
 function setStage(n){state.sim.stage=n;save();hud();}
+/* the post-it a chapter leaves behind: '?' flips to '!' with what was learned written on it */
+function postitHtml(id,big){const c=CH.find(x=>x.id===id),s=SUMMARY[id];return `<div class="pcard ${big?'big':''}"><div class="pm">!</div><div class="pt">${esc(s.t)}</div>${s.l.map(x=>`<div class="pl">· ${esc(x)}</div>`).join('')}<div class="pc">Ch.${c.num} ${esc(c.ko)}</div></div>`;}
+function postitCard(id){
+  const c=CH.find(x=>x.id===id),d=state.ch[id],n=CH.filter(x=>chDone(x.id)).length;sfx('flip');setTimeout(()=>sfx('done'),260);
+  const hint=id==='year'?'<p class="small muted">프로젝트 한 바퀴를 돌았어요. 이제 원주를 자유롭게 다니며 남은 세 장을 채워요. 순서는 상관없어요.</p>':allDone()?'<p class="small muted">여섯 장을 다 뒤집었어요. 동아리방 포스트잇 벽에서 리포트를 볼 수 있어요.</p>':'';
+  openOv(`<span class="lab">Post-it ${n} / 6 · 발자국 ${d.score} / ${c.max}</span>${postitHtml(id,true)}<p class="small muted" style="text-align:center">물음표가 느낌표로 바뀌었어요. 포스트잇은 퀘스트 창과 동아리방 벽에서 언제든 다시 볼 수 있어요.</p>${hint}<div class="row end"><button class="btn primary" data-close>계속</button></div>`,true);
+}
 /* ================= STEP RENDERERS ================= */
 function renderStep(el,step,done){const R={quiz:renderQuiz,order:renderOrder,match:renderMatch,simq:renderSimQ,simbuild:renderSimBuild};R[step.type](el,step,done);}
-function rerender(el,step,done){renderStep(el,step,done);panel.querySelectorAll('canvas.face').forEach(c=>{if(!c.width||c.width!==16){c.width=16;c.height=16;drawPerson(c.getContext('2d'),0,0,PAL[c.dataset.pal]||PAL.player,0,'d');}});}
+function rerender(el,step,done){renderStep(el,step,done);drawFaces();}
 function renderQuiz(el,step,done){
   const sub=enc.sub||(enc.sub={pick:null});const answered=sub.pick!==null;const okIdx=step.options.findIndex(o=>o.ok);
   el.innerHTML=`<div class="h3">${esc(fill(step.q))}</div><div class="choices">${step.options.map((o,i)=>`<button class="choice ${answered?(i===okIdx?'ok':(i===sub.pick?'no':'dim')):''}" data-i="${i}" ${answered?'disabled':''}><span class="k">${String.fromCharCode(65+i)}</span><span>${esc(fill(o.t))}</span></button>`).join('')}</div>
@@ -747,7 +1015,7 @@ function renderMatch(el,step,done){
   el.querySelectorAll('[data-l]').forEach(b=>b.addEventListener('click',()=>{sub.sel=+b.dataset.l;sub.shake=null;rerender(el,step,done);}));
   el.querySelectorAll('[data-r]').forEach(b=>b.addEventListener('click',()=>{if(sub.sel===null)return;const r=+b.dataset.r;if(r===sub.sel){sub.matched.push(r);sub.sel=null;sub.shake=null;sfx('ok');}else{sub.tried[sub.sel]=true;sub.shake=r;sfx('no');}rerender(el,step,done);}));
 }
-function applyDelta(d){const s=state.sim;s.trust=clamp(s.trust+(d.trust||0),0,100);s.sustain=clamp(s.sustain+(d.sustain||0),0,100);s.energy=clamp(s.energy+(d.energy||0),0,100);save();hud();}
+function applyDelta(d){const s=state.sim;s.trust=clamp(s.trust+(d.trust||0),0,100);s.sustain=clamp(s.sustain+(d.sustain||0),0,100);s.energy=clamp(s.energy+(d.energy||0),0,100);save();hud();statBump(d);}
 function deltaChips(d){const m={trust:'신뢰',sustain:'지속',energy:'에너지'};return `<div class="deltas">${Object.keys(m).filter(k=>d[k]).map(k=>`<span class="delta ${d[k]>0?'up':'down'}">${m[k]} ${d[k]>0?'+':''}${d[k]}</span>`).join('')||'<span class="delta">변화 없음</span>'}</div>`;}
 function renderSimQ(el,step,done){
   const sub=enc.sub||(enc.sub={pick:null});const answered=sub.pick!==null;const okIdx=step.options.findIndex(o=>o.ok);
@@ -765,98 +1033,191 @@ function renderSimBuild(el,step,done){
   if(!sub.checked){el.querySelectorAll('.choice').forEach(b=>b.addEventListener('click',()=>{sub.pick[b.dataset.g]=+b.dataset.i;rerender(el,step,done);}));el.querySelector('#check').addEventListener('click',()=>{sub.checked=true;sfx(okCount===3?'ok':'no');applyDelta({trust:okCount*3,sustain:okCount*7-(3-okCount)*5});state.sim.best.build=okCount;rerender(el,step,done);});}
   else el.querySelector('#next').addEventListener('click',()=>done(okCount,3));
 }
-/* ================= ENCOUNTERS ================= */
-const E=id=>ENT.find(e=>e.id===id);
+/* ================= NC MINI-GAME: presentation timing ================= */
+let mg=null;
+function ncMiniGame(onPerfect){
+  const intro=()=>{openOv(`<span class="lab">NC · Presentation</span><div class="h3">발표 타이밍</div>
+    <p>발표는 다섯 장이에요. 슬라이드마다 막대 위를 오가는 커서가 <b>노란 구간</b>에 들어왔을 때 <b>지금!</b>을 누르세요. 뒤로 갈수록 구간은 좁아지고 커서는 빨라져요.</p>
+    <div class="mg-list">${SLIDES.map((s,i)=>`<div><b>${i+1}. ${s.en}</b> <span class="small muted">${esc(s.ko)}</span></div>`).join('')}</div>
+    <p class="small muted">다섯 장을 모두 맞혀야 퍼펙트. 몇 번이든 다시 도전할 수 있어요. 키보드는 Space · Enter.</p>
+    <div class="row end"><button class="btn ghost" data-close>나중에</button><button class="btn primary" id="mgStart">발표 시작</button></div>`,true);
+    panel.querySelector('#mgStart').addEventListener('click',start);};
+  const start=()=>{mg={i:0,hits:[],busy:false,t0:0,zl:0,zw:0,sec:1,lastPtr:0};slide();};
+  const slide=()=>{const s=SLIDES[mg.i];mg.zw=s.w;mg.zl=8+Math.random()*(84-s.w);mg.sec=s.sec;mg.busy=false;mg.t0=performance.now()-Math.random()*400;
+    openOv(`<span class="lab">NC · Presentation</span>
+      <div class="mg-slide"><div class="mg-en">SLIDE ${mg.i+1} / 5 · ${s.en}</div><div class="mg-ko">${esc(s.ko)}</div><div class="small" style="opacity:.8">${esc(s.line)}</div></div>
+      <div class="mg-track"><div class="mg-zone" id="mgZone" style="left:${mg.zl}%;width:${mg.zw}%"></div><div class="mg-cur" id="mgCur"></div></div>
+      <div class="mg-dots">${SLIDES.map((x,i)=>`<i class="${mg.hits[i]===true?'ok':mg.hits[i]===false?'no':''}"></i>`).join('')}</div>
+      <div class="row"><button class="btn primary" id="mgHit" style="flex:1;justify-content:center;padding-block:16px;font-size:17px">지금!</button></div>`,false);
+    const b=panel.querySelector('#mgHit');
+    b.addEventListener('pointerdown',e=>{e.preventDefault();mg.lastPtr=performance.now();hit();});
+    b.addEventListener('click',()=>{if(!mg||performance.now()-mg.lastPtr<600)return;hit();});
+    requestAnimationFrame(tick);};
+  const pos=()=>{const ph=((performance.now()-mg.t0)/1000/mg.sec)%2;return (ph<1?ph:2-ph)*100;};
+  const tick=()=>{if(!mg||mg.busy)return;const c=document.getElementById('mgCur');if(!c)return;c.style.left=pos()+'%';requestAnimationFrame(tick);};
+  const hit=()=>{if(!mg||mg.busy)return;mg.busy=true;const p=pos();const ok=p>=mg.zl&&p<=mg.zl+mg.zw;mg.hits[mg.i]=ok;sfx(ok?'ok':'no');
+    const z=document.getElementById('mgZone'),c=document.getElementById('mgCur');if(c)c.style.left=p+'%';if(z)z.classList.add(ok?'hit':'miss');
+    const dots=panel.querySelectorAll('.mg-dots i');if(dots[mg.i])dots[mg.i].className=ok?'ok':'no';
+    setTimeout(()=>{if(!mg)return;mg.i++;if(mg.i<SLIDES.length)slide();else finish();},650);};
+  const finish=()=>{const n=mg.hits.filter(Boolean).length,perfect=n===SLIDES.length;mg=null;
+    if(perfect){sfx('done');openOv(`<span class="lab">NC · Presentation</span><div class="h3">PERFECT · 5 / 5</div><p>다섯 장 모두 정확했어요. 객석이 조용해졌다가, 박수가 터져요.</p><div class="row end"><button class="btn primary" id="mgDone">결과 발표 듣기</button></div>`,false);
+      panel.querySelector('#mgDone').addEventListener('click',()=>{closeOv();onPerfect();});}
+    else{openOv(`<span class="lab">NC · Presentation</span><div class="h3">${n} / 5</div><p>좋은 발표였지만 퍼펙트는 아니에요. 우승하려면 다섯 장 모두 정확해야 해요. 숨 한 번 고르고 다시.</p><div class="row end"><button class="btn ghost" data-close>나중에</button><button class="btn primary" id="mgRetry">다시 도전</button></div>`,true);
+      panel.querySelector('#mgRetry').addEventListener('click',start);}};
+  intro();
+}
+/* ================= FLOW: who has something for the player right now ================= */
 function newFor(e){
-  const st=state?state.sim.stage:0,P=state?state.parts:{};
+  if(!state||!state.started)return null;
+  const st=state.sim.stage,P=state.parts;
   switch(e.key){
+    case 'booth':return (!chDone('three')&&state.carrying!==null)?'!':null;
+    case 'bus':if(e.kind!=='npc')return null;
+      if(e.map==='wonju')return ((chDone('three')&&!chDone('what'))||(hiddenReady()&&!state.flags.ncWon)||(state.flags.ncWon&&!state.flags.endingSeen))?'!':null;
+      if(e.map==='sc')return chDone('what')?'!':null;
+      return state.flags.ncWon?'!':null;
+    case 'alum':return P['what.def']?null:'!';
+    case 'ob':return P['what.word']?null:'!';
     case 'pres':return (st===1||st===6)?'!':null;
     case 'field':return st===2?'!':null;
     case 'whiteboard':return (st===3||st===4)?'!':null;
     case 'mentor':return st===5?'!':null;
     case 'treasurer':return st===7?'!':null;
     case 'pr':return st===8?'!':null;
-    case 'postwall':return st===9?'!':(state&&allDone()&&!state.flags.reported?'!':null);
-    case 'alum':return P['what.def']?null:'!';
-    case 'ob':return P['what.word']?null:'!';
-    case 'booth':return state&&state.carrying!==null?'!':null;
-    case 'bboard':return state&&state.posters.length===6&&!P['rhythm.order']?'!':null;
-    case 'owner':return P['community.roles']?null:'!';
-    case 'phyco':return P['community.phyco']?null:'!';
-    case 'jeje':return P['community.jeje']?null:'!';
-    case 'shop':return P['venture.'+e.v]?null:'!';
-    case 'office':return [1,2,3,4,5].every(n=>P['venture.'+n])&&!P['venture.pipe']?'!':null;
+    case 'postwall':return st===9?'!':(allDone()&&!state.flags.reported?'!':null);
+    case 'owner':return freeRoam()&&!P['community.roles']?'!':null;
+    case 'phyco':return freeRoam()&&!P['community.phyco']?'!':null;
+    case 'jeje':return freeRoam()&&!P['community.jeje']?'!':null;
+    case 'shop':return freeRoam()&&!P['venture.'+e.v]?'!':null;
+    case 'pboard':return freeRoam()&&[1,2,3,4,5].every(n=>P['venture.'+n])&&!P['venture.pipe']?'!':null;
+    case 'bboard':return freeRoam()&&state.posters.length===5&&!P['rhythm.order']?'!':null;
+    case 'nchost':return (!state.nc.met||(state.nc.perfect&&!state.flags.ncWon))?'!':null;
+    case 'judge':return state.nc.met&&!state.nc.q[e.j]?'!':null;
+    case 'podium':return state.nc.met&&!judgesLeft()&&!state.nc.perfect?'!':null;
   }
   return null;
 }
-function intro(){
-  const p=E('pres');
+const NARR={name:'3월의 캠퍼스',role:'동아리 박람회',pal:'player'};
+function opening(){
   runEnc([
-    {e:p,say:`왔구나. 인액터스 YM 동아리방에 온 걸 환영해${state.name?', '+esc(state.name):''}. 나는 회장이야. 오늘이 네 첫 회의 날이고.`},
-    {e:p,say:'벽에 물음표 포스트잇 여섯 장 보이지? 저게 네 첫 학기 과제야. 원주를 돌아다니면서 하나씩 느낌표로 바꿔 와. 위의 <b>퀘스트</b>와 <b>지도</b> 버튼을 누르면 어디로 가야 하는지 보여.'},
-    {e:p,say:'그 전에 우리 팀 회의부터. 화이트보드는 비어 있고, 다들 마커만 만지작거리고 있어. 뭐부터 할까?'},
-    {e:p,step:SIM.r1},
-    {e:p,say:'좋아. 그럼 시장이든 밭이든 골목이든, 끌리는 현장으로 가서 사람들 얘기부터 듣고 와. 동아리방 문은 아래쪽이야.'},
-  ],()=>setStage(2));
+    {e:NARR,say:`새 학기, 연세대 미래캠퍼스. ${esc(state.name)}${josa(state.name,'은','는')} 동아리 박람회 한가운데에 서 있어요. 부스 세 개가 나란히 보여요. 봉사동아리, 창업동아리, 그리고 인액터스.`},
+    {e:NARR,say:'셋 다 세상에 도움이 되는 일을 한다는데, 뭐가 다를까요? 광장에 떨어진 <b>말풍선 8개</b>를 하나씩 주워서, 그 말을 할 법한 부스에 건네 보세요. 주운 말은 화면 위에 계속 떠 있어요. 헷갈리면 부스 사람에게 먼저 말을 걸어 봐요.'},
+    {e:NARR,say:'화면 위 포스트잇 여섯 장이 이번 학기의 물음표예요. 한 장을 마칠 때마다 느낌표로 바뀌고, 배운 내용이 그 포스트잇에 정리돼요.'},
+  ],()=>{state.flags.opened=true;save();hud();});
+}
+function giveBubble(e,b){
+  const ok=b.a===e.booth;
+  if(!ok){state.btried[b.id]=true;save();sfx('no');
+    openOv(`${who(e)}<div class="bubblebig">“${esc(b.t)}”</div>${fbBox(false,'우리 말이 아니에요',`<p>${esc(BOOTH_NO[e.booth])}</p><p class="small muted">말풍선은 그대로 들고 있어요. 다른 부스에 가져가 보세요. 처음 건넨 부스가 맞아야 발자국 1개를 받아요.</p>`)}<div class="row end"><button class="btn primary" data-close>알겠어요</button></div>`,true);return;}
+  const first=!state.btried[b.id];sfx('ok');state.delivered[b.id]=true;state.carrying=null;
+  const pages=[{html:`${who(e)}<div class="bubblebig">“${esc(b.t)}”</div>${fbBox(true,first?'우리 말 맞아요':'이번엔 맞아요',`<p>${esc(b.why)}</p>`)}`}];
+  if(BUBBLES.every(x=>state.delivered[x.id])){const en=E('bn2');
+    pages.push({html:`${who(en)}<p class="say">여덟 문장이 다 제자리를 찾았네요. 셋을 가르는 다섯 줄, 한 장으로 볼까요?</p>${COMPARE}`});
+    pages.push({e:en,say:`어때요, 차이가 보이죠? 우리는 사회문제를 <b>사업으로</b> 풀어요. ${esc(state.name)}, 인액터스 YM에 들어올래요?`,btn:'들어갈래요!'});
+    pages.push(()=>{state.flags.joined=true;save();sfx('done');hud();});
+    pages.push({e:en,say:'환영해요! 이 <b>옐로 목걸이</b>가 YM 부원 표시예요. 이번 주말에 서울에서 <b>SC(Starting Ceremony)</b>가 열려요. 신입 회원의 첫 공식 행사예요. 광장 아래 큰길을 따라 오른쪽 끝 정류장에서 서울행 버스를 타요.'});}
+  addPart('three.'+b.id,first?1:0,1);
+  runEnc(pages,null);
+}
+function busTalk(e){
+  const d=e.kind==='npc'?e:M().ents.find(x=>x.kind==='npc'&&x.key==='bus');
+  if(state.map!=='wonju'){
+    const pending=state.map==='sc'?!chDone('what'):!state.flags.ncWon;
+    const line=pending?(state.map==='sc'?'아직 선배들 이야기를 다 못 들은 것 같은데, 그래도 원주로 갈까요?':'대회가 아직 안 끝났는데, 그래도 원주로 갈까요?'):'원주까지 1시간 반. 돌아갈까요?';
+    openOv(`${who(d)}<p class="say">${line}</p><div class="row end"><button class="btn ghost" data-close>더 있을게요</button><button class="btn primary" id="goW">원주로</button></div>`,true);
+    panel.querySelector('#goW').addEventListener('click',()=>{closeOv();travel('wonju',57,39,'d','원주 · 버스 정류장');});return;}
+  if(state.flags.ncWon){
+    openOv(`${who(d)}<p class="say">인액터스 월드컵행, 탑승 수속을 시작합니다. 36개국 챔피언이 모이는 무대예요. 한국 대표 인액터스 YM, 탑승할까요?</p><div class="row end"><button class="btn ghost" data-close>조금 이따가</button><button class="btn primary" id="fly">탑승하기</button></div>`,true);
+    panel.querySelector('#fly').addEventListener('click',()=>{closeOv();ending();});return;}
+  const opts=[];
+  if(chDone('three'))opts.push(['sc',chDone('what')?'SC 강당 다시 가 보기':'SC 강당으로 (Ch.02)']);
+  if(hiddenReady())opts.push(['nc','NC 대회장으로']);
+  if(!opts.length){simple(d,'서울까지 1시간 반. 멀죠? 그래서 현장이 가까워요. 지금은 박람회부터 구경해요. 탈 일이 생기면 태워 줄게요.');return;}
+  const line=hiddenReady()?'…학생, 신발에 노란 발자국이 묻었네. 다섯 개를 다 찾은 사람만 태우는 버스가 있어요. 7월의 가장 큰 무대, NC행.':(chDone('what')?'어디로 모실까요?':'SC 가는 학생이죠? 서울까지 1시간 반. 타요.');
+  openOv(`${who(d)}<p class="say">${line}</p><div class="choices">${opts.map(o=>`<button class="choice" data-go="${o[0]}"><span class="k">→</span><span>${o[1]}</span></button>`).join('')}</div><div class="row end"><button class="btn ghost" data-close>다음에</button></div>`,true);
+  panel.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>{const g=b.dataset.go;closeOv();if(g==='sc')travel('sc',11,15,'u','서울 · SC 강당 앞. 문은 바로 위쪽');else travel('nc',14,18,'u','서울 · NC 대회장 앞. 문은 바로 위쪽');}));
+}
+function ncWin(e){
+  runEnc([
+    {e,say:'심사 결과를 발표하겠습니다. 올해의 National Champion은…'},
+    ()=>{state.flags.ncWon=true;save();sfx('done');hud();},
+    {e,say:'<b>연세대학교 미래캠퍼스, 인액터스 YM!</b> 월드컵 한국 대표로 선정되었습니다.',extra:'<p class="small muted">게임 속 가상의 결말이에요. 진짜 NC는 매년 7월, 진짜 무대는 이제부터.</p>'},
+    {e,say:'원주로 돌아가 보세요. 정류장에서 기다리는 건 이제 버스가 아닐 거예요.'},
+  ],null);
 }
 function interact(e){
   const st=state.sim.stage,P=state.parts;
   switch(e.key){
-    case 'sign':simple({name:e.name,role:'표지판',pal:'player'},esc(e.text));return;
-    case 'pres':
-      if(st===1){intro();return;}
-      if(st===6){runEnc([{e,say:'소식 두 개. 씨앗 프로그램 서류에서 떨어졌어. 그리고 시제품 첫 테스트, 반응이 미지근했대. 단톡방이 조용하네.'},{e,step:SIM.r6},{e,say:'시험 끝나는 날 놀GM이야. 벤처 거리 끝 치킨집에서 보자. 총무가 기다릴 거야.'}],()=>setStage(7));return;}
-      simple(e,`지금 할 일: <b>${esc(objective())}</b>.<br><span class="small muted">퀘스트 버튼을 누르면 여섯 장의 상태가 다 보여.</span>`);return;
-    case 'field':{
-      const pr=PROBLEMS[e.problem];
-      if(st===2){runEnc([{e,say:esc(pr.line)},()=>{state.sim.problem=e.problem;save();},{e,step:SIM.r2},{e,say:'…그래요, 또 와요. 다음엔 뭘 들고 올지 보죠.'}],()=>setStage(3));return;}
-      if(st>=3&&state.sim.problem===e.problem){simple(e,st<10?'또 왔네요. 지난번 얘기는 팀에 잘 전했어요?':'덕분에 요즘은 좀 달라요. 학생들, 고마워요.');return;}
-      simple(e,esc(pr.line)+(st<2?'':`<br><span class="small muted">(지금은 ${esc(PROBLEMS[state.sim.problem]?PROBLEMS[state.sim.problem].place:'다른 현장')} 프로젝트가 진행 중이에요)</span>`));return;}
-    case 'whiteboard':
-      if(st===3){runEnc([{step:SIM.r3}],()=>setStage(4));return;}
-      if(st===4){runEnc([{step:{type:'simbuild',key:'sim.build'}}],()=>setStage(5));return;}
-      simple({name:'화이트보드',role:'동아리방',pal:'player'},st<3?'마커 자국만 남아 있어요. 맨 위에 작게: <b>문제가 먼저.</b>':'BM 한 장이 붙어 있어요. 누가 돈을 내는지, 대상자에게 무엇이 남는지, 우리가 떠나면 어떻게 되는지.');return;
-    case 'mentor':
-      if(st===5){runEnc([{e,say:'왔어요? 기다렸어요. 어젯밤에 자료 다시 읽다가 질문 두 개가 생겼거든요. 시작하죠.'},{e,step:SIM.r5},{e,say:'이 질문, 무대에서 심사위원이 똑같이 물을 거예요. 오늘처럼 답하면 돼요. 다음 주에도 여기 있을게요. 그 전에 동아리방부터 들러요, 회장이 찾아요.'}],()=>setStage(6));return;}
-      simple(e,st<5?'BM 한 장 들고 와요. 빈 종이여도 괜찮아요. 같이 채우면 되니까.':'데이터 더 모아 와요. 만나야 할 사람은 제가 소개할게요. 혼자 뛰게 두진 않아요.');return;
-    case 'owner':
-      if(!P['community.roles']){runEnc([{e,say:'어서 와요! 여기 손님 절반이 인액터스 사람이에요. 멘토링 날엔 토론이 길어져서 저도 가게를 늦게 닫아요. 저기 앉은 세 분, 오늘도 후배들 도우러 일부러 나오셨어요. 누가 누군지 맞혀 볼래요? 먼저 말을 걸어 봐도 좋아요.'},{e,step:Q.roles}],null);return;}
-      simple(e,'오늘도 멘토링? 아메리카노 한 잔은 제가 살게요. 열심히 하는 팀한텐 늘 그래요.');return;
-    case 'seat':simple(e,esc(e.line));return;
+    case 'sign':simple({name:entName(e),role:'표지판',pal:'player'},isPlane(e)?'인액터스 월드컵행 탑승구. 36개국 챔피언이 모이는 무대로.':esc(e.text));return;
+    case 'bus':busTalk(e);return;
+    case 'booth':{
+      if(chDone('three')){simple(e,BOOTH_AFTER[e.booth]);return;}
+      if(state.carrying===null){simple(e,esc(BOOTH_HINT[e.booth]),'<p class="small muted">말풍선을 주워 오면 우리가 할 법한 말인지 봐 줄게요.</p>');return;}
+      const b=BUBBLES[state.carrying-1];
+      openOv(`${who(e)}<div class="bubblebig">“${esc(b.t)}”</div><p class="say">이 말을 <b>${BOOTHS[e.booth]}</b> 부스에 건넬까요?</p><div class="row end"><button class="btn ghost" data-close>다시 생각하기</button><button class="btn primary" id="give">건네기</button></div>`,true);
+      panel.querySelector('#give').addEventListener('click',()=>giveBubble(e,b));return;}
     case 'alum':
-      if(!P['what.def']){runEnc([{e,say:'SC에 온 걸 환영해요. 10기 알럼나이예요. 인액터스가 뭔지, 이름부터 풀어 볼까요?'},{e,step:Q.name},{e,step:Q.def},{e,say:'<span class="quote">“치열하게 고민하고, 시원하게 실패를 맞이하고, 뜨겁게 일어나십쇼.”<span>10기 알럼나이 서우현 선배의 말</span></span>'}],null);return;}
+      if(!P['what.def']){runEnc([{e,say:'SC에 온 걸 환영해요. 저는 10기 선배예요. 인액터스가 뭔지, 이름부터 풀어 볼까요?'},{e,step:Q.name},{e,step:Q.def},{e,say:'<span class="quote">“치열하게 고민하고, 시원하게 실패를 맞이하고, 뜨겁게 일어나십쇼.”<span>10기 선배의 말</span></span>'}],null);return;}
       simple(e,'다음 SC에서 또 봐요. 그때는 당신이 무대에 서 있을지도.');return;
     case 'ob':
       if(!P['what.word']){runEnc([{e,say:'먼저 활동한 OB예요. 인액터스에서 제일 중요한 단어 하나만 꼽으라면 뭘까요?'},{e,step:Q.word},{e,say:'그 단어, 잊지 마요. 프로젝트가 흔들릴 때마다 돌아올 자리예요.'}],null);return;}
       simple(e,'자립. 그 한 단어면 돼요.');return;
-    case 'booth':{
-      if(state.carrying===null){simple(e,'광장 바닥에 떨어진 말풍선을 주워 오세요. 우리 부스가 할 법한 말이면 여기로!');return;}
-      const b=BUBBLES[state.carrying-1];const ok=b.a===e.booth;
-      state.delivered[b.id]=true;state.carrying=null;addPart('three.'+b.id,ok?1:0,1);
-      const all=BUBBLES.every(x=>state.delivered[x.id]);
-      const pages=[{html:`${who(e)}<p class="say">“${esc(b.t)}”</p>${fbBox(ok,ok?'우리 말 맞아요':`${BOOTHS[b.a]}의 말이에요`,`<p>${esc(b.why)}</p>`)}`}];
-      if(all)pages.push({html:`${who(E('bn2'))}<p class="say">여덟 문장 다 정리됐네요. 셋을 가르는 다섯 줄, 한 장으로 볼까요?</p>${COMPARE}`});
-      runEnc(pages,null);return;}
-    case 'bboard':
-      if(state.posters.length<6){simple({name:'게시판',role:'동아리방 앞',pal:'player'},`포스터가 ${state.posters.length}/6장. 여섯 장을 다 모아 오면 순서대로 붙일 수 있어요.<br><span class="small muted">캠퍼스 잔디, 박람회 광장, 카페 안, 시장, 밭, 벤처 거리에 한 장씩 떨어져 있어요.</span>`);return;}
-      if(!P['rhythm.order']){runEnc([{step:Q.rhythm},{step:Q.sc}],null);return;}
-      simple({name:'게시판',role:'동아리방 앞',pal:'player'},'한 해의 리듬이 순서대로 붙어 있어요. 다음 행사는 퀘스트 버튼에서.');return;
+    case 'pres':
+      if(st===1){runEnc([
+        {e,say:`SC 잘 다녀왔어? 인액터스 YM 동아리방에 온 걸 환영해, ${esc(state.name)}. 나는 회장이야. 오늘이 네 첫 팀 회의 날이고.`},
+        {e,say:'우리 팀은 이번 학기 <b>내부 PIC</b>에 낼 프로젝트를 처음부터 만들 거야. 화면 왼쪽 위에 <b>프로젝트 스탯</b> 세 개가 생겼지? 대상자 신뢰 40, 지속가능성 40, 팀 에너지 60에서 시작해. 최대는 100이고, 네 선택마다 오르내려.'},
+        {e,say:'화이트보드는 비어 있고, 다들 마커만 만지작거리고 있어. 뭐부터 할까?'},
+        {e,step:SIM.r1},
+        {e,say:'좋아. 그럼 시장이든 밭이든 골목이든, 끌리는 현장으로 가서 사람들 얘기부터 듣고 와. 동아리방 문은 아래쪽이야.'}],()=>setStage(2));return;}
+      if(st===6){runEnc([{e,say:'소식 두 개. 씨앗 프로그램 서류에서 떨어졌어. 그리고 시제품 첫 테스트, 반응이 미지근했대. 단톡방이 조용하네.'},{e,step:SIM.r6},{e,say:'시험 끝나는 날 놀GM이야. 벤처 거리 끝 놀GM 간판 앞에서 보자. 총무가 기다릴 거야.'}],()=>setStage(7));return;}
+      if(!chDone('three')){simple(e,'어, 처음 보는 얼굴이네. 지금 광장에서 동아리 박람회 하는 중이야. 구경하고 와!');return;}
+      if(!chDone('what')){simple(e,'SC부터 다녀와. 큰길 오른쪽 끝 정류장에서 서울행 버스를 타면 돼. 다녀오면 첫 회의 하자.');return;}
+      if(state.flags.ncWon){simple(e,state.flags.endingSeen?'월드컵 이야기는 다음 GM에서 천천히 들려줘.':'국가대표라니. 비행기 타기 전에 사진 한 장 찍자.');return;}
+      if(state.flags.reported){simple(e,hiddenReady()?'발자국을 다 찾았다고? 그럼 정류장으로 가 봐. 기사님이 알아볼 거야.':'소문 들었어? 요즘 원주 곳곳에 <b>노란 발자국</b>이 찍혀 있대. 다섯 개를 다 찾으면 버스 기사님이 특별한 데로 데려다준다던데.');return;}
+      simple(e,`지금 할 일: <b>${esc(objective().t)}</b><br><span class="small muted">퀘스트 버튼을 누르면 여섯 장의 상태가 다 보여.</span>`);return;
+    case 'field':{
+      const pr=PROBLEMS[e.problem];
+      if(st===2){runEnc([{e,say:esc(pr.line)},()=>{state.sim.problem=e.problem;save();},{e,step:SIM.r2},{e,say:'…그래요, 또 와요. 다음엔 뭘 들고 올지 보죠.'}],()=>setStage(3));return;}
+      if(st>=3&&state.sim.problem===e.problem){simple(e,st<10?'또 왔네요. 지난번 얘기는 팀에 잘 전했어요?':'덕분에 요즘은 좀 달라요. 학생들, 고마워요.');return;}
+      simple(e,esc(pr.line)+(st<3?'':`<br><span class="small muted">(지금은 ${esc(PROBLEMS[state.sim.problem]?PROBLEMS[state.sim.problem].place:'다른 현장')} 프로젝트가 진행 중이에요)</span>`));return;}
+    case 'whiteboard':{
+      const wb={name:'화이트보드',role:'동아리방',pal:'player'};
+      if(st===3){runEnc([{step:SIM.r3}],()=>setStage(4));return;}
+      if(st===4){runEnc([{step:{type:'simbuild',key:'sim.build'}}],()=>setStage(5));return;}
+      simple(wb,st<3?'마커 자국만 남아 있어요. 맨 위에 작게: <b>문제가 먼저.</b>':'BM 한 장이 붙어 있어요. 누가 돈을 내는지, 대상자에게 무엇이 남는지, 우리가 떠나면 어떻게 되는지.');return;}
+    case 'mentor':
+      if(st===5){runEnc([{e,say:'왔어요? 기다렸어요. 어젯밤에 자료 다시 읽다가 질문 두 개가 생겼거든요. 시작하죠.'},{e,step:SIM.r5},{e,say:'이 질문, 무대에서 심사위원이 똑같이 물을 거예요. 오늘처럼 답하면 돼요. 다음 주에도 여기 있을게요. 그 전에 동아리방부터 들러요, 회장이 찾아요.'}],()=>setStage(6));return;}
+      simple(e,st<5?'BM 한 장 들고 와요. 빈 종이여도 괜찮아요. 같이 채우면 되니까.':'데이터 더 모아 와요. 만나야 할 사람은 제가 소개할게요. 혼자 뛰게 두진 않아요.');return;
+    case 'owner':
+      if(freeRoam()&&!P['community.roles']){runEnc([{e,say:'어서 와요! 여기 손님 절반이 인액터스 사람이에요. 멘토링 날엔 토론이 길어져서 저도 가게를 늦게 닫아요. 저기 앉은 세 분, 오늘도 후배들 도우러 일부러 나오셨어요. 누가 누군지 맞혀 볼래요? 먼저 말을 걸어 봐도 좋아요.'},{e,step:Q.roles}],null);return;}
+      simple(e,freeRoam()?'오늘도 멘토링? 아메리카노 한 잔은 제가 살게요. 열심히 하는 팀한텐 늘 그래요.':'어서 와요! 멘토링 하러 왔어요? 멘토 선배는 안쪽 자리에 있어요.');return;
+    case 'seat':simple(e,esc(e.line));return;
+    case 'bboard':{
+      const bb={name:'게시판',role:'캠퍼스',pal:'player'};
+      if(!freeRoam()){simple(bb,'게시판이 비어 있어요. 한 해의 행사 포스터가 붙을 자리예요.');return;}
+      if(P['rhythm.order']){simple(bb,'한 해의 리듬이 순서대로 붙어 있어요. SC → PIC → ETC·씨앗 → NC → 월드컵.');return;}
+      if(state.posters.length<5){simple(bb,`포스터가 ${state.posters.length}/5장. 다섯 장을 다 모아 오면 순서대로 붙일 수 있어요.`,'<p class="small muted">캠퍼스 잔디, 카페 안, 시장, 밭, 벤처 거리에 한 장씩 떨어져 있어요. 주우면 무슨 행사인지 바로 보여요.</p>');return;}
+      runEnc([{step:Q.rhythm},{step:Q.sc}],null);return;}
     case 'phyco':
-      if(!P['community.phyco']){runEnc([{e,say:'Phyco-Lab이에요. 우리 팀이 무슨 문제를 다루는지 알아요?'},{e,step:Q.phyco}],null);return;}
-      simple(e,'11월 현장 실험 준비 중이에요. 양식장에 같이 갈래요?');return;
+      if(freeRoam()&&!P['community.phyco']){runEnc([{e,say:'Phyco-Lab이에요. 우리 팀이 무슨 문제를 다루는지 알아요?'},{e,step:Q.phyco}],null);return;}
+      simple(e,freeRoam()?'11월 현장 실험 준비 중이에요. 양식장에 같이 갈래요?':'Phyco-Lab이에요. 지금은 시제품 데이터 정리 중이라 정신이 없네요. 팀 프로젝트 한 바퀴 돌고 오면 우리 얘기도 들려줄게요.');return;
     case 'jeje':
-      if(!P['community.jeje']){runEnc([{e,say:'제제손손, NP1이에요. 우리가 다루는 문제는요?'},{e,step:Q.jeje}],null);return;}
-      simple(e,'다음 주에 복지시설 인터뷰가 또 있어요. 질문지 같이 만들래요?');return;
+      if(freeRoam()&&!P['community.jeje']){runEnc([{e,say:'제제손손, NP1이에요. 우리가 다루는 문제는요?'},{e,step:Q.jeje}],null);return;}
+      simple(e,freeRoam()?'다음 주에 복지시설 인터뷰가 또 있어요. 질문지 같이 만들래요?':'제제손손이에요. 인터뷰 녹취 푸는 중이에요. 네 프로젝트부터 한 바퀴 돌고 와요, 그다음에 얘기해요.');return;
     case 'mush':simple(e,'Mushpot이에요. 지금은 시제품 제작하고 제조 공정 구체화하는 중. 우리가 어떤 문제를 푸는지는 직접 물어봐요, 길어지니까.');return;
     case 'shop':{
       const v=VENTURES[e.v-1];
+      if(!freeRoam()){simple(e,`${esc(v.name)}이에요. ${esc(v.sub)}에서 시작한 회사죠. 프로젝트를 한 바퀴 돌고 다시 와요. 그때 우리 얘기가 더 잘 들릴 거예요.`);return;}
       if(!P['venture.'+e.v]){const others=shuffle(VENTURES.filter(x=>x.n!==v.n)).slice(0,2);const opts=shuffle([{t:v.desc,ok:true,fb:v.more},...others.map(o=>({t:o.desc,fb:`그건 ${o.name}(${o.sub})이에요.`}))]);
         runEnc([{e,say:`${esc(v.name)}이에요. ${esc(v.sub)}에서 시작했죠. 우리가 뭘 하는 회사인지 아세요?`},{e,step:{type:'quiz',key:'venture.'+e.v,q:`${v.name}의 비즈니스는?`,options:opts}}],null);return;}
-      simple(e,`${esc(v.more)}`);return;}
-    case 'office':
-      if(![1,2,3,4,5].every(n=>P['venture.'+n])){simple(e,'다섯 회사 다 둘러보고 오면, 프로젝트가 회사가 되는 길을 알려 줄게요.');return;}
-      if(!P['venture.pipe']){runEnc([{e,say:'다 돌아봤네요. 그 회사들이 걸어온 길에는 이름이 있어요. Venture Pipeline.'},{e,step:Q.pipe}],null);return;}
-      simple(e,'알럼나이 창업가 29명, 2024년 총 연매출 2,500억 원, 5년 이상 생존율 90%. 다음은 당신들 차례.');return;
+      simple(e,esc(v.more));return;}
+    case 'pboard':{
+      const pb={name:'Venture Pipeline 안내판',role:'벤처 거리',pal:'player'};
+      if(!freeRoam()){simple(pb,'거리 끝에 세워진 안내판이에요. 아직은 글씨가 흐릿해요. 프로젝트 한 바퀴를 돌고 나면 읽힐 것 같아요.');return;}
+      const n=[1,2,3,4,5].filter(k=>P['venture.'+k]).length;
+      if(n<5){simple(pb,`이 거리의 다섯 회사를 다 둘러보면 안내판의 글씨가 또렷해져요. (${n}/5)`);return;}
+      if(!P['venture.pipe']){runEnc([{e:pb,say:'다섯 회사가 걸어온 길에는 이름이 있어요. <b>Venture Pipeline</b>. 프로젝트가 회사가 되는 길이에요.'},{e:pb,step:Q.pipe}],null);return;}
+      simple(pb,'알럼나이 창업가 29명, 2024년 총 연매출 2,500억 원, 5년 이상 생존율 90%.',PIPE);return;}
     case 'treasurer':
       if(st===7){runEnc([{e,say:'시험 끝! 오늘 놀GM이야. 근데 PIC도 겹쳤잖아. 팀은 어떻게 할래?'},{e,step:SIM.r7},{e,say:'자, 들어가자. 오늘 랜덤배달은 내가 정한다. 다음은 동아리방 홍보부원한테 가 봐, 리포트 얘기가 있대.'}],()=>setStage(8));return;}
       simple(e,st<7?'놀GM은 시험 끝나고! 지금은 프로젝트 하러 가요.':'다음 놀GM 메뉴는 네가 정해.');return;
@@ -866,8 +1227,26 @@ function interact(e){
     case 'postwall':
       if(st===9){simEnd();return;}
       if(allDone()){report();return;}
-      questList();return;
-    case 'driver':simple(e,'서울까지 1시간 반. 멀죠? 그래서 현장이 가까워요. 원주에서 전국 26개 대학으로, 세계 36개국으로 이어지는 실 한 가닥, 그게 여기서 시작해요.');return;
+      questList(true);return;
+    case 'nchost':
+      if(state.flags.ncWon){simple(e,'축하해요, National Champion. 원주로 돌아가 보세요. 정류장에 다른 탈것이 기다리고 있을 거예요.');return;}
+      if(state.nc.perfect){ncWin(e);return;}
+      if(!state.nc.met){runEnc([
+        {e,say:'National Competition에 오신 걸 환영합니다. 1년에 한 번, 인액터스 코리아의 팀들이 한 해의 성과를 발표하는 자리예요. 올해도 800여 명이 모였어요.'},
+        {e,say:'순서는 둘이에요. 먼저 <b>심사위원 세 분</b>의 질문에 모두 답하고, 그다음 <b>무대 위 발표대</b>에서 발표를 완벽하게 마치면 됩니다. 우승팀은 월드컵 한국 대표가 돼요.'}],()=>{state.nc.met=true;save();hud();});return;}
+      simple(e,judgesLeft()?`심사위원 질문이 ${judgesLeft()}개 남았어요. 심사위원석은 무대 앞 긴 테이블이에요.`:'이제 무대 위 발표대로 올라가세요. 발표는 영어, 다섯 장이에요.');return;
+    case 'judge':{
+      const j=e.j,base=NCQ[j];
+      if(!state.nc.met){simple(e,'먼저 사무국 직원에게 접수부터 하고 오세요. 무대 왼쪽에 있어요.');return;}
+      if(state.nc.q[j]){simple(e,'좋은 답이었어요. 무대에서 봅시다.');return;}
+      runEnc([{e,say:base.open},
+        {e,step:{type:'quiz',q:base.q,options:shuffle(base.options)},onDone:p=>{if(p>=1){state.nc.q[j]=true;save();hud();}}},
+        ()=>{enc.pages.push({e,say:state.nc.q[j]?(judgesLeft()?`통과입니다. 남은 질문은 ${judgesLeft()}개.`:'세 질문 모두 통과입니다. 이제 무대 위 발표대로 올라가세요.'):'아쉽네요. 다음 팀 질의가 끝나면 다시 오세요. 한 번 더 물어볼게요.'});}],null);return;}
+    case 'podium':{
+      const pd={name:'발표대',role:'NC 무대',pal:'player'};
+      if(state.flags.ncWon||state.nc.perfect){simple(pd,'방금 발표의 여운이 아직 남아 있어요.');return;}
+      if(!state.nc.met||judgesLeft()){simple(pd,'발표 전에 심사위원 세 분의 질문부터 통과해야 해요. 심사위원석은 무대 앞 긴 테이블이에요.');return;}
+      ncMiniGame(()=>{state.nc.perfect=true;save();hud();ncWin(E('nchost'));});return;}
   }
 }
 function simEnd(){
@@ -879,38 +1258,62 @@ function simEnd(){
   const energyLine=s.energy<30?'<p><b>다만 팀 에너지가 바닥이에요.</b> 다음 놀GM은 꼭 가세요. 프로젝트는 사람이 하니까요.</p>':s.energy>=80?'<p>팀 에너지가 가득해요. 고생도 웃으면서 하는 팀이 오래 가요.</p>':'';
   const pipe=['01 Solution Coaching','02 Incubation','03 Accelerating'];
   runEnc([{html:`<span class="lab">One year later · ${tier}</span><div class="h3">${esc(title)}</div><p>${esc(body)}</p>${energyLine}<div class="stats">${statsHtml(s)}</div><div class="pipe">${pipe.map((n,i)=>`<span class="${i===stage?'on':''}">${n}</span>${i<2?'<i>→</i>':''}`).join('')}</div><p class="small muted">인액터스 코리아의 Venture Pipeline 기준으로 팀이 선 자리예요. 한 학기가 Incubation 한 바퀴와 같아요.</p>`},
-    {html:`<p class="quote">“'이게 될까?' 싶을 때도 많지만, 직접 부딪혀 도전했을 때 얻는 게 가장 많았습니다.”<span>서동건 · 26-1 회장, Phyco-Lab PM</span></p>`,btn:'포스트잇 뒤집기'}],
-    ()=>{sfx('flip');addPart('sim.end',0,0);setStage(10);});
+    {html:`<p class="quote">“'이게 될까?' 싶을 때도 많지만, 직접 부딪혀 도전했을 때 얻는 게 가장 많았습니다.”<span>10기 선배의 말</span></p>`,btn:'포스트잇 뒤집기'}],
+    ()=>{state.sim.stage=10;addPart('sim.end',0,0);save();hud();});
 }
-function questList(){
-  openOv(`<span class="lab">Quests</span><div class="h3">물음표 여섯 장</div><div class="qlist">${CH.map(c=>{const d=state.ch[c.id]||{score:0,done:false};return `<div class="qi"><span class="pin ${d.done?'':'off'}">${d.done?'!':'?'}</span><div><b>Ch.${c.num} ${esc(c.ko)}</b> <span class="small muted num">${d.score} / ${c.max}</span><div class="small muted">${esc(c.where)}</div></div></div>`;}).join('')}</div>
-    ${(()=>{const a=ENT.filter(e=>newFor(e));return a.length?`<div class="card" style="gap:4px"><span class="lab">지금 할 수 있는 일 ${a.length}</span>${a.slice(0,8).map(e=>`<div class="small">• ${esc(e.name)}</div>`).join('')}${a.length>8?`<div class="small muted">외 ${a.length-8}곳</div>`:''}</div>`:'';})()}
-    <div class="small muted">지금: ${esc(objective())}${state.carrying?`<br>들고 있는 말풍선: “${esc(BUBBLES[state.carrying-1].t)}”`:''}<br>포스터 ${state.posters.length}/6</div>
-    ${allDone()?'<div class="row"><button class="btn primary" id="rep">리포트 보기</button></div>':''}<div class="row end"><button class="btn ghost" data-close>닫기</button></div>`,true);
+/* ================= PANELS: quests, map, report, cover, menu ================= */
+function hiddenRow(){
+  if(!state.flags.reported)return '';
+  let t,sub;
+  if(state.flags.endingSeen){t='히든 엔딩 · 월드컵으로';sub='메뉴에서 히든 엔딩을 다시 볼 수 있어요.';}
+  else if(state.flags.ncWon){t='??? · WC행 비행기';sub='원주 정류장에 버스 대신 비행기가 서 있어요.';}
+  else if(hiddenReady()){t='??? · NC';sub=state.map==='nc'?objective().t:'발자국 다섯 개가 버스 정류장을 가리켜요.';}
+  else{t='??? · 노란 발자국';sub=`원주 곳곳에 찍힌 노란 발자국 ${state.feet.length} / 5`;}
+  const hint=(!hiddenReady()&&!state.flags.ncWon)?`<div class="small muted">지나온 자리들에 찍혀 있어요: ${FEET.map(f=>state.feet.includes(f.n)?`<s>${esc(f.where)}</s>`:esc(f.where)).join(' · ')}</div>`:'';
+  return `<div class="qi hid"><span class="pin ${state.flags.endingSeen?'':'off'}">${state.flags.endingSeen?'!':'?'}</span><div><b>${esc(t)}</b><div class="small muted">${esc(sub)}</div>${hint}</div></div>`;
+}
+function bagHtml(){
+  const rows=[];
+  if(state.carrying!==null)rows.push(`<div class="small"><b>말풍선</b> “${esc(BUBBLES[state.carrying-1].t)}”</div>`);
+  if(state.posters.length&&!state.parts['rhythm.order'])state.posters.forEach(n=>{const p=POSTERS[n-1];rows.push(`<div class="small"><b>포스터 · ${esc(p.title)}</b> (${esc(p.when)}) ${esc(p.line)}</div>`);});
+  if(state.feet.length)state.feet.forEach(n=>rows.push(`<div class="small"><b>발자국</b> ${esc(FEET[n-1].t)}</div>`));
+  return rows.length?`<div class="card" style="gap:6px"><span class="lab">가방</span>${rows.join('')}</div>`:'';
+}
+function questList(wall){
+  const todo=todoList();
+  openOv(`<span class="lab">${wall?'Post-it wall':'Quests'}</span><div class="h3">${wall?'포스트잇 벽':'물음표 여섯 장'}</div>
+    <div class="obj"><b>Next</b><span>${esc(objective().t)}</span></div>
+    <div class="qlist">${CH.map(c=>{const d=state.ch[c.id]||{score:0,done:false},open=chUnlocked(c.id);
+      return `<div class="qi ${open?'':'lock'}"><span class="pin ${d.done?'':'off'}">${d.done?'!':'?'}</span><div style="min-width:0;flex:1"><b>Ch.${c.num} ${esc(c.ko)}</b> <span class="small muted num">${d.score} / ${c.max}</span>
+        ${d.done?`<div class="pnote"><b>${esc(SUMMARY[c.id].t)}</b>${SUMMARY[c.id].l.map(x=>`<span>· ${esc(x)}</span>`).join('')}</div>`:`<div class="small muted">${open?esc(c.where):'앞 장을 마치면 열려요'}</div>`}</div></div>`;}).join('')}${hiddenRow()}</div>
+    ${todo.length?`<div class="card" style="gap:4px"><span class="lab">지금 이 지도에서 할 수 있는 일 ${todo.length}</span>${todo.slice(0,8).map(e=>`<div class="small">• ${esc(entName(e))}</div>`).join('')}</div>`:''}
+    ${bagHtml()}
+    <div class="row end">${allDone()?'<button class="btn primary" id="rep">리포트 보기</button>':''}<button class="btn ghost" data-close>닫기</button></div>`,true);
   const r=panel.querySelector('#rep');if(r)r.addEventListener('click',report);
 }
+const MAPCOL={g:'#86B85C',f:'#86B85C',T:'#2F6B3A',p:'#D9C48E',d:'#A4825A',z:'#CFC9BB',w:'#2E3A55',i:'#CDA97A',x:'#8E6B47',m:'#B08A5E',r:'#4A4F58',R:'#4A4F58',q:'#5B9BD5',s:'#15223B',c:'#4E9A4E',h:'#9E4F3F',b:'#2B2F3A',t:'#7A5A3A',k:'#15223B',e:'#7A5A3A',v:'#0B1324',a:'#22406A',n:'#6A2433',u:'#15223B',U:'#2A0F16',J:'#F3EEE2'};
 function showMap(){
-  const mc=document.createElement('canvas');mc.width=MW*2;mc.height=MH*2;const c=mc.getContext('2d');
-  const col={g:'#86B85C',f:'#86B85C',T:'#2F6B3A',p:'#D9C48E',d:'#A4825A',z:'#CFC9BB',w:'#2E3A55',i:'#CDA97A',x:'#8E6B47',m:'#B08A5E',r:'#4A4F58',R:'#4A4F58',q:'#5B9BD5',s:'#15223B',c:'#4E9A4E',h:'#9E4F3F',b:'#2B2F3A',t:'#7A5A3A',k:'#15223B',e:'#7A5A3A'};
-  for(let y=0;y<MH;y++)for(let x=0;x<MW;x++){c.fillStyle=col[map[y][x]]||'#86B85C';c.fillRect(x*2,y*2,2,2);}
-  ENT.forEach(e=>{if(e.kind==='shop'||e.kind==='booth'||e.kind==='bus'){c.fillStyle=e.color||'#2E3A55';c.fillRect(e.x*2,e.y*2,e.w*2,e.h*2);}});
-  ENT.forEach(e=>{const m=newFor(e);if(m){c.fillStyle='#FFC222';c.fillRect(e.x*2-1,e.y*2-1,4,4);}else if(e.kind==='npc'){c.fillStyle='#F3EEE2';c.fillRect(e.x*2,e.y*2,2,2);}});
+  const m=M(),s=m.id==='wonju'?2:6;const mc=document.createElement('canvas');mc.width=m.w*s;mc.height=m.h*s;const c=mc.getContext('2d');
+  for(let y=0;y<m.h;y++)for(let x=0;x<m.w;x++){c.fillStyle=MAPCOL[m.g[y][x]]||'#86B85C';c.fillRect(x*s,y*s,s,s);}
+  m.ents.forEach(e=>{if(e.kind==='shop'||e.kind==='booth'||e.kind==='bus'||e.kind==='podium'||e.kind==='banner'){c.fillStyle=e.kind==='banner'||e.kind==='podium'?'#FFC222':(e.kind==='bus'&&isPlane(e)?'#F3EEE2':(e.color||'#2E3A55'));c.fillRect(e.x*s,e.y*s,e.w*s,e.h*s);}});
+  m.ents.forEach(e=>{if(newFor(e)){c.fillStyle='#FFC222';c.fillRect(e.x*s-1,e.y*s-1,s+2,s+2);}else if(e.kind==='npc'){c.fillStyle='#F3EEE2';c.fillRect(e.x*s,e.y*s,s,s);}});
   const [tx,ty]=ptile();
-  const labels=[[9,1,'동아리방'],[29,1,'SC 강당'],[50,1,'박람회 광장'],[8,19,'카페'],[26,17,'시장'],[42,17,'밭'],[56,17,'골목'],[20,32,'벤처 거리'],[47,32,'사무국'],[54,32,'놀GM'],[58,41,'버스']];
-  openOv(`<span class="lab">Map · Wonju</span><div style="position:relative"><img class="mini" src="${mc.toDataURL()}" alt="원주 지도"><div id="lbls" style="position:absolute;inset:0;pointer-events:none"></div></div>
+  openOv(`<span class="lab">Map · ${esc(m.name)}</span><div style="position:relative"><img class="mini" src="${mc.toDataURL()}" alt="${esc(m.name)} 지도"><div id="lbls" style="position:absolute;inset:0;pointer-events:none"></div></div>
     <div class="legend"><span><i style="background:#FFC222;border:2px solid #15223B;box-sizing:border-box"></i>나</span><span><i style="background:#FFC222"></i>할 일 있는 곳</span><span><i style="background:#F3EEE2;border:1px solid #999"></i>사람</span></div>
+    ${m.id==='wonju'?'':'<p class="small muted">여기는 서울이에요. 문 밖의 버스를 타면 원주로 돌아가요.</p>'}
     <div class="row end"><button class="btn ghost" data-close>닫기</button></div>`,true);
-  const lb=panel.querySelector('#lbls');labels.forEach(l=>{const s=document.createElement('span');s.textContent=l[2];s.style.cssText=`position:absolute;left:${l[0]/MW*100}%;top:${l[1]/MH*100}%;font-size:10px;font-weight:700;color:#F3EEE2;text-shadow:0 0 3px #000,0 0 3px #000;transform:translate(-20%,0)`;lb.appendChild(s);});
-  const me=document.createElement('div');me.className='memark';me.style.left=((tx+0.5)/MW*100)+'%';me.style.top=((ty+0.5)/MH*100)+'%';me.innerHTML='<i></i><b></b><span>나</span>';lb.appendChild(me);
+  const lb=panel.querySelector('#lbls');m.labels.forEach(l=>{const sp=document.createElement('span');sp.textContent=(m.id==='wonju'&&l[2]==='정류장'&&state.flags.ncWon)?'비행기':l[2];sp.style.cssText=`position:absolute;left:${l[0]/m.w*100}%;top:${l[1]/m.h*100}%;font-size:10px;font-weight:700;color:#F3EEE2;text-shadow:0 0 3px #000,0 0 3px #000;transform:translate(-20%,0)`;lb.appendChild(sp);});
+  const me=document.createElement('div');me.className='memark';me.style.left=((tx+0.5)/m.w*100)+'%';me.style.top=((ty+0.5)/m.h*100)+'%';me.innerHTML='<i></i><b></b><span>나</span>';lb.appendChild(me);
 }
 function report(){
-  state.flags.reported=true;save();
+  const firstTime=!state.flags.reported;state.flags.reported=true;save();hud();
   const total=totalScore(),pct=total/TOTAL_MAX;
   const grade=pct>=.9?['현장의 사람','네 옆자리에서 세상을 바꿀 준비가 됐어요.']:pct>=.7?['길을 아는 사람','방향은 알아요. 이제 현장에서 발자국을 찍을 차례예요.']:pct>=.5?['첫 발자국','첫 걸음은 뗐어요. 아래 질문을 들고 선배를 찾아가 보세요.']:['물음표 수집가','물음표가 많다는 건 질문할 게 많다는 뜻이에요. 그게 시작이에요.'];
   const b=state.sim.best||{};
   const principles=[['문제가 먼저','아이디어가 아니라 사회문제가 시작점',!!b['sim.r1']],['대상자와 함께','도와주는 대상이 아니라 함께 검증하는 파트너',!!(b['sim.r2']&&b['sim.r6'])],['사업으로 푼다','기부·봉사가 아니라 수익 구조',!!(b['sim.r3']&&(b.build||0)>=2)],['증명한다','감동보다 결과, 확인된 숫자',!!b['sim.r8']]];
   let qs=Object.keys(state.miss).map(k=>k.startsWith('three.')?'three':k.startsWith('venture.')&&k!=='venture.pipe'?'venture':k).filter((k,i,a)=>a.indexOf(k)===i&&ASK[k]).map(k=>ASK[k]);qs=qs.length?qs.slice(0,3):ASK_DEFAULT;
   const nm=state.name||'OOO';
+  const note=state.flags.endingSeen?'':`<div class="card" style="border-style:dashed"><span class="lab">벽 뒤에서 떨어진 쪽지</span><p class="hand">${state.flags.ncWon?'정류장에 비행기가 와 있다.':hiddenReady()?'발자국 다섯 개는 정류장을 가리킨다.':'노란 발자국 다섯 개를 따라가면, 7월의 무대가 나온다.'}</p></div>`;
   openOv(`<span class="lab">First Footprint Report</span><h2 class="h3" style="font-size:20px">${esc(nm)}${josa(state.name,'이','가')} 걸어온 1년</h2>
     <div class="card"><div class="grade"><div class="big num">${total}<span style="font-size:20px;color:var(--muted)"> / ${TOTAL_MAX}</span></div><div><span class="lab">Grade</span><div class="h3">${grade[0]}</div><p class="small muted">${grade[1]}</p></div></div>
       <div class="tbl narrow"><table>${CH.map(c=>`<tr><td>Ch.${c.num} ${esc(c.ko)}</td><td class="num" style="text-align:right">${state.ch[c.id]?state.ch[c.id].score:0} / ${c.max}</td></tr>`).join('')}</table></div></div>
@@ -918,41 +1321,55 @@ function report(){
     <div class="card"><span class="lab">Ask a senior</span><div class="h3">다음 GM에서 선배에게 물어볼 세 가지</div><div class="qs">${qs.map(q=>`<div class="q"><span class="postit">?</span><span>${esc(q)}</span></div>`).join('')}</div></div>
     <div class="card navy"><span class="lab">Next steps</span><div class="checks"><div class="check"><span class="m">1</span><div>SC에서 알럼나이·OB 선배의 이야기를 직접 듣기</div></div><div class="check"><span class="m">2</span><div>Phyco-Lab · Mushpot · 제제손손 중 한 팀의 현장에 따라가 보기</div></div><div class="check"><span class="m">3</span><div>내부 PIC에 낼 '해결하고 싶은 문제' 하나를 옐로 포스트잇에 적어 두기</div></div></div></div>
     <div class="cover"><div class="band"><span>Enactus YM</span><span>Y:Beyond</span></div><div class="body" style="text-align:center;align-items:center;gap:8px"><div class="hand" style="font-size:30px">네 옆자리 ${esc(nm)}${josa(state.name,'이','가')} 세상을 바꾼다</div><div class="h-en" style="font-size:24px">Enactus YM</div><p class="muted small">비즈니스로 만드는 더 나은 나, 더 나은 우리</p></div><div class="band"><span>Wonju</span><span>26 universities · 36 countries</span></div></div>
-    <div class="row"><button class="btn primary" id="endBtn">3D 엔딩 보기 (10초)</button><button class="btn ghost" data-close>닫기</button></div>`,true);
-  panel.querySelector('#endBtn').addEventListener('click',ending);
+    ${note}
+    <div class="row end"><button class="btn primary" data-close>닫기</button></div>`,true);
+  if(firstTime)objDirty=true;
+}
+function statInfo(){
+  openOv(`<span class="lab">Project stats</span><div class="h3">프로젝트 스탯</div>
+    <div class="stats">${statsHtml(state.sim)}</div>
+    <div class="checks">
+      <div class="check on"><span class="m">1</span><div><b>대상자 신뢰</b> · 40에서 시작<div class="small muted">문제를 겪는 분들과의 관계. 현장에 가고, 직접 듣고, 정직하게 말하면 올라요.</div></div></div>
+      <div class="check on"><span class="m">2</span><div><b>지속가능성</b> · 40에서 시작<div class="small muted">우리가 떠나도 돌아가는 구조. 기부 대신 수익 구조를 만들수록 올라요.</div></div></div>
+      <div class="check on"><span class="m">3</span><div><b>팀 에너지</b> · 60에서 시작<div class="small muted">팀의 공기. 일만 하면 떨어지고, 놀 땐 놀아야 올라요.</div></div></div>
+    </div>
+    <p class="small muted">세 값 모두 0에서 100 사이예요. 3장이 끝날 때 신뢰와 지속가능성의 평균이 70 이상이면 씨앗 프로그램 무대, 50 이상이면 '진행 중', 그 아래면 팀이 처음으로 돌아가는 결말이에요.</p>
+    <div class="row end"><button class="btn primary" data-close>닫기</button></div>`,true);
 }
 function cover(){
   const saved=state.started;
   openOv(`<div class="cover"><div class="band"><span>Enactus YM</span><span>Vol. 1</span></div><div class="body">
     <div class="row"><span class="postit">?</span><span class="postit" style="transform:rotate(4deg)">!</span></div>
     <h1 class="h-en">First<br>Footprint</h1>
-    <p class="small">인액터스 YM 신입부원 모험. 원주를 걸어 다니며 선배와 현장 사람들을 만나고, 물음표 포스트잇 여섯 장을 느낌표로 바꿔요. 약 15분.</p>
+    <p class="small">인액터스 YM 신입부원 모험. 동아리 박람회에서 시작해 서울의 SC를 다녀오고, 원주에서 프로젝트 1년을 걸어요. 물음표 포스트잇 여섯 장을 느낌표로 바꾸면 끝. 약 15분.</p>
     <label>이름 (리포트에 들어가요)<input id="name" type="text" maxlength="12" placeholder="예: 인액이" value="${esc(state.name)}" autocomplete="off"></label>
     <p class="small muted" id="nameHint" ${state.name?'hidden':''}>이름을 적어야 시작할 수 있어요.</p>
     <div class="row"><button class="btn primary" id="go" ${state.name?'':'disabled'}>${saved?'이어서 하기':'시작하기'}</button>${saved?'<button class="btn ghost" id="reset">처음부터</button>':''}</div>
     <p class="small muted">출처: 인액터스 코리아 공식 홈페이지, 인액터스 YM 브랜드 기획안(2026.10). 3장의 현장은 연습용 가상 설정이에요.</p>
     </div><div class="band"><span>A head for business</span><span>A heart for the world</span></div></div>`,false);
   const nmIn=panel.querySelector('#name'),goBtn=panel.querySelector('#go'),hint=panel.querySelector('#nameHint');nmIn.addEventListener('input',()=>{const ok=nmIn.value.trim().length>0;goBtn.disabled=!ok;hint.hidden=ok;});nmIn.addEventListener('keydown',e=>{if(e.key==='Enter'&&!goBtn.disabled)goBtn.click();});
-  goBtn.addEventListener('click',()=>{const nm=nmIn.value.trim().slice(0,12);if(!nm){goBtn.disabled=true;hint.hidden=false;nmIn.focus();return;}state.name=nm;const first=!state.started;state.started=true;save();closeOv();hud();audioInit();bgmStart();if(first||state.sim.stage===0){setStage(1);intro();}});
-  const r=panel.querySelector('#reset');if(r)r.addEventListener('click',()=>{state=fresh();save();hud();cover();});
+  goBtn.addEventListener('click',()=>{const nm=nmIn.value.trim().slice(0,12);if(!nm){goBtn.disabled=true;hint.hidden=false;nmIn.focus();return;}state.name=nm;state.started=true;save();closeOv();hud();audioInit();bgmStart();if(!state.flags.opened)opening();});
+  const r=panel.querySelector('#reset');if(r)r.addEventListener('click',()=>{state=fresh();lastObjKey=null;objDirty=false;cardQ.length=0;save();hud();cover();});
 }
 function menu(){
   const st=state.sim.stage;openOv(`<span class="lab">Menu</span><div class="h3">First Footprint</div>
-    ${state.started?`<div class="obj"><b>Next</b><span>${esc(objective())}</span></div>`:''}
-    ${state.started&&st>=1&&st<10?`<div class="stats">${statsHtml(state.sim)}</div><p class="small muted">대상자 신뢰는 문제를 겪는 분들과의 관계, 지속가능성은 우리가 떠나도 돌아가는 구조, 팀 에너지는 팀의 공기예요.</p>`:''}
+    ${state.started?`<div class="obj"><b>Next</b><span>${esc(objective().t)}</span></div>`:''}
+    ${state.started&&st>=1&&st<10?`<div class="stats">${statsHtml(state.sim)}</div><p class="small muted">대상자 신뢰는 문제를 겪는 분들과의 관계, 지속가능성은 우리가 떠나도 돌아가는 구조, 팀 에너지는 팀의 공기예요. 신뢰 40 · 지속 40 · 에너지 60에서 시작하고 최대는 100이에요.</p>`:''}
     <p class="small muted">이동: 방향키·WASD 또는 화면 왼쪽 패드. 말하기: Space·Enter·E 또는 노란 버튼. 사람이나 물건 앞에 서서 눌러요. 머리 위에 노란 느낌표가 뜬 사람에게 할 일이 있어요.</p>
-    <div class="row"><button class="btn ghost" id="rs">처음부터 다시</button><button class="btn ghost" id="snd">소리 ${SND.on?'끄기':'켜기'}</button>${allDone()?'<button class="btn" id="rep">리포트 보기</button><button class="btn" id="endBtn">3D 엔딩</button>':''}</div>
+    <div class="row"><button class="btn ghost" id="rs">처음부터 다시</button><button class="btn ghost" id="snd">소리 ${SND.on?'끄기':'켜기'}</button>${state.started&&allDone()?'<button class="btn" id="rep">리포트 보기</button>':''}${state.flags.endingSeen?'<button class="btn" id="endBtn">히든 엔딩 다시 보기</button>':''}</div>
     <div class="row end"><button class="btn ghost" data-close>닫기</button></div>`,true);
-  panel.querySelector('#rs').addEventListener('click',()=>{panel.querySelector('#rs').outerHTML='<button class="btn" id="rs2">정말 처음부터</button>';panel.querySelector('#rs2').addEventListener('click',()=>{state=fresh();save();closeOv();hud();cover();});});
-  const r=panel.querySelector('#rep');if(r)r.addEventListener('click',report);const eb=panel.querySelector('#endBtn');if(eb)eb.addEventListener('click',ending);panel.querySelector('#snd').addEventListener('click',()=>{toggleSound();closeOv();menu();});
+  panel.querySelector('#rs').addEventListener('click',()=>{panel.querySelector('#rs').outerHTML='<button class="btn" id="rs2">정말 처음부터</button>';panel.querySelector('#rs2').addEventListener('click',()=>{state=fresh();lastObjKey=null;objDirty=false;cardQ.length=0;save();closeOv();hud();cover();});});
+  const r=panel.querySelector('#rep');if(r)r.addEventListener('click',report);const eb=panel.querySelector('#endBtn');if(eb)eb.addEventListener('click',()=>{closeOv();ending();});panel.querySelector('#snd').addEventListener('click',()=>{toggleSound();closeOv();menu();});
 }
-document.getElementById('bSound').addEventListener('click',()=>{audioInit();toggleSound();});
-document.getElementById('bQuest').addEventListener('click',()=>{if(!state.started)return;if(ovOpen&&!ovClosable)return;questList();});
-document.getElementById('bMap').addEventListener('click',()=>{if(!state.started)return;if(ovOpen&&!ovClosable)return;showMap();});
-document.getElementById('bMenu').addEventListener('click',()=>{if(ovOpen&&!ovClosable)return;menu();});
+const hudFree=()=>!(ovOpen&&!ovClosable)&&!traveling;
+$('bSound').addEventListener('click',()=>{audioInit();toggleSound();});
+$('bQuest').addEventListener('click',()=>{if(!state.started||!hudFree())return;questList();});
+$('pins').addEventListener('click',()=>{if(!state.started||!hudFree())return;questList();});
+$('bMap').addEventListener('click',()=>{if(!state.started||!hudFree())return;showMap();});
+$('bMenu').addEventListener('click',()=>{if(!hudFree())return;menu();});
+$('statw').addEventListener('click',()=>{if(!state.started||!hudFree())return;statInfo();});
 const GEO_WORLD="-720,-536,-696,-536,-744,-512,-720,-512,-696,-512,-744,-488,-720,-488,-696,-488,-744,-464,-720,-464,-696,-464,1680,-464,-720,-440,-696,-440,-672,-440,1704,-440,-720,-416,-696,-416,-672,-416,1464,-416,1728,-416,1752,-416,-720,-392,-696,-392,-672,-392,-648,-392,-624,-392,1752,-392,-720,-368,-696,-368,-672,-368,-648,-368,-624,-368,-600,-368,-576,-368,1416,-368,1440,-368,1464,-368,1488,-368,-720,-344,-696,-344,-672,-344,-648,-344,-624,-344,-600,-344,-576,-344,-552,-344,192,-344,1176,-344,1392,-344,1416,-344,1440,-344,1464,-344,1488,-344,-696,-320,-672,-320,-648,-320,-624,-320,-600,-320,-576,-320,-552,-320,-528,-320,192,-320,216,-320,240,-320,264,-320,288,-320,1176,-320,1200,-320,1224,-320,1248,-320,1272,-320,1344,-320,1368,-320,1392,-320,1416,-320,1440,-320,1464,-320,1488,-320,1512,-320,-696,-296,-672,-296,-648,-296,-624,-296,-600,-296,-576,-296,-552,-296,-528,-296,-504,-296,192,-296,216,-296,240,-296,264,-296,288,-296,1152,-296,1176,-296,1200,-296,1224,-296,1248,-296,1272,-296,1296,-296,1320,-296,1344,-296,1368,-296,1392,-296,1416,-296,1440,-296,1464,-296,1488,-296,1512,-296,-696,-272,-672,-272,-648,-272,-624,-272,-600,-272,-576,-272,-552,-272,-528,-272,-504,-272,168,-272,192,-272,216,-272,240,-272,264,-272,288,-272,312,-272,1152,-272,1176,-272,1200,-272,1224,-272,1248,-272,1272,-272,1296,-272,1320,-272,1344,-272,1368,-272,1392,-272,1416,-272,1440,-272,1464,-272,1488,-272,1512,-272,-696,-248,-672,-248,-648,-248,-624,-248,-600,-248,-576,-248,-552,-248,-528,-248,-504,-248,-480,-248,168,-248,192,-248,216,-248,240,-248,264,-248,288,-248,312,-248,336,-248,456,-248,1152,-248,1176,-248,1200,-248,1224,-248,1248,-248,1272,-248,1296,-248,1320,-248,1344,-248,1368,-248,1392,-248,1416,-248,1440,-248,1464,-248,1488,-248,1512,-248,-696,-224,-672,-224,-648,-224,-624,-224,-600,-224,-576,-224,-552,-224,-528,-224,-504,-224,-480,-224,-456,-224,-432,-224,144,-224,168,-224,192,-224,216,-224,240,-224,264,-224,288,-224,312,-224,336,-224,456,-224,1152,-224,1176,-224,1200,-224,1224,-224,1248,-224,1272,-224,1296,-224,1320,-224,1344,-224,1368,-224,1392,-224,1416,-224,1440,-224,1464,-224,1488,-224,-696,-200,-672,-200,-648,-200,-624,-200,-600,-200,-576,-200,-552,-200,-528,-200,-504,-200,-480,-200,-456,-200,-432,-200,-408,-200,144,-200,168,-200,192,-200,216,-200,240,-200,264,-200,288,-200,312,-200,336,-200,456,-200,480,-200,1200,-200,1224,-200,1248,-200,1272,-200,1296,-200,1320,-200,1344,-200,1368,-200,1392,-200,1416,-200,1440,-200,1464,-200,-696,-176,-672,-176,-648,-176,-624,-176,-600,-176,-576,-176,-552,-176,-528,-176,-504,-176,-480,-176,-456,-176,-432,-176,-408,-176,120,-176,144,-176,168,-176,192,-176,216,-176,240,-176,264,-176,288,-176,312,-176,336,-176,360,-176,456,-176,480,-176,1224,-176,1248,-176,1272,-176,1296,-176,1320,-176,1344,-176,1368,-176,1392,-176,1416,-176,1440,-176,1776,-176,-744,-152,-720,-152,-696,-152,-672,-152,-648,-152,-624,-152,-600,-152,-576,-152,-552,-152,-528,-152,-504,-152,-480,-152,-456,-152,-432,-152,-408,-152,144,-152,168,-152,192,-152,216,-152,240,-152,264,-152,288,-152,312,-152,336,-152,360,-152,384,-152,480,-152,504,-152,1248,-152,1272,-152,1296,-152,1320,-152,1344,-152,1440,-152,-744,-128,-720,-128,-696,-128,-672,-128,-648,-128,-624,-128,-600,-128,-576,-128,-552,-128,-528,-128,-504,-128,-480,-128,-456,-128,-432,-128,-408,-128,-384,-128,144,-128,168,-128,192,-128,216,-128,240,-128,264,-128,288,-128,312,-128,336,-128,360,-128,384,-128,1320,-128,1344,-128,-768,-104,-744,-104,-720,-104,-696,-104,-672,-104,-648,-104,-624,-104,-600,-104,-576,-104,-552,-104,-528,-104,-504,-104,-480,-104,-456,-104,-432,-104,-408,-104,-384,-104,144,-104,168,-104,192,-104,216,-104,240,-104,264,-104,288,-104,312,-104,336,-104,360,-104,384,-104,-792,-80,-768,-80,-744,-80,-720,-80,-696,-80,-672,-80,-648,-80,-624,-80,-600,-80,-576,-80,-552,-80,-528,-80,-504,-80,-480,-80,-456,-80,-432,-80,-408,-80,-384,-80,-360,-80,144,-80,168,-80,192,-80,216,-80,240,-80,264,-80,288,-80,312,-80,336,-80,360,-80,384,-80,1104,-80,1128,-80,1392,-80,1416,-80,1464,-80,-792,-56,-768,-56,-744,-56,-720,-56,-696,-56,-672,-56,-648,-56,-624,-56,-600,-56,-576,-56,-552,-56,-528,-56,-504,-56,-480,-56,-456,-56,-432,-56,-408,-56,-384,-56,-360,-56,144,-56,168,-56,192,-56,216,-56,240,-56,264,-56,288,-56,312,-56,336,-56,360,-56,384,-56,1056,-56,1200,-56,1392,-56,1416,-56,1440,-56,1488,-56,1512,-56,-792,-32,-768,-32,-744,-32,-720,-32,-696,-32,-672,-32,-648,-32,-624,-32,-600,-32,-576,-32,-552,-32,-528,-32,-504,-32,-480,-32,-456,-32,-432,-32,-408,-32,120,-32,144,-32,168,-32,192,-32,216,-32,240,-32,264,-32,288,-32,312,-32,336,-32,360,-32,384,-32,1032,-32,1056,-32,1128,-32,1152,-32,1200,-32,1224,-32,1296,-32,1344,-32,1368,-32,1392,-32,1416,-32,-792,-8,-768,-8,-744,-8,-720,-8,-696,-8,-672,-8,-648,-8,-624,-8,-600,-8,-576,-8,-552,-8,-528,-8,-504,-8,-480,-8,96,-8,120,-8,144,-8,168,-8,192,-8,216,-8,240,-8,264,-8,288,-8,312,-8,336,-8,360,-8,384,-8,408,-8,1008,-8,1032,-8,1104,-8,1128,-8,1152,-8,1200,-8,1224,-8,1320,-8,-768,16,-744,16,-720,16,-696,16,-672,16,-648,16,-624,16,-600,16,-576,16,-552,16,-528,16,-504,16,96,16,120,16,144,16,168,16,192,16,216,16,240,16,264,16,288,16,312,16,336,16,360,16,384,16,408,16,432,16,1008,16,1032,16,1104,16,1128,16,1152,16,1176,16,-768,40,-744,40,-720,40,-696,40,-672,40,-648,40,-624,40,-600,40,-576,40,-552,40,-528,40,96,40,120,40,144,40,168,40,192,40,216,40,240,40,264,40,288,40,312,40,336,40,360,40,384,40,408,40,432,40,456,40,984,40,1008,40,1032,40,1152,40,1176,40,-768,64,-744,64,-720,64,-696,64,-672,64,-648,64,-624,64,-600,64,-96,64,-72,64,-48,64,-24,64,0,64,24,64,48,64,72,64,96,64,120,64,144,64,168,64,192,64,216,64,240,64,264,64,288,64,312,64,336,64,360,64,384,64,408,64,432,64,456,64,480,64,1008,64,1176,64,1248,64,-816,88,-744,88,-720,88,-696,88,-672,88,-648,88,-624,88,-120,88,-96,88,-72,88,-48,88,-24,88,0,88,24,88,48,88,72,88,96,88,120,88,144,88,168,88,192,88,216,88,240,88,264,88,288,88,312,88,336,88,360,88,384,88,408,88,432,88,456,88,480,88,768,88,984,88,1176,88,1248,88,-840,112,-720,112,-696,112,-144,112,-120,112,-96,112,-72,112,-48,112,-24,112,0,112,24,112,48,112,72,112,96,112,120,112,144,112,168,112,192,112,216,112,240,112,264,112,288,112,312,112,336,112,360,112,384,112,408,112,432,112,504,112,768,112,792,112,1032,112,1056,112,1080,112,1224,112,1248,112,-888,136,-864,136,-840,136,-144,136,-120,136,-96,136,-72,136,-48,136,-24,136,0,136,24,136,48,136,72,136,96,136,120,136,144,136,168,136,192,136,216,136,240,136,264,136,288,136,312,136,336,136,360,136,384,136,408,136,456,136,768,136,792,136,984,136,1008,136,1032,136,1056,136,1080,136,1224,136,-960,160,-936,160,-912,160,-144,160,-120,160,-96,160,-72,160,-48,160,-24,160,0,160,24,160,48,160,72,160,96,160,120,160,144,160,168,160,192,160,216,160,240,160,264,160,288,160,312,160,336,160,360,160,384,160,432,160,456,160,480,160,504,160,744,160,768,160,792,160,984,160,1008,160,1032,160,1056,160,1080,160,1200,160,-1032,184,-1008,184,-984,184,-960,184,-936,184,-912,184,-888,184,-744,184,-720,184,-696,184,-672,184,-144,184,-120,184,-96,184,-72,184,-48,184,-24,184,0,184,24,184,48,184,72,184,96,184,120,184,144,184,168,184,192,184,216,184,240,184,264,184,288,184,312,184,336,184,360,184,432,184,456,184,480,184,504,184,528,184,552,184,744,184,768,184,792,184,816,184,840,184,960,184,984,184,1008,184,1032,184,1056,184,-1032,208,-1008,208,-984,208,-888,208,-768,208,-168,208,-144,208,-120,208,-96,208,-72,208,-48,208,-24,208,0,208,24,208,48,208,72,208,96,208,120,208,144,208,168,208,192,208,216,208,240,208,264,208,288,208,312,208,336,208,360,208,408,208,432,208,456,208,480,208,504,208,528,208,552,208,576,208,744,208,768,208,792,208,816,208,840,208,864,208,936,208,960,208,984,208,1008,208,1032,208,1056,208,1104,208,-1056,232,-1032,232,-1008,232,-984,232,-144,232,-120,232,-96,232,-72,232,-48,232,-24,232,0,232,24,232,48,232,72,232,96,232,120,232,144,232,168,232,192,232,216,232,240,232,264,232,288,232,312,232,336,232,408,232,432,232,456,232,480,232,504,232,528,232,552,232,576,232,696,232,720,232,744,232,768,232,792,232,816,232,840,232,864,232,888,232,912,232,936,232,960,232,984,232,1008,232,1032,232,1056,232,1080,232,1104,232,1128,232,1152,232,-1080,256,-1056,256,-1032,256,-1008,256,-984,256,-144,256,-120,256,-96,256,-72,256,-48,256,-24,256,0,256,24,256,48,256,72,256,96,256,120,256,144,256,168,256,192,256,216,256,240,256,264,256,288,256,312,256,336,256,384,256,408,256,432,256,456,256,480,256,600,256,624,256,648,256,672,256,696,256,720,256,744,256,768,256,792,256,816,256,840,256,864,256,888,256,912,256,936,256,960,256,984,256,1008,256,1032,256,1056,256,1080,256,1104,256,1128,256,1152,256,1176,256,-1104,280,-1080,280,-1056,280,-1032,280,-1008,280,-984,280,-816,280,-120,280,-96,280,-72,280,-48,280,-24,280,0,280,24,280,48,280,72,280,96,280,120,280,144,280,168,280,192,280,216,280,240,280,264,280,288,280,312,280,336,280,360,280,384,280,408,280,432,280,456,280,480,280,528,280,552,280,576,280,600,280,624,280,648,280,672,280,696,280,720,280,744,280,768,280,792,280,816,280,840,280,864,280,888,280,912,280,936,280,960,280,984,280,1008,280,1032,280,1056,280,1080,280,1104,280,1128,280,1152,280,1176,280,1200,280,-1152,304,-1128,304,-1104,304,-1080,304,-1056,304,-1032,304,-1008,304,-984,304,-960,304,-936,304,-912,304,-888,304,-864,304,-840,304,-816,304,-96,304,-72,304,-48,304,-24,304,0,304,24,304,48,304,72,304,96,304,120,304,144,304,168,304,216,304,240,304,264,304,288,304,312,304,336,304,360,304,384,304,408,304,432,304,456,304,480,304,504,304,528,304,552,304,576,304,600,304,624,304,648,304,672,304,696,304,720,304,744,304,768,304,792,304,816,304,840,304,864,304,888,304,912,304,936,304,960,304,984,304,1008,304,1032,304,1056,304,1080,304,1104,304,1128,304,1152,304,1176,304,1200,304,-1152,328,-1128,328,-1104,328,-1080,328,-1056,328,-1032,328,-1008,328,-984,328,-960,328,-936,328,-912,328,-888,328,-864,328,-840,328,-816,328,-72,328,-48,328,-24,328,0,328,24,328,48,328,72,328,96,328,120,328,216,328,360,328,384,328,408,328,432,328,456,328,480,328,504,328,528,328,552,328,576,328,600,328,624,328,648,328,672,328,696,328,720,328,744,328,768,328,792,328,816,328,840,328,864,328,888,328,912,328,936,328,960,328,984,328,1008,328,1032,328,1056,328,1080,328,1104,328,1128,328,1152,328,1176,328,1200,328,-1200,352,-1176,352,-1152,352,-1128,352,-1104,352,-1080,352,-1056,352,-1032,352,-1008,352,-984,352,-960,352,-936,352,-912,352,-888,352,-864,352,-840,352,-816,352,-792,352,-768,352,-48,352,0,352,24,352,48,352,72,352,96,352,336,352,360,352,384,352,408,352,432,352,456,352,480,352,504,352,528,352,552,352,576,352,600,352,624,352,648,352,672,352,696,352,720,352,744,352,768,352,792,352,816,352,840,352,864,352,888,352,912,352,936,352,960,352,984,352,1008,352,1032,352,1056,352,1080,352,1104,352,1128,352,1152,352,1176,352,1344,352,1368,352,1392,352,-1224,376,-1200,376,-1176,376,-1152,376,-1128,376,-1104,376,-1080,376,-1056,376,-1032,376,-1008,376,-984,376,-960,376,-936,376,-912,376,-888,376,-864,376,-840,376,-816,376,-792,376,-768,376,-72,376,-48,376,-24,376,144,376,216,376,288,376,312,376,336,376,360,376,384,376,408,376,432,376,456,376,480,376,552,376,576,376,600,376,624,376,648,376,672,376,696,376,720,376,744,376,768,376,792,376,816,376,840,376,864,376,888,376,912,376,936,376,960,376,984,376,1008,376,1032,376,1056,376,1080,376,1104,376,1128,376,1152,376,1176,376,1392,376,-1224,400,-1200,400,-1176,400,-1152,400,-1128,400,-1104,400,-1080,400,-1056,400,-1032,400,-1008,400,-984,400,-960,400,-936,400,-912,400,-888,400,-864,400,-840,400,-816,400,-792,400,-768,400,-744,400,-72,400,-48,400,-24,400,0,400,96,400,216,400,240,400,288,400,312,400,336,400,360,400,384,400,408,400,432,400,456,400,480,400,552,400,576,400,600,400,624,400,648,400,672,400,696,400,720,400,744,400,768,400,792,400,816,400,840,400,864,400,888,400,912,400,936,400,960,400,984,400,1008,400,1032,400,1056,400,1080,400,1104,400,1128,400,1152,400,1176,400,1224,400,1248,400,1272,400,1416,400,-1224,424,-1200,424,-1176,424,-1152,424,-1128,424,-1104,424,-1080,424,-1056,424,-1032,424,-1008,424,-984,424,-960,424,-936,424,-912,424,-888,424,-864,424,-840,424,-816,424,-792,424,-768,424,-744,424,-720,424,-72,424,-48,424,-24,424,0,424,24,424,120,424,144,424,192,424,216,424,240,424,264,424,432,424,456,424,480,424,528,424,552,424,576,424,600,424,624,424,648,424,672,424,696,424,720,424,744,424,768,424,792,424,816,424,840,424,864,424,888,424,912,424,936,424,960,424,984,424,1008,424,1032,424,1056,424,1080,424,1104,424,1128,424,1152,424,1176,424,1200,424,1224,424,1248,424,1272,424,1296,424,-1224,448,-1200,448,-1176,448,-1152,448,-1128,448,-1104,448,-1080,448,-1056,448,-1032,448,-1008,448,-984,448,-960,448,-936,448,-912,448,-888,448,-864,448,-840,448,-816,448,-792,448,-768,448,-744,448,-720,448,-696,448,-672,448,-648,448,0,448,24,448,48,448,72,448,96,448,120,448,168,448,192,448,216,448,240,448,264,448,288,448,336,448,384,448,408,448,432,448,456,448,528,448,552,448,576,448,600,448,624,448,648,448,672,448,696,448,720,448,744,448,768,448,792,448,816,448,840,448,864,448,888,448,912,448,936,448,960,448,984,448,1008,448,1032,448,1056,448,1080,448,1104,448,1128,448,1152,448,1176,448,1200,448,1224,448,1248,448,1272,448,1296,448,1320,448,1344,448,-1224,472,-1200,472,-1176,472,-1152,472,-1128,472,-1104,472,-1080,472,-1056,472,-1032,472,-1008,472,-984,472,-960,472,-936,472,-912,472,-888,472,-864,472,-840,472,-816,472,-792,472,-768,472,-744,472,-720,472,-696,472,-672,472,-552,472,-24,472,0,472,24,472,48,472,72,472,96,472,120,472,144,472,168,472,192,472,216,472,240,472,264,472,288,472,312,472,336,472,360,472,384,472,408,472,432,472,456,472,480,472,504,472,528,472,552,472,576,472,600,472,624,472,648,472,672,472,696,472,720,472,744,472,768,472,792,472,816,472,840,472,864,472,888,472,912,472,936,472,960,472,984,472,1008,472,1032,472,1056,472,1080,472,1104,472,1128,472,1152,472,1176,472,1200,472,1224,472,1248,472,1272,472,1296,472,1320,472,1344,472,1368,472,-1224,496,-1200,496,-1176,496,-1152,496,-1128,496,-1104,496,-1080,496,-1056,496,-1032,496,-1008,496,-984,496,-960,496,-936,496,-912,496,-888,496,-864,496,-840,496,-816,496,-792,496,-768,496,-744,496,-720,496,-696,496,-672,496,-576,496,0,496,24,496,48,496,72,496,96,496,120,496,144,496,168,496,192,496,216,496,240,496,264,496,288,496,312,496,336,496,360,496,384,496,408,496,432,496,456,496,480,496,504,496,528,496,552,496,576,496,600,496,624,496,648,496,672,496,696,496,720,496,744,496,768,496,792,496,816,496,840,496,864,496,888,496,912,496,936,496,960,496,984,496,1008,496,1032,496,1056,496,1080,496,1104,496,1128,496,1152,496,1176,496,1200,496,1224,496,1248,496,1272,496,1296,496,1320,496,1344,496,1368,496,1392,496,1440,496,-1272,520,-1248,520,-1224,520,-1200,520,-1176,520,-1152,520,-1128,520,-1104,520,-1080,520,-1056,520,-1032,520,-1008,520,-984,520,-960,520,-936,520,-912,520,-888,520,-864,520,-840,520,-816,520,-768,520,-744,520,-720,520,-696,520,-672,520,-648,520,-624,520,-600,520,-576,520,-96,520,-48,520,-24,520,0,520,48,520,72,520,96,520,120,520,144,520,168,520,192,520,216,520,240,520,264,520,288,520,312,520,336,520,360,520,384,520,408,520,432,520,456,520,480,520,504,520,528,520,552,520,576,520,600,520,624,520,648,520,672,520,696,520,720,520,744,520,768,520,792,520,816,520,840,520,864,520,888,520,912,520,936,520,960,520,984,520,1008,520,1032,520,1056,520,1080,520,1104,520,1128,520,1152,520,1176,520,1200,520,1224,520,1248,520,1272,520,1296,520,1320,520,1344,520,1368,520,1392,520,1416,520,-1296,544,-1272,544,-1248,544,-1224,544,-1200,544,-1176,544,-1152,544,-1128,544,-1104,544,-1080,544,-1056,544,-1032,544,-1008,544,-984,544,-960,544,-936,544,-912,544,-888,544,-864,544,-840,544,-792,544,-768,544,-744,544,-720,544,-696,544,-672,544,-648,544,-624,544,-600,544,-576,544,-72,544,-24,544,96,544,168,544,192,544,216,544,240,544,264,544,288,544,312,544,336,544,360,544,384,544,408,544,432,544,456,544,480,544,504,544,528,544,552,544,576,544,600,544,624,544,648,544,672,544,696,544,720,544,744,544,768,544,792,544,816,544,840,544,864,544,888,544,912,544,936,544,960,544,984,544,1008,544,1032,544,1056,544,1080,544,1104,544,1128,544,1152,544,1176,544,1200,544,1224,544,1248,544,1272,544,1296,544,1320,544,1344,544,1368,544,1560,544,1584,544,-1584,568,-1320,568,-1296,568,-1272,568,-1248,568,-1224,568,-1200,568,-1176,568,-1152,568,-1128,568,-1104,568,-1080,568,-1056,568,-1032,568,-1008,568,-984,568,-960,568,-936,568,-912,568,-744,568,-720,568,-696,568,-672,568,-648,568,-624,568,-48,568,-24,568,96,568,144,568,168,568,216,568,240,568,264,568,288,568,312,568,336,568,360,568,384,568,408,568,432,568,456,568,480,568,504,568,528,568,552,568,576,568,600,568,624,568,648,568,672,568,696,568,720,568,744,568,768,568,792,568,816,568,840,568,864,568,888,568,912,568,936,568,960,568,984,568,1008,568,1032,568,1056,568,1080,568,1104,568,1128,568,1152,568,1176,568,1200,568,1224,568,1248,568,1272,568,1296,568,1320,568,1344,568,1368,568,1560,568,1584,568,1608,568,-1608,592,-1584,592,-1560,592,-1368,592,-1344,592,-1320,592,-1296,592,-1272,592,-1248,592,-1224,592,-1200,592,-1176,592,-1152,592,-1128,592,-1104,592,-1080,592,-1056,592,-1032,592,-1008,592,-984,592,-960,592,-768,592,-744,592,-720,592,-696,592,-648,592,72,592,96,592,120,592,144,592,168,592,240,592,264,592,288,592,312,592,336,592,360,592,384,592,408,592,432,592,456,592,480,592,504,592,528,592,552,592,576,592,600,592,624,592,648,592,672,592,696,592,720,592,744,592,768,592,792,592,816,592,840,592,864,592,888,592,912,592,936,592,960,592,984,592,1008,592,1032,592,1056,592,1080,592,1104,592,1128,592,1152,592,1176,592,1200,592,1224,592,1248,592,1272,592,1296,592,1320,592,1344,592,1368,592,1392,592,1416,592,1536,592,1608,592,1632,592,-1656,616,-1632,616,-1608,616,-1584,616,-1560,616,-1536,616,-1512,616,-1488,616,-1464,616,-1440,616,-1416,616,-1392,616,-1368,616,-1344,616,-1320,616,-1296,616,-1272,616,-1248,616,-1224,616,-1200,616,-1176,616,-1152,616,-1128,616,-1104,616,-1080,616,-1056,616,-1032,616,-1008,616,-984,616,-960,616,-936,616,-768,616,-744,616,-720,616,-480,616,-456,616,-432,616,72,616,96,616,120,616,144,616,168,616,216,616,240,616,264,616,288,616,312,616,336,616,360,616,384,616,408,616,432,616,456,616,480,616,504,616,528,616,552,616,576,616,600,616,624,616,648,616,672,616,696,616,720,616,744,616,768,616,792,616,816,616,840,616,864,616,888,616,912,616,936,616,960,616,984,616,1008,616,1032,616,1056,616,1080,616,1104,616,1128,616,1152,616,1176,616,1200,616,1224,616,1248,616,1272,616,1296,616,1320,616,1344,616,1368,616,1392,616,1416,616,1440,616,1464,616,1488,616,1512,616,1536,616,1560,616,1608,616,1656,616,1680,616,1704,616,1728,616,-1608,640,-1584,640,-1560,640,-1536,640,-1512,640,-1488,640,-1464,640,-1440,640,-1416,640,-1392,640,-1368,640,-1344,640,-1320,640,-1296,640,-1272,640,-1248,640,-1224,640,-1200,640,-1176,640,-1152,640,-1128,640,-1104,640,-1080,640,-1056,640,-1032,640,-1008,640,-984,640,-960,640,-936,640,-912,640,-864,640,-840,640,-816,640,-720,640,-696,640,-672,640,-504,640,-480,640,-456,640,-432,640,-408,640,-216,640,-192,640,-168,640,96,640,120,640,144,640,168,640,192,640,240,640,264,640,288,640,312,640,336,640,360,640,384,640,408,640,432,640,456,640,480,640,504,640,528,640,552,640,576,640,600,640,624,640,648,640,672,640,696,640,720,640,744,640,768,640,792,640,816,640,840,640,864,640,888,640,912,640,936,640,960,640,984,640,1008,640,1032,640,1056,640,1080,640,1104,640,1128,640,1152,640,1176,640,1200,640,1224,640,1248,640,1272,640,1296,640,1320,640,1344,640,1368,640,1392,640,1416,640,1440,640,1464,640,1488,640,1512,640,1536,640,1560,640,1584,640,1608,640,1632,640,1656,640,1680,640,1704,640,1728,640,1752,640,1776,640,-1776,664,-1752,664,-1728,664,-1608,664,-1584,664,-1560,664,-1536,664,-1512,664,-1488,664,-1464,664,-1440,664,-1416,664,-1392,664,-1368,664,-1344,664,-1320,664,-1296,664,-1272,664,-1248,664,-1224,664,-1200,664,-1176,664,-1152,664,-1128,664,-1104,664,-1080,664,-1056,664,-1032,664,-1008,664,-984,664,-960,664,-936,664,-912,664,-888,664,-864,664,-840,664,-720,664,-696,664,-672,664,-648,664,-624,664,-528,664,-504,664,-480,664,-456,664,-432,664,-408,664,-384,664,-360,664,144,664,168,664,192,664,216,664,240,664,264,664,288,664,312,664,336,664,384,664,456,664,480,664,504,664,528,664,552,664,576,664,600,664,624,664,648,664,672,664,696,664,744,664,768,664,792,664,816,664,840,664,864,664,888,664,912,664,936,664,960,664,984,664,1008,664,1032,664,1056,664,1080,664,1104,664,1128,664,1152,664,1176,664,1200,664,1224,664,1248,664,1272,664,1296,664,1320,664,1344,664,1368,664,1392,664,1416,664,1440,664,1464,664,1488,664,1512,664,1536,664,1560,664,1584,664,1608,664,1632,664,1656,664,1680,664,1704,664,1728,664,1752,664,1776,664,-1656,688,-1632,688,-1608,688,-1584,688,-1560,688,-1536,688,-1512,688,-1488,688,-1464,688,-1440,688,-1416,688,-1392,688,-1368,688,-1344,688,-1320,688,-1296,688,-1272,688,-1248,688,-1224,688,-1200,688,-1176,688,-1152,688,-1128,688,-1104,688,-936,688,-912,688,-888,688,-840,688,-816,688,-744,688,-720,688,-696,688,-504,688,-480,688,-456,688,-432,688,-408,688,-384,688,-360,688,-336,688,-312,688,-288,688,192,688,216,688,240,688,264,688,288,688,312,688,336,688,360,688,624,688,648,688,696,688,720,688,768,688,792,688,816,688,840,688,864,688,888,688,912,688,936,688,960,688,984,688,1008,688,1032,688,1056,688,1080,688,1104,688,1128,688,1152,688,1176,688,1200,688,1224,688,1248,688,1272,688,1296,688,1320,688,1344,688,1368,688,1392,688,1416,688,1440,688,1464,688,1488,688,1512,688,1536,688,1560,688,1584,688,1608,688,1632,688,1656,688,1680,688,1704,688,1728,688,1752,688,1776,688,-1560,712,-1224,712,-1152,712,-1128,712,-1104,712,-1080,712,-1056,712,-960,712,-936,712,-864,712,-840,712,-816,712,-792,712,-768,712,-744,712,-720,712,-528,712,-504,712,-480,712,-456,712,-432,712,-408,712,-384,712,-360,712,-336,712,-312,712,-288,712,-264,712,-240,712,552,712,672,712,696,712,720,712,744,712,768,712,792,712,816,712,840,712,864,712,888,712,912,712,936,712,960,712,984,712,1008,712,1032,712,1056,712,1080,712,1104,712,1128,712,1152,712,1176,712,1200,712,1224,712,1248,712,1272,712,1296,712,1320,712,1344,712,1368,712,1392,712,1416,712,1440,712,1464,712,1488,712,1512,712,-1224,736,-1200,736,-1176,736,-1056,736,-1008,736,-984,736,-936,736,-912,736,-864,736,-792,736,-552,736,-528,736,-504,736,-480,736,-456,736,-432,736,-408,736,-384,736,-360,736,-336,736,-312,736,-288,736,-264,736,-240,736,-216,736,552,736,816,736,840,736,864,736,888,736,912,736,936,736,960,736,984,736,1008,736,1032,736,1056,736,1080,736,1104,736,1128,736,1152,736,1176,736,1248,736,1416,736,-1152,760,-1128,760,-1080,760,-1008,760,-984,760,-912,760,-600,760,-576,760,-552,760,-528,760,-504,760,-480,760,-456,760,-432,760,-408,760,-384,760,-360,760,-336,760,-312,760,-288,760,-264,760,-240,760,-216,760,600,760,624,760,648,760,936,760,960,760,984,760,1008,760,1032,760,1056,760,1080,760,1104,760,1128,760,1392,760,1416,760,-1032,784,-1008,784,-984,784,-960,784,-912,784,-888,784,-864,784,-840,784,-816,784,-792,784,-768,784,-720,784,-696,784,-672,784,-648,784,-624,784,-600,784,-576,784,-552,784,-528,784,-504,784,-480,784,-456,784,-432,784,-408,784,-384,784,-360,784,-336,784,-312,784,-288,784,-264,784,-240,784,-216,784,144,784,168,784,1008,784,1032,784";
 const GEO_KR="1262,333,1263,333,1264,333,1265,333,1266,333,1268,333,1263,334,1264,334,1265,334,1266,334,1268,334,1269,334,1266,336,1268,336,1265,343,1269,343,1270,343,1261,344,1262,344,1263,344,1265,344,1266,344,1272,344,1275,344,1263,345,1265,345,1266,345,1268,345,1269,345,1270,345,1272,345,1273,345,1274,345,1278,345,1263,346,1264,346,1265,346,1266,346,1268,346,1269,346,1270,346,1273,346,1274,346,1278,346,1260,348,1261,348,1263,348,1264,348,1265,348,1266,348,1268,348,1269,348,1270,348,1271,348,1272,348,1273,348,1276,348,1278,348,1279,348,1280,348,1284,348,1286,348,1263,349,1264,349,1265,349,1266,349,1268,349,1269,349,1270,349,1271,349,1272,349,1273,349,1274,349,1275,349,1279,349,1280,349,1284,349,1285,349,1286,349,1287,349,1264,350,1265,350,1266,350,1268,350,1269,350,1270,350,1271,350,1272,350,1273,350,1274,350,1275,350,1276,350,1278,350,1279,350,1281,350,1282,350,1283,350,1284,350,1261,351,1262,351,1263,351,1265,351,1266,351,1268,351,1269,351,1270,351,1271,351,1272,351,1273,351,1274,351,1275,351,1276,351,1278,351,1279,351,1280,351,1281,351,1282,351,1283,351,1284,351,1287,351,1288,351,1290,351,1291,351,1263,352,1264,352,1265,352,1266,352,1268,352,1269,352,1270,352,1271,352,1272,352,1273,352,1274,352,1275,352,1276,352,1278,352,1279,352,1280,352,1281,352,1282,352,1283,352,1284,352,1285,352,1286,352,1287,352,1288,352,1290,352,1291,352,1292,352,1264,353,1265,353,1266,353,1268,353,1269,353,1270,353,1271,353,1272,353,1273,353,1274,353,1275,353,1276,353,1278,353,1279,353,1280,353,1281,353,1282,353,1283,353,1284,353,1285,353,1286,353,1287,353,1288,353,1290,353,1291,353,1292,353,1264,354,1265,354,1266,354,1268,354,1269,354,1270,354,1271,354,1272,354,1273,354,1274,354,1275,354,1276,354,1278,354,1279,354,1280,354,1281,354,1282,354,1283,354,1284,354,1285,354,1286,354,1287,354,1288,354,1290,354,1291,354,1292,354,1293,354,1266,355,1268,355,1269,355,1270,355,1271,355,1272,355,1273,355,1274,355,1275,355,1276,355,1278,355,1279,355,1280,355,1281,355,1282,355,1283,355,1284,355,1285,355,1286,355,1287,355,1288,355,1290,355,1291,355,1292,355,1293,355,1294,355,1265,356,1266,356,1268,356,1269,356,1270,356,1271,356,1272,356,1273,356,1274,356,1275,356,1276,356,1278,356,1279,356,1280,356,1281,356,1282,356,1283,356,1284,356,1285,356,1286,356,1287,356,1288,356,1290,356,1291,356,1292,356,1293,356,1294,356,1266,358,1268,358,1269,358,1270,358,1271,358,1272,358,1273,358,1274,358,1275,358,1276,358,1278,358,1279,358,1280,358,1281,358,1282,358,1283,358,1284,358,1285,358,1286,358,1287,358,1288,358,1290,358,1291,358,1292,358,1293,358,1294,358,1268,359,1269,359,1270,359,1271,359,1272,359,1273,359,1274,359,1275,359,1276,359,1278,359,1279,359,1280,359,1281,359,1282,359,1283,359,1284,359,1285,359,1286,359,1287,359,1288,359,1290,359,1291,359,1292,359,1293,359,1294,359,1295,359,1266,360,1268,360,1269,360,1270,360,1271,360,1272,360,1273,360,1274,360,1275,360,1276,360,1278,360,1279,360,1280,360,1281,360,1282,360,1283,360,1284,360,1285,360,1286,360,1287,360,1288,360,1290,360,1291,360,1292,360,1293,360,1294,360,1295,360,1266,361,1268,361,1269,361,1270,361,1271,361,1272,361,1273,361,1274,361,1275,361,1276,361,1278,361,1279,361,1280,361,1281,361,1282,361,1283,361,1284,361,1285,361,1286,361,1287,361,1288,361,1290,361,1291,361,1292,361,1293,361,1294,361,1265,362,1266,362,1268,362,1269,362,1270,362,1271,362,1272,362,1273,362,1274,362,1275,362,1276,362,1278,362,1279,362,1280,362,1281,362,1282,362,1283,362,1284,362,1285,362,1286,362,1287,362,1288,362,1290,362,1291,362,1292,362,1293,362,1265,363,1266,363,1268,363,1269,363,1270,363,1271,363,1272,363,1273,363,1274,363,1275,363,1276,363,1278,363,1279,363,1280,363,1281,363,1282,363,1283,363,1284,363,1285,363,1286,363,1287,363,1288,363,1290,363,1291,363,1292,363,1293,363,1264,364,1265,364,1266,364,1268,364,1269,364,1270,364,1271,364,1272,364,1273,364,1274,364,1275,364,1276,364,1278,364,1279,364,1280,364,1281,364,1282,364,1283,364,1284,364,1285,364,1286,364,1287,364,1288,364,1290,364,1291,364,1292,364,1293,364,1294,364,1265,365,1266,365,1268,365,1269,365,1270,365,1271,365,1272,365,1273,365,1274,365,1275,365,1276,365,1278,365,1279,365,1280,365,1281,365,1282,365,1283,365,1284,365,1285,365,1286,365,1287,365,1288,365,1290,365,1291,365,1292,365,1293,365,1294,365,1263,366,1264,366,1265,366,1266,366,1268,366,1269,366,1270,366,1271,366,1272,366,1273,366,1274,366,1275,366,1276,366,1278,366,1279,366,1280,366,1281,366,1282,366,1283,366,1284,366,1285,366,1286,366,1287,366,1288,366,1290,366,1291,366,1292,366,1293,366,1294,366,1262,367,1263,367,1264,367,1265,367,1266,367,1268,367,1269,367,1270,367,1271,367,1272,367,1273,367,1274,367,1275,367,1276,367,1278,367,1279,367,1280,367,1281,367,1282,367,1283,367,1284,367,1285,367,1286,367,1287,367,1288,367,1290,367,1291,367,1292,367,1293,367,1294,367,1262,368,1264,368,1265,368,1266,368,1268,368,1269,368,1270,368,1271,368,1272,368,1273,368,1274,368,1275,368,1276,368,1278,368,1279,368,1280,368,1281,368,1282,368,1283,368,1284,368,1285,368,1286,368,1287,368,1288,368,1290,368,1291,368,1292,368,1293,368,1294,368,1264,370,1265,370,1266,370,1268,370,1269,370,1270,370,1271,370,1272,370,1273,370,1274,370,1275,370,1276,370,1278,370,1279,370,1280,370,1281,370,1282,370,1283,370,1284,370,1285,370,1286,370,1287,370,1288,370,1290,370,1291,370,1292,370,1293,370,1294,370,1269,371,1270,371,1271,371,1272,371,1273,371,1274,371,1275,371,1276,371,1278,371,1279,371,1280,371,1281,371,1282,371,1283,371,1284,371,1285,371,1286,371,1287,371,1288,371,1290,371,1291,371,1292,371,1293,371,1294,371,1261,372,1268,372,1269,372,1270,372,1271,372,1272,372,1273,372,1274,372,1275,372,1276,372,1278,372,1279,372,1280,372,1281,372,1282,372,1283,372,1284,372,1285,372,1286,372,1287,372,1288,372,1290,372,1291,372,1292,372,1293,372,1269,373,1270,373,1271,373,1272,373,1273,373,1274,373,1275,373,1276,373,1278,373,1279,373,1280,373,1281,373,1282,373,1283,373,1284,373,1285,373,1286,373,1287,373,1288,373,1290,373,1291,373,1292,373,1293,373,1266,374,1268,374,1269,374,1270,374,1271,374,1272,374,1273,374,1274,374,1275,374,1276,374,1278,374,1279,374,1280,374,1281,374,1282,374,1283,374,1284,374,1285,374,1286,374,1287,374,1288,374,1290,374,1291,374,1292,374,1265,375,1266,375,1268,375,1269,375,1270,375,1271,375,1272,375,1273,375,1274,375,1275,375,1276,375,1278,375,1279,375,1280,375,1281,375,1282,375,1283,375,1284,375,1285,375,1286,375,1287,375,1288,375,1290,375,1291,375,1264,376,1265,376,1266,376,1268,376,1269,376,1270,376,1271,376,1272,376,1273,376,1274,376,1275,376,1276,376,1278,376,1279,376,1280,376,1281,376,1282,376,1283,376,1284,376,1285,376,1286,376,1287,376,1288,376,1290,376,1263,377,1264,377,1265,377,1266,377,1268,377,1269,377,1270,377,1271,377,1272,377,1273,377,1274,377,1275,377,1276,377,1278,377,1279,377,1280,377,1281,377,1282,377,1283,377,1284,377,1285,377,1286,377,1287,377,1288,377,1290,377,1268,378,1269,378,1270,378,1271,378,1272,378,1273,378,1274,378,1275,378,1276,378,1278,378,1279,378,1280,378,1281,378,1282,378,1283,378,1284,378,1285,378,1286,378,1287,378,1288,378,1268,380,1269,380,1270,380,1271,380,1272,380,1273,380,1274,380,1275,380,1276,380,1278,380,1279,380,1280,380,1281,380,1282,380,1283,380,1284,380,1285,380,1286,380,1287,380,1270,381,1271,381,1272,381,1273,381,1274,381,1275,381,1276,381,1278,381,1279,381,1280,381,1281,381,1282,381,1283,381,1284,381,1285,381,1286,381,1269,382,1270,382,1271,382,1272,382,1273,382,1274,382,1275,382,1276,382,1278,382,1279,382,1280,382,1281,382,1282,382,1283,382,1284,382,1285,382,1272,383,1273,383,1274,383,1275,383,1276,383,1278,383,1279,383,1280,383,1281,383,1282,383,1283,383,1284,383,1285,383,1283,384,1284,384,1284,385";
-
 /* ================= AUDIO ================= */
 const SND={ctx:null,on:true,master:null,bgmTimer:null,next:0,step:0,stepDist:0,stepAlt:0};
 try{SND.on=localStorage.getItem('ym-sound')!=='off';}catch(e){}
@@ -968,33 +1385,39 @@ function sfx(name){if(!SND.ctx||!SND.on)return;const t=SND.ctx.currentTime;try{s
   case 'flip':noise(t,0.14,0.12,2200,'bandpass');break;
   case 'done':[523.25,659.25,783.99,1046.5].forEach((f,i)=>osc(f,t+i*0.1,0.24,'triangle',0.08));break;
   case 'tap':osc(880,t,0.03,'square',0.025);break;
+  case 'travel':noise(t,0.55,0.07,900,'bandpass');osc(180,t,0.5,'sine',0.05,90);break;
   case 'ending':[392,523.25,659.25,783.99,1046.5].forEach((f,i)=>osc(f,t+i*0.16,0.5,'sine',0.07));break;
 }}catch(e){}}
 const BPM=96,STEP=60/BPM/2;
-const N={C4:261.63,D4:293.66,E4:329.63,G4:392,A4:440,C5:523.25,D5:587.33,E5:659.25,G5:783.99,A5:880,C6:1046.5,C3:130.81,D3:146.83,E3:164.81,F2:87.31,G2:98,A2:110,F3:174.61};
-const MEL=['C5',0,'E5','G5','A5',0,'G5','E5', 'D5',0,'E5','C5','A4',0,0,0, 'E5',0,'G5','A5','C6',0,'A5','G5', 'E5',0,'D5','E5','C5',0,0,0, 'G4',0,'C5','D5','E5',0,'D5','C5', 'A4',0,'C5','A4','G4',0,0,0, 'E5',0,'G5','E5','D5',0,'C5','D5', 'C5',0,0,0,0,0,0,0].map(k=>k?N[k]:0);
-const BASS=['C3',0,0,0,'G2',0,0,0, 'A2',0,0,0,'E3',0,0,0, 'F2',0,0,0,'C3',0,0,0, 'G2',0,0,0,'G2',0,0,0, 'C3',0,0,0,'G2',0,0,0, 'A2',0,0,0,'E3',0,0,0, 'F2',0,0,0,'G2',0,0,0, 'C3',0,0,0,'C3',0,0,0].map(k=>k?N[k]:0);
+const NOTE={C4:261.63,D4:293.66,E4:329.63,G4:392,A4:440,C5:523.25,D5:587.33,E5:659.25,G5:783.99,A5:880,C6:1046.5,C3:130.81,D3:146.83,E3:164.81,F2:87.31,G2:98,A2:110,F3:174.61};
+const MEL=['C5',0,'E5','G5','A5',0,'G5','E5', 'D5',0,'E5','C5','A4',0,0,0, 'E5',0,'G5','A5','C6',0,'A5','G5', 'E5',0,'D5','E5','C5',0,0,0, 'G4',0,'C5','D5','E5',0,'D5','C5', 'A4',0,'C5','A4','G4',0,0,0, 'E5',0,'G5','E5','D5',0,'C5','D5', 'C5',0,0,0,0,0,0,0].map(k=>k?NOTE[k]:0);
+const BASS=['C3',0,0,0,'G2',0,0,0, 'A2',0,0,0,'E3',0,0,0, 'F2',0,0,0,'C3',0,0,0, 'G2',0,0,0,'G2',0,0,0, 'C3',0,0,0,'G2',0,0,0, 'A2',0,0,0,'E3',0,0,0, 'F2',0,0,0,'G2',0,0,0, 'C3',0,0,0,'C3',0,0,0].map(k=>k?NOTE[k]:0);
 function bgmStart(){if(!SND.ctx||SND.bgmTimer)return;SND.next=SND.ctx.currentTime+0.15;SND.step=0;SND.bgmTimer=setInterval(bgmTick,120);}
 function bgmTick(){if(!SND.ctx||!SND.on)return;const c=SND.ctx;if(SND.next<c.currentTime-0.5)SND.next=c.currentTime+0.05;while(SND.next<c.currentTime+0.4){const i=SND.step%MEL.length;try{if(MEL[i])osc(MEL[i],SND.next,STEP*0.9,'triangle',0.04);if(BASS[i])osc(BASS[i],SND.next,STEP*1.7,'sine',0.05);}catch(e){}SND.next+=STEP;SND.step++;}}
-function toggleSound(){SND.on=!SND.on;try{localStorage.setItem('ym-sound',SND.on?'on':'off');}catch(e){}if(SND.master)SND.master.gain.value=SND.on?1:0;if(SND.on&&SND.ctx){bgmStart();}document.getElementById('bSound').textContent=SND.on?'소리':'소리 끔';toast(SND.on?'소리 켬':'소리 끔');}
-document.getElementById('bSound').textContent=SND.on?'소리':'소리 끔';
+function toggleSound(){SND.on=!SND.on;try{localStorage.setItem('ym-sound',SND.on?'on':'off');}catch(e){}if(SND.master)SND.master.gain.value=SND.on?1:0;if(SND.on&&SND.ctx){bgmStart();}$('bSound').textContent=SND.on?'소리':'소리 끔';toast(SND.on?'소리 켬':'소리 끔');}
+$('bSound').textContent=SND.on?'소리':'소리 끔';
 /* ================= PHOTOS (optional: photos/<key>.jpg) ================= */
 const PHOTO_MISSING=new Set();
-function photoKey(e){if(!e)return null;const k=e.key;if(['pres','pr','phyco','jeje','mush','whiteboard','postwall','bboard'].includes(k)||['화이트보드','게시판','포스트잇 벽'].includes(e.name))return 'clubroom';if(k==='alum'||k==='ob')return 'sc';if(k==='booth')return 'fair';if(k==='owner'||k==='mentor'||k==='seat')return 'cafe';if(k==='field')return e.problem;if(k==='shop'||k==='office')return 'street';if(k==='treasurer')return 'nolgm';if(k==='driver')return 'bus';return null;}
+function photoKey(e){if(!e)return null;const k=e.key;
+  if(e.map==='sc'&&k!=='bus')return 'sc';if(e.map==='nc'&&k!=='bus')return 'nc';
+  if(['pres','pr','phyco','jeje','mush','whiteboard','postwall'].includes(k)||['화이트보드','포스트잇 벽'].includes(e.name))return 'clubroom';
+  if(k==='booth')return 'fair';if(k==='owner'||k==='mentor'||k==='seat')return 'cafe';if(k==='field')return e.problem;if(k==='shop'||k==='pboard'||e.name==='Venture Pipeline 안내판')return 'street';if(k==='treasurer')return 'nolgm';if(k==='bus')return 'bus';return null;}
 function photoHtml(e){const k=photoKey(e);if(!k||PHOTO_MISSING.has(k))return '';return `<img class="photo" data-key="${k}" src="photos/${k}.jpg" alt="">`;}
-/* ================= 3D ENDING ================= */
+/* ================= 3D HIDDEN ENDING: the flight to the World Cup ================= */
 const KR_CITIES=[[37.57,126.98],[37.46,126.71],[37.26,127.03],[37.42,127.13],[37.66,126.83],[37.88,127.73],[37.75,128.88],[36.64,127.49],[36.81,127.15],[36.35,127.38],[36.48,127.29],[35.82,127.15],[35.97,126.74],[35.16,126.85],[34.81,126.39],[34.76,127.66],[34.95,127.49],[35.87,128.60],[36.57,128.73],[36.02,129.36],[35.86,129.21],[35.54,129.31],[35.18,129.08],[35.23,128.68],[33.50,126.53]];
 const WORLD_CITIES=[[35.68,139.69],[39.90,116.40],[31.23,121.47],[14.60,120.98],[3.14,101.69],[1.35,103.82],[-6.21,106.85],[13.76,100.50],[28.61,77.21],[19.08,72.88],[25.20,55.27],[30.04,31.24],[-1.29,36.82],[-26.20,28.05],[6.52,3.38],[33.57,-7.59],[51.51,-0.13],[48.86,2.35],[52.52,13.40],[40.42,-3.70],[41.90,12.50],[52.23,21.01],[41.01,28.98],[55.76,37.62],[40.71,-74.01],[43.65,-79.38],[41.88,-87.63],[34.05,-118.24],[19.43,-99.13],[4.71,-74.07],[-12.05,-77.04],[-23.55,-46.63],[-34.60,-58.38],[-33.87,151.21],[-36.85,174.76]];
 const WONJU=[37.34,127.92];
+/* the plane heads west over Asia and Africa and slips over the horizon; no host city is named */
+const FLIGHT=[[37.34,127.92],[40,104],[36,78],[30,52],[20,26],[8,2],[-4,-22],[-12,-40]];
 let END=null;
 function loadThree(){return new Promise((res,rej)=>{if(window.THREE)return res();const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';s.onload=()=>res();s.onerror=()=>rej(new Error('three'));document.head.appendChild(s);});}
 function ending(){
-  if(END)return;closeOv();for(const k in keys)keys[k]=false;
+  if(END)return;if(ovOpen)closeOv();for(const k in keys)keys[k]=false;
   const box=document.createElement('div');box.className='ending3d';box.innerHTML='<canvas></canvas><div class="endcap show">불러오는 중…</div><button class="hb endclose">닫기</button>';frame.appendChild(box);
   END={box,raf:0,renderer:null};box.querySelector('.endclose').addEventListener('click',endClose);
-  loadThree().then(()=>startEnding(box)).catch(()=>{box.querySelector('.endcap').innerHTML='3D 엔딩을 불러오지 못했어요.<small>인터넷 연결을 확인한 뒤 다시 열어 주세요</small>';});
+  loadThree().then(()=>startEnding(box)).catch(()=>{box.querySelector('.endcap').innerHTML='3D 엔딩을 불러오지 못했어요.<small>인터넷 연결을 확인한 뒤 다시 탑승해 주세요</small>';});
 }
-function endClose(){if(!END)return;cancelAnimationFrame(END.raf);try{if(END.renderer)END.renderer.dispose();}catch(e){}END.box.remove();END=null;}
+function endClose(){if(!END)return;cancelAnimationFrame(END.raf);try{if(END.renderer)END.renderer.dispose();}catch(e){}END.box.remove();END=null;hud();afterClose();}
 function startEnding(box){
   const cv3=box.querySelector('canvas'),cap=box.querySelector('.endcap');
   const renderer=new THREE.WebGLRenderer({canvas:cv3,antialias:true});renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
@@ -1006,28 +1429,47 @@ function startEnding(box){
   const mkPts=(str,r)=>{const a=str.split(',').map(Number);const arr=[];for(let i=0;i<a.length;i+=2){const v=ll(a[i+1]/10,a[i]/10,r);arr.push(v.x,v.y,v.z);}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(arr,3));return g;};
   scene.add(new THREE.Points(mkPts(GEO_WORLD,1.004),new THREE.PointsMaterial({color:0xE8E2D2,size:2.6,sizeAttenuation:false,transparent:true,opacity:0.8})));
   scene.add(new THREE.Points(mkPts(GEO_KR,1.005),new THREE.PointsMaterial({color:0xFFC222,size:2.8,sizeAttenuation:false,transparent:true,opacity:0.95})));
-  const P=ll(WONJU[0],WONJU[1],1.006);const pin=new THREE.Mesh(new THREE.SphereGeometry(0.0025,16,12),new THREE.MeshBasicMaterial({color:0xFFC222}));pin.position.copy(P);scene.add(pin);
-  const ring=new THREE.Mesh(new THREE.RingGeometry(0.004,0.0055,32),new THREE.MeshBasicMaterial({color:0xFFC222,transparent:true,opacity:0.8,side:THREE.DoubleSide}));ring.position.copy(P);ring.lookAt(P.clone().multiplyScalar(2));scene.add(ring);
-  const arcs=[];const mkArc=(a,b,color,opacity,t0,dur)=>{const S=ll(a[0],a[1],1.004),E=ll(b[0],b[1],1.004);const ang=S.angleTo(E);const M=S.clone().add(E).normalize().multiplyScalar(1+0.05+0.5*ang/Math.PI);const pts=new THREE.QuadraticBezierCurve3(S,M,E).getPoints(48);const g=new THREE.BufferGeometry().setFromPoints(pts);g.setDrawRange(0,0);const line=new THREE.Line(g,new THREE.LineBasicMaterial({color,transparent:true,opacity}));scene.add(line);const dot=new THREE.Mesh(new THREE.SphereGeometry(0.0018,8,6),new THREE.MeshBasicMaterial({color}));dot.position.copy(E);dot.visible=false;scene.add(dot);arcs.push({g,dot,t0,dur,n:49});};
+  const P0=ll(WONJU[0],WONJU[1],1.006);const pin=new THREE.Mesh(new THREE.SphereGeometry(0.0025,16,12),new THREE.MeshBasicMaterial({color:0xFFC222}));pin.position.copy(P0);scene.add(pin);
+  const ring=new THREE.Mesh(new THREE.RingGeometry(0.004,0.0055,32),new THREE.MeshBasicMaterial({color:0xFFC222,transparent:true,opacity:0.8,side:THREE.DoubleSide}));ring.position.copy(P0);ring.lookAt(P0.clone().multiplyScalar(2));scene.add(ring);
+  const arcs=[];const mkArc=(a,b,color,opacity,t0,dur)=>{const A=ll(a[0],a[1],1.004),B=ll(b[0],b[1],1.004);const ang=A.angleTo(B);const Mid=A.clone().add(B).normalize().multiplyScalar(1+0.05+0.5*ang/Math.PI);const pts=new THREE.QuadraticBezierCurve3(A,Mid,B).getPoints(48);const g=new THREE.BufferGeometry().setFromPoints(pts);g.setDrawRange(0,0);const line=new THREE.Line(g,new THREE.LineBasicMaterial({color,transparent:true,opacity}));scene.add(line);const dot=new THREE.Mesh(new THREE.SphereGeometry(0.0018,8,6),new THREE.MeshBasicMaterial({color}));dot.position.copy(B);dot.visible=false;scene.add(dot);arcs.push({g,dot,t0,dur,n:49});};
   KR_CITIES.forEach((c,i)=>mkArc(WONJU,c,0xFFC222,0.95,1.3+i*0.07,0.9));
-  WORLD_CITIES.forEach((c,i)=>mkArc(WONJU,c,0xF3EEE2,0.6,5.2+i*0.05,1.5));
+  WORLD_CITIES.forEach((c,i)=>mkArc(WONJU,c,0xF3EEE2,0.5,5.2+i*0.05,1.5));
+  /* the plane and its yellow trail */
+  const fpts=FLIGHT.map((p,i)=>{const u=i/(FLIGHT.length-1);return ll(p[0],p[1],1.02+0.07*Math.sin(Math.PI*Math.min(1,u*1.15)));});
+  const curve=new THREE.CatmullRomCurve3(fpts);const TRAIL=160;const tg=new THREE.BufferGeometry().setFromPoints(curve.getPoints(TRAIL));tg.setDrawRange(0,0);
+  scene.add(new THREE.Line(tg,new THREE.LineBasicMaterial({color:0xFFC222,transparent:true,opacity:0.9})));
+  const plane=new THREE.Group();const pm=new THREE.MeshBasicMaterial({color:0xF3EEE2}),ym=new THREE.MeshBasicMaterial({color:0xFFC222});
+  const body=new THREE.Mesh(new THREE.ConeGeometry(0.006,0.045,10),pm);body.rotation.x=Math.PI/2;plane.add(body);
+  const wing=new THREE.Mesh(new THREE.BoxGeometry(0.05,0.002,0.012),pm);plane.add(wing);
+  const tail=new THREE.Mesh(new THREE.BoxGeometry(0.018,0.002,0.008),ym);tail.position.z=-0.019;plane.add(tail);
+  const fin=new THREE.Mesh(new THREE.BoxGeometry(0.002,0.012,0.008),ym);fin.position.set(0,0.006,-0.019);plane.add(fin);
+  plane.visible=false;scene.add(plane);
+  const F0=5.6,F1=10.4;
   const ease=x=>x<0?0:x>1?1:(x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2);
-  const D2=()=>(camera.aspect<1?4.3:3.2);const camAt=t=>{if(t<4.6)return [36.5,128,1.32];if(t<8.6){const k=ease((t-4.6)/4);return [36.5+(20-36.5)*k,128+(60-128)*k,1.32+(D2()-1.32)*k];}return [20,60-(t-8.6)*7,D2()];};
-  const caps=[[0,'원주, 연세대 미래캠퍼스','WONJU'],[1.3,'전국 26개 대학, 그중 하나','ENACTUS KOREA · 26 UNIVERSITIES'],[5.2,'세계 36개국, 1,730개 대학','ENACTUS WORLD · 36 COUNTRIES']];
+  const D2=()=>(camera.aspect<1?4.3:3.2);const camAt=t=>{if(t<4.6)return [36.5,128,1.32];if(t<8.6){const k=ease((t-4.6)/4);return [36.5+(20-36.5)*k,128+(60-128)*k,1.32+(D2()-1.32)*k];}return [20,60-(t-8.6)*8,D2()];};
+  const caps=[[0,'원주, 연세대 미래캠퍼스','NATIONAL CHAMPION · ENACTUS YM'],[1.3,'전국 26개 대학을 대표해서','ENACTUS KOREA'],[5.2,'36개국 챔피언이 모이는 무대로','ENACTUS WORLD CUP'],[8.7,'다음 발자국은, 세계','WONJU → THE WORLD']];
   let capI=-1,card=false;const start=performance.now();END.renderer=renderer;sfx('ending');
   const resize=()=>{const w=box.clientWidth||320,hh=box.clientHeight||240;renderer.setSize(w,hh,false);camera.aspect=w/hh;camera.updateProjectionMatrix();};resize();
+  const nm=state.name||'OOO';
   const tick=()=>{if(!END)return;const t=(performance.now()-start)/1000;
     const [la,lo,d]=camAt(t);camera.position.copy(ll(la,lo,d));camera.lookAt(0,0,0);
     const kk=(d-1)/0.32;pin.scale.setScalar(kk);const s=kk*(1+0.35*Math.abs(Math.sin(t*3)));ring.scale.set(s,s,s);ring.material.opacity=0.9-0.5*Math.abs(Math.sin(t*3));
     arcs.forEach(a=>{const k=ease((t-a.t0)/a.dur);a.g.setDrawRange(0,Math.floor(k*a.n));if(k>=1){a.dot.visible=true;a.dot.scale.setScalar(kk);}});
-    let ci=-1;caps.forEach((c,i)=>{if(t>=c[0])ci=i;});if(ci!==capI){capI=ci;cap.classList.remove('show');setTimeout(()=>{cap.innerHTML=esc(caps[ci][1])+'<small>'+esc(caps[ci][2])+'</small>';cap.classList.add('show');},180);}
-    if(t>=8.8&&!card){card=true;cap.classList.remove('show');const ec=document.createElement('div');ec.className='endcard';ec.innerHTML='<div class="band"><span>Enactus YM</span><span>Wonju</span></div><div class="body"><div class="h-en" style="font-size:30px">Enactus YM</div><p>비즈니스로 만드는 더 나은 나, 더 나은 우리</p><p class="small" style="color:#5E6779">A head for business. A heart for the world.</p><p class="small" style="color:#5E6779">원주에서 전국 26개 대학으로, 세계 36개국 1,730개 대학으로</p><div class="row" style="justify-content:center;margin-top:6px"><button class="btn" id="endAgain">다시 보기</button><button class="btn ghost" id="endDone">닫기</button></div></div>';box.appendChild(ec);ec.querySelector('#endDone').addEventListener('click',endClose);ec.querySelector('#endAgain').addEventListener('click',()=>{endClose();ending();});sfx('done');state.flags.endingSeen=true;save();}
+    if(t>=F0){const u=Math.min(1,(t-F0)/(F1-F0)),ue=ease(u);const p=curve.getPointAt(Math.min(0.999,ue)),q=curve.getPointAt(Math.min(1,ue+0.001));plane.visible=u<1;plane.position.copy(p);plane.up.copy(p).normalize();plane.lookAt(q);plane.scale.setScalar(Math.max(1,d*0.85));tg.setDrawRange(0,Math.floor(ue*TRAIL)+1);}
+    let ci=-1;caps.forEach((c,i)=>{if(t>=c[0])ci=i;});if(ci!==capI){capI=ci;cap.classList.remove('show');setTimeout(()=>{if(!END||card)return;cap.innerHTML=esc(caps[ci][1])+'<small>'+esc(caps[ci][2])+'</small>';cap.classList.add('show');},180);}
+    if(t>=10.8&&!card){card=true;cap.classList.remove('show');const ec=document.createElement('div');ec.className='endcard';ec.innerHTML=`<div class="band"><span>World Cup Bound</span><span>Enactus YM</span></div><div class="body"><div class="hand" style="font-size:30px">네 옆자리 ${esc(nm)}${josa(state.name,'이','가')} 세상을 바꾼다</div><div class="h-en" style="font-size:28px">Enactus YM</div><p>원주에서 전국 26개 대학으로, 세계 36개국의 무대로</p><p class="small" style="color:#5E6779">A head for business. A heart for the world.</p><p class="small" style="color:#5E6779">히든 엔딩 · 게임 속 가상의 결말이에요. 진짜 발자국은 지금부터.</p><div class="row" style="justify-content:center;margin-top:6px"><button class="btn" id="endAgain">다시 보기</button><button class="btn ghost" id="endDone">닫기</button></div></div>`;box.appendChild(ec);ec.querySelector('#endDone').addEventListener('click',endClose);ec.querySelector('#endAgain').addEventListener('click',()=>{endClose();ending();});sfx('done');if(!state.flags.endingSeen){state.flags.endingSeen=true;save();}}
     if(Math.abs(box.clientWidth-renderer.domElement.width/renderer.getPixelRatio())>2)resize();
     renderer.render(scene,camera);END.raf=requestAnimationFrame(tick);};
   tick();
 }
 /* ================= BOOT ================= */
-function boot(data){state=(data&&data.v===2)?data:(load()||fresh());if(/debug=1/.test(location.search))window.__ff={get state(){return state;},tp:(x,y,d)=>{state.x=x*T;state.y=y*T;state.dir=d||'u';},act,ENT,stage:n=>setStage(n)};if(state.sim.stage===1&&state.started){/* intro interrupted */}recalc();hud();requestAnimationFrame(loop);if(!state.started)cover();else if(state.sim.stage===1)intro();}
+function boot(data){
+  state=(data&&data.v===3&&MAPS[data.map])?data:(load()||fresh());
+  if(!state.nc)state.nc={met:false,q:{},perfect:false};if(!state.feet)state.feet=[];if(!state.btried)state.btried={};
+  if(/debug=1/.test(location.search))window.__ff={get state(){return state;},tp:(x,y,d,m)=>{if(m)state.map=m;state.x=x*T;state.y=y*T;state.dir=d||'u';hud();},act,ENT,MAPS,CH,SOLID,newFor,interact,stage:n=>setStage(n),addPart,hud,objective,ending};
+  recalc();hud();requestAnimationFrame(loop);
+  if(!state.started)cover();else if(!state.flags.opened)opening();
+}
 if(window.claude&&window.claude.hot&&window.claude.hot.snapshot){window.claude.hot.snapshot(()=>state);}
 if(window.claude&&window.claude.hot&&window.claude.hot.ready){window.claude.hot.ready(boot);}else{boot(window.claude&&window.claude.hot?window.claude.hot.data:null);}
 })();

@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#15223B">
+<meta name="description" content="인액터스 YM 비즈니스 용어 25 퀴즈. 4지선다·OX·직접 입력, 빨리 맞힐수록 높은 점수.">
+<style>:root{padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px);background:#15223B}[hidden]{display:none!important}</style>
+<title>비즈 용어 25</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;600&family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+<style>
+/* Layout: one full-height stage (max 720px wide) on YM navy. Each question is a card with the prompt on top and a 2×2 grid of
+   colored shape tiles below, Kahoot-style; a single accent (YM yellow) marks the timer, streaks and the primary button. */
+:root{
+  --bg:#15223B; --bg2:#0E182B; --fg:#F3EEE2; --muted:#A9B2C4; --paper:#FCFAF4; --ink:#15223B; --line:#DAD1BC; --soft:#ECE5D2;
+  --yellow:#FFC222; --on-yellow:#15223B;
+  --red:#D7453A; --blue:#2F6FD6; --amber:#E0A33E; --green:#2E9E5B;
+  --good:#2E9E5B; --bad:#D7453A;
+  --serif:"EB Garamond","Times New Roman",Georgia,serif;
+  --sans:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --bg:#0E182B; --bg2:#0A1324; --paper:#F7F3EA; color-scheme:dark } }
+:root[data-theme="dark"]{ --bg:#0E182B; --bg2:#0A1324; --paper:#F7F3EA; color-scheme:dark }
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+h1,h2,h3,p{margin:0}
+h1,h2,h3{text-wrap:balance;line-height:1.25}
+.page{min-height:100%;max-width:720px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 28px;display:flex;flex-direction:column;gap:12px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.brand{font-family:var(--serif);letter-spacing:.14em;text-transform:uppercase;font-size:13px;font-weight:600;white-space:nowrap}
+.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(243,238,226,.35);border-radius:999px;padding:4px 11px;font-size:12.5px;font-weight:700;background:rgba(255,255,255,.05)}
+.pill.y{background:var(--yellow);color:var(--on-yellow);border-color:var(--yellow)}
+.hb{appearance:none;border:1px solid rgba(243,238,226,.4);background:transparent;color:var(--fg);border-radius:999px;padding:5px 11px;font-size:12.5px;font-weight:700}
+.stage{flex:1;display:flex;flex-direction:column;gap:12px}
+.card{background:var(--paper);color:var(--ink);border-radius:16px;padding:18px 18px 16px;display:flex;flex-direction:column;gap:12px;box-shadow:0 14px 40px rgba(0,0,0,.25)}
+.lab{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink)}
+.lab::before{content:"";width:0;height:0;border-left:7px solid var(--yellow);border-top:5px solid transparent;border-bottom:5px solid transparent}
+.h-en{font-family:var(--serif);text-transform:uppercase;letter-spacing:.06em;font-weight:500;font-size:clamp(34px,9vw,56px);line-height:1}
+.muted{color:#5E6779}
+.small{font-size:13px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row.end{justify-content:flex-end}
+.btn{appearance:none;border:0;border-radius:999px;padding:12px 20px;font-weight:800;font-size:15px;background:var(--ink);color:#F6F1E6;display:inline-flex;align-items:center;gap:8px}
+.btn.y{background:var(--yellow);color:var(--on-yellow)}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn.wide{width:100%;justify-content:center;padding-block:14px}
+.btn[disabled]{opacity:.45;cursor:default}
+.btn:active{transform:scale(.98)}
+input.nick{font:inherit;font-size:16px;padding:12px 14px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);width:100%}
+label.f{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:#5E6779}
+
+/* question */
+.qhead{display:flex;align-items:center;justify-content:space-between;gap:10px;color:var(--fg)}
+.qnum{font-family:var(--serif);font-size:20px;letter-spacing:.06em}
+.timer{position:relative;height:10px;background:rgba(255,255,255,.14);border-radius:5px;overflow:hidden}
+.timer i{display:block;height:100%;background:var(--yellow);width:100%;transform-origin:left;transition:transform .2s linear}
+.timer.hot i{background:var(--red)}
+.tcount{font-variant-numeric:tabular-nums;font-weight:900;font-size:22px;min-width:44px;text-align:right}
+.qtext{font-size:clamp(19px,5vw,25px);font-weight:800;line-height:1.35;color:var(--ink)}
+.qtype{font-size:12px;color:#5E6779;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.tile{appearance:none;border:0;border-radius:14px;min-height:96px;padding:14px 14px 14px 12px;color:#fff;font-weight:800;font-size:clamp(15px,4vw,18px);line-height:1.3;text-align:left;display:flex;gap:10px;align-items:flex-start;box-shadow:inset 0 -4px 0 rgba(0,0,0,.18);transition:transform .08s,opacity .3s,filter .3s;min-width:0}
+.tile span{min-width:0;overflow-wrap:anywhere}
+.tile:active{transform:scale(.98)}
+.tile.c0{background:var(--red)}.tile.c1{background:var(--blue)}.tile.c2{background:var(--amber)}.tile.c3{background:var(--green)}
+.tile .sh{flex:0 0 22px;width:22px;height:22px;margin-top:2px}
+.tile[disabled]{cursor:default}
+.tile.dim{opacity:.28;filter:saturate(.4)}
+.tile.ok{box-shadow:0 0 0 4px #fff,0 0 0 8px var(--green);transform:scale(1.02)}
+.tile.no{box-shadow:0 0 0 4px #fff,0 0 0 8px var(--red)}
+.tile .mark{margin-left:auto;font-size:22px;line-height:1}
+.typebox{display:flex;gap:8px}
+.typebox input{flex:1;font:inherit;font-size:20px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:12px 14px;border:2px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);min-width:0}
+.typebox input.ok{border-color:var(--green);background:#E3F3EA}
+.typebox input.no{border-color:var(--red);background:#F9E3E0}
+
+/* reveal */
+.reveal{display:flex;flex-direction:column;gap:8px;border-radius:14px;padding:14px 16px;background:var(--soft);color:var(--ink)}
+.reveal.good{background:#E3F3EA}.reveal.bad{background:#F9E3E0}
+.reveal .v{font-weight:900;font-size:18px;display:flex;align-items:center;gap:10px}
+.reveal.good .v{color:#1F7A45}.reveal.bad .v{color:#B4432F}
+.pts{margin-left:auto;font-variant-numeric:tabular-nums;font-weight:900;font-size:20px}
+.term{font-weight:800}
+.streak{display:inline-flex;align-items:center;gap:4px;font-weight:900;color:#B7791F}
+.scorebar{display:flex;justify-content:space-between;align-items:center;gap:10px;color:var(--fg);font-variant-numeric:tabular-nums}
+.scorebar b{font-size:20px}
+.autonext{height:4px;background:rgba(21,34,59,.15);border-radius:2px;overflow:hidden}
+.autonext i{display:block;height:100%;background:var(--ink);width:0;transition:width 3s linear}
+
+/* result */
+.big{font-family:var(--serif);font-size:clamp(56px,16vw,96px);line-height:1;font-weight:600;font-variant-numeric:tabular-nums}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.stat{background:var(--soft);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.stat .t{font-size:11px;color:#5E6779;letter-spacing:.08em;text-transform:uppercase;font-weight:700}
+.stat .v{font-weight:900;font-size:20px;font-variant-numeric:tabular-nums}
+.review{display:flex;flex-direction:column;gap:6px}
+.ri{display:flex;gap:10px;align-items:flex-start;padding:9px 11px;border-radius:10px;background:#fff;border:1px solid var(--line);font-size:14px}
+.ri .m{flex:0 0 22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:900;color:#fff;background:var(--green)}
+.ri.no .m{background:var(--red)}
+.ri .d{color:#5E6779;font-size:13px}
+.flash{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.fc{appearance:none;border:1px solid var(--line);background:#fff;border-radius:12px;padding:12px;text-align:left;min-height:84px;display:flex;flex-direction:column;gap:6px;color:var(--ink)}
+.fc b{font-size:15px}
+.fc span{font-size:12.5px;color:#5E6779;display:none}
+.fc.open span{display:block}
+.fc.open{background:var(--soft)}
+.toast{position:fixed;left:50%;bottom:max(24px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--yellow);color:var(--on-yellow);padding:8px 14px;border-radius:999px;font-size:13px;font-weight:800;z-index:4;opacity:0;transition:opacity .25s;pointer-events:none}
+.toast.show{opacity:1}
+.foot{font-family:var(--serif);letter-spacing:.14em;text-transform:uppercase;font-size:11px;color:var(--muted);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.fade{animation:fade .3s ease}
+@keyframes fade{from{opacity:.4;transform:translateY(6px)}to{opacity:1;transform:none}}
+.pop{animation:pop .5s ease}
+@keyframes pop{0%{transform:scale(.6)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+</head>
+<body>
+<div class="page">
+  <div class="top"><div class="brand">Enactus YM · Biz Quiz</div><div class="row" style="gap:6px"><span class="pill" id="best" hidden></span><button class="hb" id="bSound">소리</button></div></div>
+  <div class="stage" id="stage"></div>
+  <div class="toast" id="toast"></div>
+  <div class="foot"><span>25 terms · 3 formats</span><span>Wonju</span></div>
+</div>
+
+<script>
+(function(){
+'use strict';
+const KEY='ym-bizquiz-v1';
+const T=[
+ ['KPI','핵심성과지표, 목표 달성 정도를 측정하는 기준'],['ROI','투자 대비 수익률'],['M&A','기업 간 인수합병'],['IPO','기업의 주식시장 최초 상장'],['IR','투자자를 대상으로 기업 정보를 제공하는 활동'],
+ ['B2B','기업과 기업 간 거래'],['B2C','기업과 소비자 간 거래'],['C2C','소비자 간 거래'],['ESG','환경·사회·지배구조를 고려한 경영'],['BM','비즈니스 모델, 기업의 수익 창출 구조'],
+ ['SWOT 분석','강점·약점·기회·위협 분석'],['브랜딩','브랜드의 정체성과 이미지를 구축하는 활동'],['포지셔닝','소비자 인식 속에서 브랜드의 위치를 설정하는 전략'],['타깃팅','핵심 고객층을 선정하는 과정'],['CRM','고객관계관리'],
+ ['PMF','제품과 시장의 적합성'],['MVP','최소 기능 제품, 핵심 기능만 구현한 초기 제품'],['피벗(Pivot)','사업 방향이나 전략을 전환하는 것'],['스케일업','기업의 사업 규모를 빠르게 확대하는 것'],['캐시카우','안정적으로 수익을 창출하는 사업이나 제품'],
+ ['린 스타트업','최소한의 자원으로 빠르게 제품을 검증하는 경영 방식'],['손익분기점(BEP)','총수익과 총비용이 같아지는 지점'],['시장점유율','전체 시장에서 특정 기업이 차지하는 비율'],['네트워킹','사업적 관계와 인적 네트워크를 형성하는 활동'],['인사이트(Insight)','데이터나 현상 속에서 발견한 핵심적인 통찰'],
+];
+/* type: mc (4지선다) · ox · type (직접 입력). a = 정답 인덱스 / true·false / 정답 문자열 배열 */
+const Q=[
+ {n:1,type:'mc',q:'KPI는 무엇을 뜻할까요?',o:['핵심성과지표, 목표 달성 정도를 재는 기준','투자 대비 수익률','고객관계관리','핵심 기능만 넣은 초기 제품'],a:0,x:'Key Performance Indicator. 프로젝트의 목표를 숫자로 재는 기준이에요. 예: 인터뷰 50건, 첫 매출 30만 원.'},
+ {n:2,type:'type',q:"'투자 대비 수익률'을 뜻하는 영어 약자 세 글자는?",a:['ROI'],x:'Return On Investment. 투자한 돈 대비 얼마나 벌었는지를 뜻해요.'},
+ {n:3,type:'mc',q:"M&A에서 'A'는 무엇의 약자일까요?",o:['Acquisitions (인수)','Alliance (제휴)','Assets (자산)','Audit (감사)'],a:0,x:'Mergers & Acquisitions. 기업 간 인수합병이에요.'},
+ {n:4,type:'ox',q:'IPO는 기업이 주식시장에 처음으로 상장하는 것을 말한다.',a:true,x:'Initial Public Offering. 기업의 주식시장 최초 상장이에요.'},
+ {n:5,type:'mc',q:'다음 중 IR 활동에 가장 가까운 것은?',o:['투자자에게 회사 실적과 계획을 설명하는 설명회','소비자에게 신제품을 알리는 광고','신입 직원 교육 프로그램','경쟁사 가격 조사'],a:0,x:'Investor Relations. 투자자를 대상으로 기업 정보를 제공하는 활동이에요.'},
+ {n:6,type:'mc',q:'원주의 한 스타트업이 만든 친환경 포장재를 식품 회사에 납품한다면, 이 거래는?',o:['B2B','B2C','C2C','ESG'],a:0,x:'Business to Business. 기업과 기업 간 거래예요.'},
+ {n:7,type:'mc',q:'비누 회사가 온라인몰에서 소비자에게 직접 판매한다면?',o:['B2C','B2B','C2C','M&A'],a:0,x:'Business to Consumer. 기업과 소비자 간 거래예요.'},
+ {n:8,type:'mc',q:'중고 거래 앱에서 개인이 개인에게 자전거를 파는 거래는?',o:['C2C','B2C','B2B','IPO'],a:0,x:'Consumer to Consumer. 소비자 간 거래예요.'},
+ {n:9,type:'type',q:'환경(E)·사회(S)·지배구조(G)를 고려한 경영을 뜻하는 약자는?',a:['ESG'],x:'Environmental, Social, Governance. 환경·사회·지배구조를 고려한 경영이에요.'},
+ {n:10,type:'mc',q:"'누가 돈을 내고, 무엇을 주고, 어떻게 수익이 남는가'를 한 장에 정리한 것은?",o:['BM (비즈니스 모델)','KPI','IR','SWOT 분석'],a:0,x:'Business Model. 기업의 수익 창출 구조예요. 인액터스 프로젝트도 BM 한 장에서 시작해요.'},
+ {n:11,type:'mc',q:"SWOT 분석에서 'O'는?",o:['Opportunities (기회)','Operations (운영)','Objectives (목표)','Outcomes (결과)'],a:0,x:'Strengths·Weaknesses·Opportunities·Threats. 강점·약점·기회·위협 분석이에요.'},
+ {n:12,type:'ox',q:'브랜딩은 로고를 예쁘게 만드는 일만을 뜻한다.',a:false,x:'브랜딩은 로고를 넘어 브랜드의 정체성과 이미지를 구축하는 활동 전체예요.'},
+ {n:13,type:'mc',q:"'우리 카페는 공부하기 좋은 조용한 카페'로 손님의 머릿속에 자리 잡게 하는 전략은?",o:['포지셔닝','타깃팅','스케일업','네트워킹'],a:0,x:'포지셔닝. 소비자 인식 속에서 브랜드의 위치를 설정하는 전략이에요.'},
+ {n:14,type:'mc',q:"'20대 자취생'을 핵심 고객으로 정하는 과정은?",o:['타깃팅','포지셔닝','브랜딩','피벗'],a:0,x:'타깃팅. 핵심 고객층을 선정하는 과정이에요.'},
+ {n:15,type:'type',q:"'고객관계관리'를 뜻하는 영어 약자는?",a:['CRM'],x:'Customer Relationship Management. 고객관계관리예요.'},
+ {n:16,type:'ox',q:"PMF는 '우리가 만든 제품을 시장이 정말 원하는가'가 확인된 상태를 말한다.",a:true,x:'Product-Market Fit. 제품과 시장의 적합성이에요.'},
+ {n:17,type:'mc',q:'MVP는 어떤 제품일까요?',o:['핵심 기능만 넣어 빠르게 검증하는 초기 제품','모든 기능을 완성한 최종 제품','가장 비싼 프리미엄 제품','시장점유율 1위 제품'],a:0,x:'Minimum Viable Product. 최소 기능 제품, 핵심 기능만 구현한 초기 제품이에요.'},
+ {n:18,type:'mc',q:"시장 반응을 보고 '어르신 반찬 배달'에서 '어르신 장보기 동행'으로 사업 방향을 바꿨다. 이것은?",o:['피벗 (Pivot)','스케일업','캐시카우','포지셔닝'],a:0,x:'피벗. 사업 방향이나 전략을 전환하는 것이에요.'},
+ {n:19,type:'mc',q:'원주 매장 1곳에서 검증한 뒤 전국 30곳으로 빠르게 확대하는 것은?',o:['스케일업','피벗','린 스타트업','IPO'],a:0,x:'스케일업. 기업의 사업 규모를 빠르게 확대하는 것이에요.'},
+ {n:20,type:'ox',q:'캐시카우는 안정적으로 수익을 내 주는 사업이나 제품을 말한다.',a:true,x:'캐시카우(젖소). 꾸준히 돈을 벌어다 주는 사업이나 제품이에요.'},
+ {n:21,type:'mc',q:'최소한의 자원으로 빠르게 만들고, 측정하고, 배우기를 반복하는 경영 방식은?',o:['린 스타트업','스케일업','CRM','M&A'],a:0,x:'린 스타트업. 최소한의 자원으로 빠르게 제품을 검증하는 경영 방식이에요.'},
+ {n:22,type:'type',q:"총수익과 총비용이 같아지는 지점, '손익분기점'의 영어 약자는?",a:['BEP'],x:'Break-Even Point. 총수익과 총비용이 같아지는 지점이에요.'},
+ {n:23,type:'mc',q:'원주 커피 시장 전체 매출이 100억 원, A카페가 20억 원이면 A의 시장점유율은?',o:['20%','2%','80%','5배'],a:0,x:'시장점유율 = 우리 매출 ÷ 전체 시장 매출. 20 ÷ 100 = 20%.'},
+ {n:24,type:'ox',q:'경영에서 네트워킹은 인터넷 회선을 연결하는 기술을 뜻한다.',a:false,x:'네트워킹은 사업적 관계와 인적 네트워크를 형성하는 활동이에요. SC에서 알럼나이를 만나는 것도 네트워킹.'},
+ {n:25,type:'mc',q:"인터뷰 50건을 읽다가 '어르신의 진짜 문제는 외로움이 아니라 장보기'라는 걸 발견했다. 이 발견은?",o:['인사이트 (Insight)','데이터','KPI','피벗'],a:0,x:'인사이트. 데이터나 현상 속에서 발견한 핵심적인 통찰이에요.'},
+];
+const LIMIT={mc:20,ox:10,type:25};
+const SHAPES=['<svg class="sh" viewBox="0 0 24 24"><path d="M12 3 22 21H2z" fill="#fff"/></svg>','<svg class="sh" viewBox="0 0 24 24"><path d="M12 2l10 10-10 10L2 12z" fill="#fff"/></svg>','<svg class="sh" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#fff"/></svg>','<svg class="sh" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" fill="#fff"/></svg>'];
+const stage=document.getElementById('stage');
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+let toastT;function toast(m){const el=document.getElementById('toast');el.textContent=m;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),1800);}
+/* ---------- audio ---------- */
+const SND={ctx:null,on:true,master:null};
+try{SND.on=localStorage.getItem('ym-bizquiz-sound')!=='off';}catch(e){}
+function audioInit(){if(SND.ctx){if(SND.ctx.state==='suspended')SND.ctx.resume();return;}try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;SND.ctx=new C();SND.master=SND.ctx.createGain();SND.master.gain.value=SND.on?1:0;SND.master.connect(SND.ctx.destination);}catch(e){}}
+function osc(f,start,dur,type,gain,slide){const c=SND.ctx;const o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.setValueAtTime(f,start);if(slide)o.frequency.exponentialRampToValueAtTime(slide,start+dur);g.gain.setValueAtTime(0.0001,start);g.gain.exponentialRampToValueAtTime(gain,start+0.012);g.gain.exponentialRampToValueAtTime(0.0001,start+dur);o.connect(g);g.connect(SND.master);o.start(start);o.stop(start+dur+0.03);}
+function sfx(n){if(!SND.ctx||!SND.on)return;const t=SND.ctx.currentTime;try{switch(n){
+ case 'tick':osc(1200,t,0.04,'square',0.03);break;
+ case 'ok':osc(659,t,0.1,'triangle',0.09);osc(880,t+0.1,0.12,'triangle',0.09);osc(1318,t+0.22,0.22,'triangle',0.09);break;
+ case 'no':osc(196,t,0.25,'sawtooth',0.06,140);break;
+ case 'streak':[880,1108,1318,1760].forEach((f,i)=>osc(f,t+i*0.06,0.14,'triangle',0.07));break;
+ case 'go':osc(523,t,0.08,'square',0.04);osc(784,t+0.1,0.14,'square',0.04);break;
+ case 'end':[523,659,784,1046,1318].forEach((f,i)=>osc(f,t+i*0.12,0.5,'triangle',0.08));break;
+}}catch(e){}}
+function toggleSound(){SND.on=!SND.on;try{localStorage.setItem('ym-bizquiz-sound',SND.on?'on':'off');}catch(e){}if(SND.master)SND.master.gain.value=SND.on?1:0;document.getElementById('bSound').textContent=SND.on?'소리':'소리 끔';toast(SND.on?'소리 켬':'소리 끔');}
+document.getElementById('bSound').textContent=SND.on?'소리':'소리 끔';
+document.getElementById('bSound').addEventListener('click',()=>{audioInit();toggleSound();});
+/* ---------- state ---------- */
+let G=null,timer=null,nick='';
+function best(){try{return JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){return null;}}
+function showBest(){const b=best();const el=document.getElementById('best');if(b){el.hidden=false;el.textContent=`최고 ${b.score.toLocaleString()}점 · ${b.nick}`;}else el.hidden=true;}
+function startGame(list){
+  G={order:list,i:0,score:0,correct:0,streak:0,bestStreak:0,log:[],started:Date.now()};
+  sfx('go');question();
+}
+/* ---------- screens ---------- */
+function home(){
+  clearInterval(timer);showBest();
+  stage.innerHTML=`<div class="card fade">
+    <span class="lab">Enactus YM</span>
+    <h1 class="h-en">Biz<br>Quiz 25</h1>
+    <p>비즈니스 용어 25개를 퀴즈로 익혀요. 4지선다, OX, 직접 입력이 섞여 나오고, 빨리 맞힐수록 점수가 높아요. 한 판에 5분.</p>
+    <div class="row" style="gap:6px"><span class="pill" style="color:var(--ink);border-color:var(--line)">문제당 10~25초</span><span class="pill" style="color:var(--ink);border-color:var(--line)">정답 최대 1,000점</span><span class="pill" style="color:var(--ink);border-color:var(--line)">연속 정답 보너스</span></div>
+    <label class="f">닉네임 (선택)<input class="nick" id="nick" maxlength="12" placeholder="예: 인액이" value="${esc(nick)}" autocomplete="off"></label>
+    <button class="btn y wide" id="go">시작하기</button>
+    <div class="row"><button class="btn ghost" id="cards">용어 카드 25장 훑어보기</button></div>
+    </div>`;
+  const inp=stage.querySelector('#nick');
+  stage.querySelector('#go').addEventListener('click',()=>{nick=inp.value.trim().slice(0,12)||'플레이어';audioInit();startGame(shuffle(Q));});
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter')stage.querySelector('#go').click();});
+  stage.querySelector('#cards').addEventListener('click',cards);
+}
+function cards(){
+  stage.innerHTML=`<div class="card fade"><span class="lab">Flashcards</span><h2>용어 카드 25장</h2><p class="small muted">카드를 누르면 뜻이 보여요. 다 보고 나면 퀴즈로.</p>
+    <div class="flash">${T.map((t,i)=>`<button class="fc" data-i="${i}"><b>${esc(t[0])}</b><span>${esc(t[1])}</span></button>`).join('')}</div>
+    <div class="row"><button class="btn y" id="go">퀴즈 시작</button><button class="btn ghost" id="home">처음으로</button></div></div>`;
+  stage.querySelectorAll('.fc').forEach(b=>b.addEventListener('click',()=>b.classList.toggle('open')));
+  stage.querySelector('#go').addEventListener('click',()=>{nick=nick||'플레이어';audioInit();startGame(shuffle(Q));});
+  stage.querySelector('#home').addEventListener('click',home);
+}
+function question(){
+  const q=G.order[G.i];const limit=LIMIT[q.type];const total=G.order.length;
+  let opts=null;
+  if(q.type==='mc'){const idx=shuffle([0,1,2,3]);opts=idx.map(i=>({t:q.o[i],ok:i===q.a}));}
+  const typeLabel={mc:'4지선다 · 하나만 고르세요',ox:'OX · 맞으면 O, 틀리면 X',type:'직접 입력 · 영어 약자를 쓰세요'}[q.type];
+  stage.innerHTML=`<div class="qhead"><span class="qnum num">Q ${G.i+1} / ${total}</span><span class="scorebar"><span class="small" style="color:var(--muted)">점수</span> <b class="num">${G.score.toLocaleString()}</b>${G.streak>=2?`<span class="streak">🔥${G.streak}</span>`:''}</span></div>
+    <div class="row" style="gap:10px;flex-wrap:nowrap"><div class="timer" id="timer" style="flex:1"><i id="tbar"></i></div><span class="tcount" id="tcount">${limit}</span></div>
+    <div class="card fade" id="qcard"><span class="qtype">${typeLabel}</span><div class="qtext">${esc(q.q)}</div>
+    ${q.type==='mc'?`<div class="grid">${opts.map((o,i)=>`<button class="tile c${i}" data-i="${i}">${SHAPES[i]}<span>${esc(o.t)}</span></button>`).join('')}</div>`:''}
+    ${q.type==='ox'?`<div class="grid two"><button class="tile c1" data-ox="1" style="justify-content:center;align-items:center;font-size:40px">O</button><button class="tile c0" data-ox="0" style="justify-content:center;align-items:center;font-size:40px">X</button></div>`:''}
+    ${q.type==='type'?`<div class="typebox"><input id="ans" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="약자 입력"><button class="btn y" id="submit">확인</button></div><p class="small muted">대소문자는 상관없어요. Enter로도 제출.</p>`:''}
+    <div id="reveal"></div></div>`;
+  const t0=Date.now();let answered=false;
+  const tbar=stage.querySelector('#tbar'),tc=stage.querySelector('#tcount'),tm=stage.querySelector('#timer');
+  clearInterval(timer);
+  timer=setInterval(()=>{const el=(Date.now()-t0)/1000;const left=Math.max(0,limit-el);tbar.style.transform=`scaleX(${left/limit})`;const s=Math.ceil(left);if(tc.textContent!==String(s)){tc.textContent=s;if(s<=5&&s>0)sfx('tick');}if(s<=5)tm.classList.add('hot');if(left<=0&&!answered){answered=true;clearInterval(timer);settle(q,null,limit,opts);}},100);
+  const answer=(val)=>{if(answered)return;answered=true;clearInterval(timer);const el=Math.min(limit,(Date.now()-t0)/1000);settle(q,val,el,opts);};
+  stage.querySelectorAll('.tile[data-i]').forEach(b=>b.addEventListener('click',()=>answer(+b.dataset.i)));
+  stage.querySelectorAll('.tile[data-ox]').forEach(b=>b.addEventListener('click',()=>answer(b.dataset.ox==='1')));
+  const inp=stage.querySelector('#ans');if(inp){inp.focus();const sub=()=>answer(inp.value);stage.querySelector('#submit').addEventListener('click',sub);inp.addEventListener('keydown',e=>{if(e.key==='Enter')sub();});}
+  window.onkeydown=e=>{if(answered)return;if(q.type==='mc'&&/^[1-4]$/.test(e.key)){answer(+e.key-1);}else if(q.type==='ox'&&(e.key==='o'||e.key==='O'))answer(true);else if(q.type==='ox'&&(e.key==='x'||e.key==='X'))answer(false);};
+}
+function norm(s){return String(s||'').toUpperCase().replace(/[^A-Z0-9&]/g,'');}
+function settle(q,val,el,opts){
+  const limit=LIMIT[q.type];let ok=false,timeout=val===null;
+  if(!timeout){if(q.type==='mc')ok=opts[val].ok;else if(q.type==='ox')ok=val===q.a;else ok=q.a.some(a=>norm(a)===norm(val));}
+  let pts=0,bonus=0;
+  if(ok){pts=Math.round(1000*(1-(el/limit)/2));G.streak++;if(G.streak>=2){bonus=100*Math.min(G.streak-1,5);}G.correct++;G.bestStreak=Math.max(G.bestStreak,G.streak);}else G.streak=0;
+  G.score+=pts+bonus;G.log.push({n:q.n,ok,pts:pts+bonus,el:Math.round(el*10)/10});
+  sfx(ok?(G.streak>=3?'streak':'ok'):'no');
+  /* mark tiles */
+  if(q.type==='mc'){stage.querySelectorAll('.tile[data-i]').forEach(b=>{const i=+b.dataset.i;b.disabled=true;if(opts[i].ok){b.classList.add('ok');b.insertAdjacentHTML('beforeend','<span class="mark">✓</span>');}else if(i===val){b.classList.add('no');b.insertAdjacentHTML('beforeend','<span class="mark">✗</span>');}else b.classList.add('dim');});}
+  if(q.type==='ox'){stage.querySelectorAll('.tile[data-ox]').forEach(b=>{const v=b.dataset.ox==='1';b.disabled=true;if(v===q.a)b.classList.add('ok');else if(v===val)b.classList.add('no');else b.classList.add('dim');});}
+  if(q.type==='type'){const inp=stage.querySelector('#ans');inp.disabled=true;inp.classList.add(ok?'ok':'no');stage.querySelector('#submit').disabled=true;}
+  const term=T[q.n-1];
+  const last=G.i+1>=G.order.length;
+  stage.querySelector('#reveal').innerHTML=`<div class="reveal ${ok?'good':'bad'} fade"><div class="v">${ok?'정답!':timeout?'시간 초과':'아쉽다'}${G.streak>=2?`<span class="streak">🔥 ${G.streak}연속</span>`:''}<span class="pts">${ok?'+'+(pts+bonus).toLocaleString():'+0'}</span></div>
+    ${!ok&&q.type==='type'?`<p>정답: <b>${esc(q.a[0])}</b></p>`:''}
+    <p><span class="term">${esc(term[0])}</span> — ${esc(term[1])}</p><p class="small muted">${esc(q.x)}</p>
+    ${bonus?`<p class="small"><b>연속 정답 보너스 +${bonus}</b> (최대 +500)</p>`:''}
+    <div class="row end"><button class="btn" id="next">${last?'결과 보기':'다음 문제'}</button></div>
+    <div class="autonext"><i id="auto"></i></div></div>`;
+  const go=()=>{clearTimeout(autoT);window.onkeydown=null;G.i++;if(G.i>=G.order.length)result();else question();};
+  stage.querySelector('#next').addEventListener('click',go);
+  requestAnimationFrame(()=>{const a=stage.querySelector('#auto');if(a)a.style.width='100%';});
+  const autoT=setTimeout(go,ok?3200:5200);
+  window.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}};
+  stage.querySelector('#reveal').scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+function result(){
+  clearInterval(timer);window.onkeydown=null;sfx('end');
+  const total=G.order.length,acc=Math.round(G.correct/total*100),secs=Math.round((Date.now()-G.started)/1000);
+  const grade=G.correct===total?['용어 마스터','25개 전부. 이제 후배에게 설명해 줘도 돼요.']:G.correct>=20?['비즈 리더','거의 다 알아요. 틀린 것만 한 번 더.']:G.correct>=15?['성장 중','절반은 넘었어요. 카드 훑고 다시 한 판.']:['첫 걸음','용어 카드부터 한 바퀴 돌고 와요.'];
+  const b=best();let isBest=false;if(!b||G.score>b.score){isBest=true;try{localStorage.setItem(KEY,JSON.stringify({score:G.score,nick,correct:G.correct,date:Date.now()}));}catch(e){}}
+  showBest();
+  const wrong=G.log.filter(l=>!l.ok).map(l=>l.n);
+  stage.innerHTML=`<div class="card fade" style="align-items:center;text-align:center">
+    <span class="lab">Result · ${esc(nick)}</span>
+    <div class="big pop num">${G.score.toLocaleString()}</div>
+    <div style="font-weight:900;font-size:20px">${grade[0]}</div><p class="muted">${grade[1]}</p>
+    ${isBest?'<span class="pill y">내 최고 기록 갱신</span>':''}
+    <div class="stats" style="width:100%"><div class="stat"><span class="t">정답</span><span class="v num">${G.correct} / ${total}</span></div><div class="stat"><span class="t">정확도</span><span class="v num">${acc}%</span></div><div class="stat"><span class="t">최고 연속</span><span class="v num">${G.bestStreak}</span></div></div>
+    <p class="small muted">걸린 시간 ${Math.floor(secs/60)}분 ${secs%60}초</p>
+    <div class="row" style="justify-content:center"><button class="btn y" id="again">다시 하기</button>${wrong.length?`<button class="btn" id="wrong">틀린 ${wrong.length}개만 다시</button>`:''}<button class="btn ghost" id="home">처음으로</button></div>
+    </div>
+    <div class="card fade"><span class="lab">Review</span><h3>문제별 결과</h3><div class="review">${G.order.map((q,i)=>{const l=G.log[i];const t=T[q.n-1];return `<div class="ri ${l.ok?'':'no'}"><span class="m">${l.ok?'✓':'✗'}</span><div><b>${esc(t[0])}</b> <span class="small muted num">${l.ok?'+'+l.pts.toLocaleString()+' · '+l.el+'초':'0점'}</span><div class="d">${esc(t[1])}</div></div></div>`;}).join('')}</div></div>`;
+  stage.querySelector('#again').addEventListener('click',()=>startGame(shuffle(Q)));
+  const w=stage.querySelector('#wrong');if(w)w.addEventListener('click',()=>startGame(shuffle(Q.filter(q=>wrong.includes(q.n)))));
+  stage.querySelector('#home').addEventListener('click',home);
+  window.scrollTo({top:0});
+}
+home();
+})();
+</script>
+</body>
+</html>

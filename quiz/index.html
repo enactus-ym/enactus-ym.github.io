@@ -227,22 +227,26 @@ function question(){
   let opts=null;
   if(q.type==='mc'){const idx=shuffle([0,1,2,3]);opts=idx.map(i=>({t:q.o[i],ok:i===q.a}));}
   const typeLabel={mc:'4지선다 · 하나만 고르세요',ox:'OX · 맞으면 O, 틀리면 X',type:'직접 입력 · 영어 약자를 쓰세요'}[q.type];
-  stage.innerHTML=`<div class="qhead"><span class="qnum num">Q ${G.i+1} / ${total}</span><span class="scorebar"><span class="small" style="color:var(--muted)">점수</span> <b class="num">${G.score.toLocaleString()}</b>${G.streak>=2?`<span class="streak">🔥${G.streak}</span>`:''}</span></div>
+  stage.innerHTML=`<div class="qhead"><span class="row" style="gap:8px"><span class="qnum num">Q ${G.i+1} / ${total}</span><button class="hb" id="quit">포기</button></span><span class="scorebar"><span class="small" style="color:var(--muted)">점수</span> <b class="num">${G.score.toLocaleString()}</b>${G.streak>=2?`<span class="streak">🔥${G.streak}</span>`:''}</span></div>
     <div class="row" style="gap:10px;flex-wrap:nowrap"><div class="timer" id="timer" style="flex:1"><i id="tbar"></i></div><span class="tcount" id="tcount">${limit}</span></div>
     <div class="card fade" id="qcard"><span class="qtype">${typeLabel}</span><div class="qtext">${esc(q.q)}</div>
     ${q.type==='mc'?`<div class="grid">${opts.map((o,i)=>`<button class="tile c${i}" data-i="${i}">${SHAPES[i]}<span>${esc(o.t)}</span></button>`).join('')}</div>`:''}
     ${q.type==='ox'?`<div class="grid two"><button class="tile c1" data-ox="1" style="justify-content:center;align-items:center;font-size:40px">O</button><button class="tile c0" data-ox="0" style="justify-content:center;align-items:center;font-size:40px">X</button></div>`:''}
     ${q.type==='type'?`<div class="typebox"><input id="ans" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="약자 입력"><button class="btn y" id="submit">확인</button></div><p class="small muted">대소문자는 상관없어요. Enter로도 제출.</p>`:''}
     <div id="reveal"></div></div>`;
-  const t0=Date.now();let answered=false;
+  let t0=Date.now();let answered=false,paused=false,pausedAt=0;
   const tbar=stage.querySelector('#tbar'),tc=stage.querySelector('#tcount'),tm=stage.querySelector('#timer');
   clearInterval(timer);
-  timer=setInterval(()=>{const el=(Date.now()-t0)/1000;const left=Math.max(0,limit-el);tbar.style.transform=`scaleX(${left/limit})`;const s=Math.ceil(left);if(tc.textContent!==String(s)){tc.textContent=s;if(s<=5&&s>0)sfx('tick');}if(s<=5)tm.classList.add('hot');if(left<=0&&!answered){answered=true;clearInterval(timer);settle(q,null,limit,opts);}},100);
-  const answer=(val)=>{if(answered)return;answered=true;clearInterval(timer);const el=Math.min(limit,(Date.now()-t0)/1000);settle(q,val,el,opts);};
+  timer=setInterval(()=>{if(paused)return;const el=(Date.now()-t0)/1000;const left=Math.max(0,limit-el);tbar.style.transform=`scaleX(${left/limit})`;const s=Math.ceil(left);if(tc.textContent!==String(s)){tc.textContent=s;if(s<=5&&s>0)sfx('tick');}if(s<=5)tm.classList.add('hot');if(left<=0&&!answered){answered=true;clearInterval(timer);settle(q,null,limit,opts);}},100);
+  const answer=(val)=>{if(answered||paused)return;answered=true;clearInterval(timer);const el=Math.min(limit,(Date.now()-t0)/1000);settle(q,val,el,opts);};
+  stage.querySelector('#quit').addEventListener('click',()=>{if(answered||paused)return;paused=true;pausedAt=Date.now();const qc=stage.querySelector('#qcard');const box=document.createElement('div');box.className='card fade';box.id='quitbox';box.innerHTML=`<span class="lab">Give up?</span><div class="qtext" style="font-size:20px">여기서 그만할까요?</div><p class="small muted">지금까지 ${G.log.length}문제를 풀었고 ${G.score.toLocaleString()}점이에요. 남은 문제는 틀린 것으로 기록돼요.</p><div class="row"><button class="btn" id="q-result">그만하고 결과 보기</button><button class="btn ghost" id="q-home">처음으로</button><button class="btn y" id="q-resume">계속하기</button></div>`;qc.insertAdjacentElement('beforebegin',box);qc.hidden=true;
+    box.querySelector('#q-resume').addEventListener('click',()=>{t0+=Date.now()-pausedAt;paused=false;box.remove();qc.hidden=false;const inp=stage.querySelector('#ans');if(inp)inp.focus();});
+    box.querySelector('#q-result').addEventListener('click',()=>{clearInterval(timer);window.onkeydown=null;G.quit=true;result();});
+    box.querySelector('#q-home').addEventListener('click',()=>{clearInterval(timer);window.onkeydown=null;G=null;home();});});
   stage.querySelectorAll('.tile[data-i]').forEach(b=>b.addEventListener('click',()=>answer(+b.dataset.i)));
   stage.querySelectorAll('.tile[data-ox]').forEach(b=>b.addEventListener('click',()=>answer(b.dataset.ox==='1')));
   const inp=stage.querySelector('#ans');if(inp){inp.focus();const sub=()=>answer(inp.value);stage.querySelector('#submit').addEventListener('click',sub);inp.addEventListener('keydown',e=>{if(e.key==='Enter')sub();});}
-  window.onkeydown=e=>{if(answered)return;if(q.type==='mc'&&/^[1-4]$/.test(e.key)){answer(+e.key-1);}else if(q.type==='ox'&&(e.key==='o'||e.key==='O'))answer(true);else if(q.type==='ox'&&(e.key==='x'||e.key==='X'))answer(false);};
+  window.onkeydown=e=>{if(answered||paused)return;if(q.type==='mc'&&/^[1-4]$/.test(e.key)){answer(+e.key-1);}else if(q.type==='ox'&&(e.key==='o'||e.key==='O'))answer(true);else if(q.type==='ox'&&(e.key==='x'||e.key==='X'))answer(false);};
 }
 function norm(s){return String(s||'').toUpperCase().replace(/[^A-Z0-9&]/g,'');}
 function settle(q,val,el,opts){
@@ -273,21 +277,22 @@ function settle(q,val,el,opts){
 }
 function result(){
   clearInterval(timer);window.onkeydown=null;sfx('end');
-  const total=G.order.length,acc=Math.round(G.correct/total*100),secs=Math.round((Date.now()-G.started)/1000);
+  const total=G.order.length,answered=G.log.length,skipped=total-answered,acc=Math.round(G.correct/total*100),secs=Math.round((Date.now()-G.started)/1000);
+  while(G.log.length<total){G.log.push({n:G.order[G.log.length].n,ok:false,pts:0,el:0,skip:true});}
   const grade=G.correct===total?['용어 마스터','25개 전부. 이제 후배에게 설명해 줘도 돼요.']:G.correct>=20?['비즈 리더','거의 다 알아요. 틀린 것만 한 번 더.']:G.correct>=15?['성장 중','절반은 넘었어요. 카드 훑고 다시 한 판.']:['첫 걸음','용어 카드부터 한 바퀴 돌고 와요.'];
-  const b=best();let isBest=false;if(!b||G.score>b.score){isBest=true;try{localStorage.setItem(KEY,JSON.stringify({score:G.score,nick,correct:G.correct,date:Date.now()}));}catch(e){}}
+  const b=best();let isBest=false;if(!G.quit&&(!b||G.score>b.score)){isBest=true;try{localStorage.setItem(KEY,JSON.stringify({score:G.score,nick,correct:G.correct,date:Date.now()}));}catch(e){}}
   showBest();
   const wrong=G.log.filter(l=>!l.ok).map(l=>l.n);
   stage.innerHTML=`<div class="card fade" style="align-items:center;text-align:center">
-    <span class="lab">Result · ${esc(nick)}</span>
+    <span class="lab">${G.quit?'Stopped':'Result'} · ${esc(nick)}</span>
     <div class="big pop num">${G.score.toLocaleString()}</div>
     <div style="font-weight:900;font-size:20px">${grade[0]}</div><p class="muted">${grade[1]}</p>
     ${isBest?'<span class="pill y">내 최고 기록 갱신</span>':''}
     <div class="stats" style="width:100%"><div class="stat"><span class="t">정답</span><span class="v num">${G.correct} / ${total}</span></div><div class="stat"><span class="t">정확도</span><span class="v num">${acc}%</span></div><div class="stat"><span class="t">최고 연속</span><span class="v num">${G.bestStreak}</span></div></div>
-    <p class="small muted">걸린 시간 ${Math.floor(secs/60)}분 ${secs%60}초</p>
+    <p class="small muted">걸린 시간 ${Math.floor(secs/60)}분 ${secs%60}초${skipped?` · ${answered}문제 풀고 중단 (${skipped}문제 미응답)`:''}</p>
     <div class="row" style="justify-content:center"><button class="btn y" id="again">다시 하기</button>${wrong.length?`<button class="btn" id="wrong">틀린 ${wrong.length}개만 다시</button>`:''}<button class="btn ghost" id="home">처음으로</button></div>
     </div>
-    <div class="card fade"><span class="lab">Review</span><h3>문제별 결과</h3><div class="review">${G.order.map((q,i)=>{const l=G.log[i];const t=T[q.n-1];return `<div class="ri ${l.ok?'':'no'}"><span class="m">${l.ok?'✓':'✗'}</span><div><b>${esc(t[0])}</b> <span class="small muted num">${l.ok?'+'+l.pts.toLocaleString()+' · '+l.el+'초':'0점'}</span><div class="d">${esc(t[1])}</div></div></div>`;}).join('')}</div></div>`;
+    <div class="card fade"><span class="lab">Review</span><h3>문제별 결과</h3><div class="review">${G.order.map((q,i)=>{const l=G.log[i];const t=T[q.n-1];return `<div class="ri ${l.ok?'':'no'}"><span class="m">${l.ok?'✓':'✗'}</span><div><b>${esc(t[0])}</b> <span class="small muted num">${l.ok?'+'+l.pts.toLocaleString()+' · '+l.el+'초':l.skip?'미응답':'0점'}</span><div class="d">${esc(t[1])}</div></div></div>`;}).join('')}</div></div>`;
   stage.querySelector('#again').addEventListener('click',()=>startGame(shuffle(Q)));
   const w=stage.querySelector('#wrong');if(w)w.addEventListener('click',()=>startGame(shuffle(Q.filter(q=>wrong.includes(q.n)))));
   stage.querySelector('#home').addEventListener('click',home);

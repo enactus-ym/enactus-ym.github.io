@@ -646,9 +646,9 @@ add('wonju',[
  {id:'merchant',kind:'npc',x:26,y:22,name:'상인 아주머니',role:'전통시장',pal:'merchant',key:'field',problem:'market',face:'d'},
  {id:'farmer',kind:'npc',x:42,y:22,name:'농부 할아버지',role:'치악산 자락',pal:'farmer',key:'field',problem:'farm',face:'d'},
  {id:'resident',kind:'npc',x:56,y:23,name:'골목 주민',role:'자취촌',pal:'resident',key:'field',problem:'alley',face:'d'},
- {id:'s5',kind:'sign',x:24,y:17,name:'원주 전통시장',key:'sign',text:'현장 1. 전통시장. (연습용 가상 설정이에요)'},
- {id:'s6',kind:'sign',x:44,y:17,name:'치악산 자락 밭',key:'sign',text:'현장 2. 소농가의 밭. (연습용 가상 설정이에요)'},
- {id:'s7',kind:'sign',x:58,y:17,name:'자취촌 골목',key:'sign',text:'현장 3. 자취생이 많은 골목. (연습용 가상 설정이에요)'},
+ {id:'s5',kind:'sign',x:24,y:17,name:'원주 전통시장',key:'sign',text:'현장 1. 전통시장.'},
+ {id:'s6',kind:'sign',x:44,y:17,name:'치악산 자락 밭',key:'sign',text:'현장 2. 소농가의 밭.'},
+ {id:'s7',kind:'sign',x:58,y:17,name:'자취촌 골목',key:'sign',text:'현장 3. 자취생이 많은 골목.'},
  /* venture street */
  {id:'v1',kind:'shop',x:3,y:33,w:5,h:2,name:'고요한M'},
  {id:'v2',kind:'shop',x:11,y:33,w:5,h:2,name:'동구밭'},
@@ -1374,7 +1374,7 @@ function cover(){
     <label>이름 (리포트에 들어가요)<input id="name" type="text" maxlength="12" placeholder="예: 인액이" value="${esc(state.name)}" autocomplete="off"></label>
     <p class="small muted" id="nameHint" ${state.name?'hidden':''}>이름을 적어야 시작할 수 있어요.</p>
     <div class="row"><button class="btn primary" id="go" ${state.name?'':'disabled'}>${saved?'이어서 하기':'시작하기'}</button>${saved?'<button class="btn ghost" id="reset">처음부터</button>':''}</div>
-    <p class="small muted">출처: 인액터스 코리아 공식 홈페이지, 인액터스 YM 브랜드 기획안(2026.10). 3장의 현장은 연습용 가상 설정이에요.</p>
+    <p class="small muted">출처: 인액터스 코리아 공식 홈페이지, 인액터스 YM 브랜드 기획안(2026.10).</p>
     </div><div class="band"><span>A head for business</span><span>A heart for the world</span></div></div>`,false);
   const nmIn=panel.querySelector('#name'),goBtn=panel.querySelector('#go'),hint=panel.querySelector('#nameHint');nmIn.addEventListener('input',()=>{const ok=nmIn.value.trim().length>0;goBtn.disabled=!ok;hint.hidden=ok;});nmIn.addEventListener('keydown',e=>{if(e.key==='Enter'&&!goBtn.disabled)goBtn.click();});
   goBtn.addEventListener('click',()=>{const nm=nmIn.value.trim().slice(0,12);if(!nm){goBtn.disabled=true;hint.hidden=false;nmIn.focus();return;}state.name=nm;state.started=true;save();closeOv();hud();audioInit();bgmStart();if(!state.flags.opened)opening();});

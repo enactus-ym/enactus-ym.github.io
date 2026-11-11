@@ -282,6 +282,21 @@ button.pins{appearance:none;border:0;background:transparent;padding:2px;margin:0
 .tbl.fit.r3 th:nth-child(1){width:24%}
 .tbl.fit.r3 th:nth-child(2){width:27%}
 }
+/* ---- costumes ---- */
+.cosrow{appearance:none;display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--soft);color:var(--fg);border:1px solid var(--line);border-radius:12px;padding:9px 12px;cursor:pointer;font:inherit}
+.cosrow canvas{width:40px;height:40px;border-radius:8px;background:var(--paper);image-rendering:pixelated;image-rendering:crisp-edges;flex:0 0 auto}
+.cosrow span{display:flex;flex-direction:column;gap:1px;flex:1;min-width:0}
+.cosrow b{font-size:15px;font-weight:800}
+.cosrow small{font-size:12px;color:var(--muted)}
+.cosrow i{font-style:normal;font-size:22px;line-height:1;color:var(--muted)}
+.cos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.cosc{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;background:var(--soft);border:2px solid transparent;border-radius:12px;padding:10px 6px 10px;min-width:0}
+.cosc.on{border-color:#FFC222}
+.cosc canvas{width:min(100%,96px);aspect-ratio:1;border-radius:10px;image-rendering:pixelated;image-rendering:crisp-edges}
+.cosc .cn{font-weight:800;font-size:14px;line-height:1.25;word-break:keep-all}
+.cosc .cs{font-size:11.5px;color:var(--muted);line-height:1.35;word-break:keep-all;min-height:2.7em}
+.cosc .btn{justify-content:center;min-width:64px}
+.cosc .clock{font-size:12px;font-weight:700;color:var(--muted);padding:7px 0}
 </style>
 
 </head>
@@ -606,6 +621,15 @@ const PAL={
  team1:{hair:'#1F1A17',skin:'#F1C9A5',top:'#2E6E8E',bottom:'#2B2F3A',lanyard:false},
  team2:{hair:'#4A3222',skin:'#F3D2B3',top:'#8E3B46',bottom:'#2B2F3A',lanyard:false},
 };
+/* player costumes: the default 학잠 plus two rewards from the hidden quest */
+const COSTUMES={
+ default:{name:'연세대 학잠',sub:'기본 캐릭터',pal:PAL.player},
+ suit:{name:'정장',sub:'NC 대회장에서 입는 옷',got:'NC 대회장 안에서는 정장을 입어요. 원주로 돌아가면 메뉴의 코스튬에서 갈아입을 수 있어요.',
+   pal:{hair:PAL.player.hair,skin:PAL.player.skin,top:'#1E2A44',shade:'#121A2D',bottom:'#1A2338',shoe:'#0D0F14',style:'suit'}},
+ aloha:{name:'하와이 관광 옷',sub:'히든 엔딩의 기념품',got:'원주로 돌아왔어요. 메뉴의 코스튬에서 갈아입을 수 있어요.',
+   pal:{hair:PAL.player.hair,skin:PAL.player.skin,top:'#17A39B',bottom:'#F0E2B6',shoe:'#8A5A3C',style:'aloha'}},
+};
+const COS_ORDER=['default','suit','aloha'];
 const ENT=[];
 const SOLID_KINDS=new Set(['npc','sign','whiteboard','postwall','bboard','pboard','podium','bus','booth','shop','desk']);
 const RESERVED={wonju:new Set(),sc:new Set(),nc:new Set()};
@@ -743,19 +767,35 @@ function tile(ch){
 /* ================= SPRITES ================= */
 function drawPerson(c,x,y,p,f,dir){
   px(c,'rgba(0,0,0,.18)',x+4,y+14,8,2);
-  if(f===0||f===2){px(c,p.bottom,x+5,y+11,2,4);px(c,p.bottom,x+9,y+11,2,4);}
-  else if(dir==='l'||dir==='r'){const s=f===1?1:-1;px(c,p.bottom,x+5+s,y+11,2,4);px(c,p.bottom,x+9-s,y+11,2,3);}
-  else if(f===1){px(c,p.bottom,x+5,y+11,2,3);px(c,p.bottom,x+9,y+11,2,4);}else{px(c,p.bottom,x+5,y+11,2,4);px(c,p.bottom,x+9,y+11,2,3);}
+  const st=p.style;
+  /* a leg: trousers by default; shorts over bare shins for the aloha outfit; a shoe row when the costume has one */
+  const leg=(lx,h)=>{px(c,p.bottom,lx,y+11,2,h);if(st==='aloha'&&h>3)px(c,p.skin,lx,y+13,2,h-3);if(p.shoe)px(c,p.shoe,lx,y+10+h,2,1);};
+  if(f===0||f===2){leg(x+5,4);leg(x+9,4);}
+  else if(dir==='l'||dir==='r'){const s=f===1?1:-1;leg(x+5+s,4);leg(x+9-s,3);}
+  else if(f===1){leg(x+5,3);leg(x+9,4);}else{leg(x+5,4);leg(x+9,3);}
   if(f===1||f===3)y-=1;
   const a=f===1?1:f===3?-1:0;
   px(c,p.top,x+4,y+6,8,5);
-  if(p.jacket){px(c,p.sleeve,x+3,y+7+a,1,2);px(c,p.skin,x+3,y+9+a,1,1);px(c,p.sleeve,x+12,y+7-a,1,2);px(c,p.skin,x+12,y+9-a,1,1);px(c,p.sleeve,x+4,y+10,8,1);
+  if(st==='suit'){   /* navy suit, white shirt, yellow tie */
+    px(c,p.top,x+3,y+7+a,1,2);px(c,p.skin,x+3,y+9+a,1,1);px(c,p.top,x+12,y+7-a,1,2);px(c,p.skin,x+12,y+9-a,1,1);
+    px(c,'#F3EEE2',x+6,y+6,4,1);
+    if(dir==='u'){px(c,p.shade,x+7,y+8,2,3);}
+    else{px(c,'#F3EEE2',x+6,y+7,4,1);px(c,'#FFC222',x+7,y+7,2,3);px(c,p.shade,x+6,y+8,1,2);px(c,p.shade,x+9,y+8,1,2);}}
+  else if(st==='aloha'){   /* short-sleeved flower shirt with a lei */
+    px(c,p.top,x+3,y+7+a,1,1);px(c,p.skin,x+3,y+8+a,1,2);px(c,p.top,x+12,y+7-a,1,1);px(c,p.skin,x+12,y+8-a,1,2);
+    px(c,'#F3EEE2',x+5,y+9,1,1);px(c,'#FFC222',x+10,y+9,1,1);px(c,'#F3EEE2',x+8,y+10,1,1);
+    if(dir==='u'){px(c,'#FF7FA8',x+6,y+6,1,1);px(c,'#FFC222',x+7,y+6,1,1);px(c,'#FF7FA8',x+8,y+6,1,1);px(c,'#FFC222',x+9,y+6,1,1);px(c,'#FFC222',x+6,y+8,1,1);px(c,'#F3EEE2',x+9,y+8,1,1);}
+    else{px(c,p.skin,x+7,y+6,2,1);px(c,'#FF7FA8',x+5,y+6,1,1);px(c,'#FFC222',x+6,y+7,1,1);px(c,'#FF7FA8',x+7,y+8,1,1);px(c,'#FFC222',x+8,y+8,1,1);px(c,'#FF7FA8',x+9,y+7,1,1);px(c,'#FFC222',x+10,y+6,1,1);}}
+  else if(p.jacket){px(c,p.sleeve,x+3,y+7+a,1,2);px(c,p.skin,x+3,y+9+a,1,1);px(c,p.sleeve,x+12,y+7-a,1,2);px(c,p.skin,x+12,y+9-a,1,1);px(c,p.sleeve,x+4,y+10,8,1);
     if(dir==='u'){px(c,p.sleeve,x+5,y+7,6,1);px(c,p.sleeve,x+6,y+9,4,1);}else{px(c,p.sleeve,x+7,y+6,2,1);if(dir!=='r')px(c,'#FFC222',x+5,y+8,1,1);if(dir!=='l')px(c,p.sleeve,x+10,y+8,1,1);}}
   else{px(c,p.skin,x+3,y+7+a,1,3);px(c,p.skin,x+12,y+7-a,1,3);}
   if(p.lanyard&&dir!=='u'){px(c,'#FFC222',x+7,y+6,1,3);px(c,'#FFC222',x+8,y+6,1,3);px(c,'#F3EEE2',x+7,y+9,2,2);}
   px(c,p.skin,x+5,y+1,6,5);px(c,p.hair,x+5,y+0,6,2);
   if(dir==='u'){px(c,p.hair,x+5,y+2,6,4);px(c,p.skin,x+5,y+5,6,1);px(c,'#3A2E27',x+8,y+1,1,1);}else{px(c,p.hair,x+5,y+2,1,2);px(c,p.hair,x+10,y+2,1,2);}
   if(dir!=='u'){if(dir==='l'){px(c,'#222',x+6,y+3);}else if(dir==='r'){px(c,'#222',x+9,y+3);}else{px(c,'#222',x+6,y+3);px(c,'#222',x+9,y+3);}}
+  if(st==='aloha'){   /* straw hat with a wide brim, sunglasses */
+    px(c,'#E8C873',x+5,y+0,6,1);px(c,'#D7523A',x+5,y+1,6,1);px(c,'#E8C873',x+3,y+2,10,1);px(c,'#CFAE57',x+3,y+2,1,1);px(c,'#CFAE57',x+12,y+2,1,1);
+    if(dir==='d')px(c,'#15171C',x+6,y+3,4,1);else if(dir==='l')px(c,'#15171C',x+5,y+3,3,1);else if(dir==='r')px(c,'#15171C',x+8,y+3,3,1);}
 }
 function drawPlane(c,x,y,w,h){
   /* a small airliner seen from the side, nose to the right */
@@ -795,7 +835,7 @@ function drawCarry(c,x,y,t){const b=Math.round(Math.sin(t/220)*1);px(c,'#15223B'
 function drawMarker(c,e,ox,oy,t){const x=Math.round(e.x*T-ox+e.w*T/2),y=e.y*T-oy-(e.kind==='bus'&&isPlane(e)?19:8)+Math.round(Math.sin(t/250)*2);px(c,'#15223B',x-4,y-5,8,9);px(c,'#FFC222',x-3,y-4,6,7);px(c,'#15223B',x-1,y-3,2,3);px(c,'#15223B',x-1,y+1,2,1);}
 /* ================= STATE ================= */
 let state=null;
-function fresh(){return {v:3,name:'',started:false,map:'wonju',x:50*T,y:12*T,dir:'u',parts:{},ch:{},miss:{},sim:{stage:0,trust:40,sustain:40,energy:60,problem:null,best:{}},posters:[],delivered:{},btried:{},carrying:null,feet:[],nc:{met:false,q:{},perfect:false},flags:{}};}
+function fresh(){return {v:3,name:'',started:false,map:'wonju',x:50*T,y:12*T,dir:'u',parts:{},ch:{},miss:{},sim:{stage:0,trust:40,sustain:40,energy:60,problem:null,best:{}},posters:[],delivered:{},btried:{},carrying:null,feet:[],nc:{met:false,q:{},perfect:false},flags:{},costume:'default',cos:{}};}
 function load(){try{const r=localStorage.getItem(KEY);if(r){const s=JSON.parse(r);if(s&&s.v===3&&MAPS[s.map])return s;}}catch(e){}return null;}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
 function recalc(){CH.forEach(c=>{let sc=0,all=true;c.parts.forEach(k=>{const p=state.parts[k];if(p)sc+=p.p;else all=false;});state.ch[c.id]={score:Math.min(sc,c.max),max:c.max,done:all};});}
@@ -817,6 +857,11 @@ function M(){return MAPS[state.map];}
 function isPlane(e){return e.map==='wonju'&&!!(state&&state.flags.ncWon);}
 /* the plane boards only after the club room welcome (older saves that already saw the ending skip the wait) */
 function planeReady(){return !!(state.flags.ncWon&&(state.flags.cheered||state.flags.endingSeen));}
+/* costumes: inside the NC hall it is always the suit; elsewhere whatever the player picked from what they own */
+function cosOwned(id){return id==='default'||!!(state.cos&&state.cos[id]);}
+function wearing(){if(state.map==='nc')return 'suit';const c=state.costume;return (c&&COSTUMES[c]&&cosOwned(c))?c:'default';}
+function playerPal(){return COSTUMES[wearing()].pal;}
+function unlockCostume(id){if(cosOwned(id))return false;(state.cos=state.cos||{})[id]=true;save();sfx('done');floatCard('새 코스튬을 얻었어요',COSTUMES[id].name,COSTUMES[id].got,6500);return true;}
 function npcPal(e){return e.id==='driver'&&isPlane(e)?'pilot':e.pal;}
 function entRole(e){return e.id==='driver'&&isPlane(e)?'인액터스 월드컵행':(e.role||'');}
 function entName(e){if(e.map==='wonju'&&isPlane(e)){if(e.id==='bus')return 'WC행 비행기';if(e.id==='driver')return '기장';if(e.id==='s8')return '월드컵 탑승구';}return e.name;}
@@ -878,7 +923,7 @@ function draw(t){
   const list=m.ents.filter(e=>e.x+e.w>x0-1&&e.x<x1+1&&e.y+e.h>y0-1&&e.y<y1+1).map(e=>({e,z:(e.y+e.h)*T}));
   list.push({player:true,z:state.y+T});list.sort((a,b)=>a.z-b.z);
   const pxp=Math.round(state.x-camx),pyp=Math.round(state.y-camy);
-  for(const it of list){if(it.player)drawPerson(ctx,pxp,pyp,PAL.player,moving?anim:0,state.dir);else drawEntity(ctx,it.e,camx,camy,t);}
+  for(const it of list){if(it.player)drawPerson(ctx,pxp,pyp,playerPal(),moving?anim:0,state.dir);else drawEntity(ctx,it.e,camx,camy,t);}
   if(state.carrying!==null)drawCarry(ctx,pxp,pyp,t);
   for(const e of m.ents){if(newFor(e))drawMarker(ctx,e,camx,camy,t);}
   updateLabels(camx,camy);
@@ -964,7 +1009,7 @@ function objective(){
 /* ================= OVERLAY ================= */
 let ovOpen=false,ovClosable=true;const ov=$('ov'),panel=$('panel');
 function openOv(html,closable){if(!ovOpen)sfx('open');ovOpen=true;ovClosable=closable!==false;ov.hidden=false;$('float').classList.remove('show');panel.innerHTML=html;panel.querySelectorAll('img.photo').forEach(i=>{const kill=()=>{PHOTO_MISSING.add(i.dataset.key);i.remove();};if(i.complete&&i.naturalWidth===0)kill();else i.addEventListener('error',kill);});for(const k in keys)keys[k]=false;panel.scrollTop=0;drawFaces();panel.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',closeOv));}
-function drawFaces(){panel.querySelectorAll('canvas.face').forEach(c=>{if(c.dataset.done)return;c.dataset.done='1';c.width=16;c.height=16;drawPerson(c.getContext('2d'),0,0,PAL[c.dataset.pal]||PAL.player,0,'d');});}
+function drawFaces(){panel.querySelectorAll('canvas.face').forEach(c=>{if(c.dataset.done)return;c.dataset.done='1';c.width=16;c.height=16;drawPerson(c.getContext('2d'),0,0,(c.dataset.pal==='player'?playerPal():PAL[c.dataset.pal])||PAL.player,0,'d');});}
 function closeOv(){ovOpen=false;ov.hidden=true;panel.innerHTML='';enc=null;mg=null;setTimeout(afterClose,0);}
 /* after any overlay closes: queued post-it cards first, then a one-line "next" hint */
 function afterClose(){if(ovOpen||traveling||!state||!state.started)return;if(cardQ.length){cardQ.shift()();return;}if(objDirty){objDirty=false;toast('다음: '+objective().t,4200);}}
@@ -1144,7 +1189,7 @@ function busTalk(e){
   if(!opts.length){simple(d,'서울까지 1시간 반. 멀죠? 그래서 현장이 가까워요. 지금은 박람회부터 구경해요. 탈 일이 생기면 태워 줄게요.');return;}
   const line=hiddenReady()?'…학생, 신발에 노란 발자국이 묻었네. 다섯 개를 다 찾은 사람만 태우는 버스가 있어요. 7월의 가장 큰 무대, NC행.':(chDone('what')?'어디로 모실까요?':'SC 가는 학생이죠? 서울까지 1시간 반. 타요.');
   openOv(`${who(d)}<p class="say">${line}</p><div class="choices">${opts.map(o=>`<button class="choice" data-go="${o[0]}"><span class="k">→</span><span>${o[1]}</span></button>`).join('')}</div><div class="row end"><button class="btn ghost" data-close>다음에</button></div>`,true);
-  panel.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>{const g=b.dataset.go;closeOv();if(g==='sc')travel('sc',11,15,'u','서울 · SC 강당 앞. 문은 바로 위쪽');else travel('nc',14,18,'u','서울 · NC 대회장 앞. 문은 바로 위쪽');}));
+  panel.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>{const g=b.dataset.go;closeOv();if(g==='sc')travel('sc',11,15,'u','서울 · SC 강당 앞. 문은 바로 위쪽');else travel('nc',14,18,'u','서울 · NC 대회장 앞. 문은 바로 위쪽',()=>{unlockCostume('suit');afterClose();});}));
 }
 function ncWin(e){
   runEnc([
@@ -1383,12 +1428,30 @@ function cover(){
 function menu(){
   const st=state.sim.stage;openOv(`<span class="lab">Menu</span><div class="h3">First Footprint</div>
     ${state.started?`<div class="obj"><b>Next</b><span>${esc(objective().t)}</span></div>`:''}
+    ${state.started?`<button class="cosrow" id="cos"><canvas class="face" data-pal="player"></canvas><span><b>코스튬</b><small>지금 입은 옷: ${esc(COSTUMES[wearing()].name)} · 보유 ${COS_ORDER.filter(cosOwned).length} / ${COS_ORDER.length}</small></span><i>›</i></button>`:''}
     ${state.started&&st>=1&&st<10?`<div class="stats">${statsHtml(state.sim)}</div><p class="small muted">대상자 신뢰는 문제를 겪는 분들과의 관계, 지속가능성은 우리가 떠나도 돌아가는 구조, 팀 에너지는 팀의 공기예요. 신뢰 40 · 지속 40 · 에너지 60에서 시작하고 최대는 100이에요.</p>`:''}
     <p class="small muted">이동: 방향키·WASD 또는 화면 왼쪽 패드. 말하기: Space·Enter·E 또는 노란 버튼. 사람이나 물건 앞에 서서 눌러요. 머리 위에 노란 느낌표가 뜬 사람에게 할 일이 있어요.</p>
     <div class="row"><button class="btn ghost" id="rs">처음부터 다시</button><button class="btn ghost" id="snd">소리 ${SND.on?'끄기':'켜기'}</button>${state.started&&allDone()?'<button class="btn" id="rep">리포트 보기</button>':''}</div>
     <div class="row end"><button class="btn ghost" data-close>닫기</button></div>`,true);
   panel.querySelector('#rs').addEventListener('click',()=>{panel.querySelector('#rs').outerHTML='<button class="btn" id="rs2">정말 처음부터</button>';panel.querySelector('#rs2').addEventListener('click',()=>{state=fresh();lastObjKey=null;objDirty=false;cardQ.length=0;save();closeOv();hud();cover();});});
-  const r=panel.querySelector('#rep');if(r)r.addEventListener('click',report);panel.querySelector('#snd').addEventListener('click',()=>{toggleSound();closeOv();menu();});
+  const r=panel.querySelector('#rep');if(r)r.addEventListener('click',report);const cb=panel.querySelector('#cos');if(cb)cb.addEventListener('click',costumes);panel.querySelector('#snd').addEventListener('click',()=>{toggleSound();closeOv();menu();});
+}
+/* costume room: the current look plus two rewards that stay silhouettes until the hidden quest hands them over */
+let cosT=null;
+function cosDraw(k){const dirs=['d','l','u','r'],dir=dirs[k%4];document.querySelectorAll('#cosGrid canvas.cosv').forEach(cv=>{const id=cv.dataset.cos,c=cv.getContext('2d');c.clearRect(0,0,16,16);c.drawImage(tile('g'),0,0);
+    if(cosOwned(id)){drawPerson(c,0,0,COSTUMES[id].pal,0,dir);return;}
+    const o=document.createElement('canvas');o.width=16;o.height=16;const oc=o.getContext('2d');drawPerson(oc,0,0,COSTUMES[id].pal,0,dir);oc.globalCompositeOperation='source-in';oc.fillStyle='#15223B';oc.fillRect(0,0,16,16);c.drawImage(o,0,0);});}
+function costumes(){
+  const w=wearing(),inNC=state.map==='nc',locked=COS_ORDER.filter(id=>!cosOwned(id)).length;
+  const note=inNC?'NC 대회장 안에서는 정장만 입을 수 있어요. 원주로 돌아가면 다른 옷으로 갈아입을 수 있어요.':locked?'실루엣으로 보이는 옷은 히든 퀘스트를 달성하면 얻을 수 있어요.':'세 벌을 모두 모았어요. 원주에서는 언제든 갈아입을 수 있어요.';
+  openOv(`<span class="lab">Costume</span><div class="h3">코스튬</div>
+    <div class="cos" id="cosGrid">${COS_ORDER.map(id=>{const c=COSTUMES[id],own=cosOwned(id),on=w===id;
+      return `<div class="cosc ${on?'on':''} ${own?'':'lock'}"><canvas class="cosv" data-cos="${id}" width="16" height="16"></canvas><div class="cn">${own?esc(c.name):'???'}</div><div class="cs">${own?esc(c.sub):'히든 퀘스트 보상'}</div>${own?`<button class="btn sm ${on?'ghost':'primary'}" data-wear="${id}" ${on||inNC?'disabled':''}>${on?'입는 중':'입기'}</button>`:'<span class="clock">잠김</span>'}</div>`;}).join('')}</div>
+    <p class="small muted">${note}</p>
+    <div class="row end"><button class="btn ghost" id="cosBack">메뉴로</button><button class="btn primary" data-close>닫기</button></div>`,true);
+  panel.querySelectorAll('[data-wear]').forEach(b=>b.addEventListener('click',()=>{const id=b.dataset.wear;if(!cosOwned(id)||state.map==='nc')return;state.costume=id;save();sfx('ok');hud();costumes();}));
+  panel.querySelector('#cosBack').addEventListener('click',menu);
+  let k=0;cosDraw(0);clearInterval(cosT);cosT=setInterval(()=>{if(!document.getElementById('cosGrid')){clearInterval(cosT);cosT=null;return;}cosDraw(++k);},900);
 }
 const hudFree=()=>!(ovOpen&&!ovClosable)&&!traveling;
 $('bSound').addEventListener('click',()=>{audioInit();toggleSound();});
@@ -1446,7 +1509,9 @@ function ending(){
   END={box,raf:0,renderer:null};box.querySelector('.endclose').addEventListener('click',endClose);
   loadThree().then(()=>startEnding(box)).catch(()=>{box.querySelector('.endcap').innerHTML='3D 엔딩을 불러오지 못했어요.<small>인터넷 연결을 확인한 뒤 다시 탑승해 주세요</small>';});
 }
-function endClose(){if(!END)return;cancelAnimationFrame(END.raf);try{if(END.renderer)END.renderer.dispose();}catch(e){}END.box.remove();END=null;hud();afterClose();}
+function endClose(again){if(!END)return;cancelAnimationFrame(END.raf);try{if(END.renderer)END.renderer.dispose();}catch(e){}END.box.remove();END=null;hud();if(again===true)return;
+  if(state.flags.endingSeen)unlockCostume('aloha');   /* back in Wonju after the hidden ending */
+  afterClose();}
 function startEnding(box){
   const cv3=box.querySelector('canvas'),cap=box.querySelector('.endcap');
   const renderer=new THREE.WebGLRenderer({canvas:cv3,antialias:true});renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
@@ -1486,7 +1551,7 @@ function startEnding(box){
     arcs.forEach(a=>{const k=ease((t-a.t0)/a.dur);a.g.setDrawRange(0,Math.floor(k*a.n));if(k>=1){a.dot.visible=true;a.dot.scale.setScalar(kk);}});
     if(t>=F0){const u=Math.min(1,(t-F0)/(F1-F0)),ue=ease(u);const p=curve.getPointAt(Math.min(0.999,ue)),q=curve.getPointAt(Math.min(1,ue+0.001));plane.visible=u<1;plane.position.copy(p);plane.up.copy(p).normalize();plane.lookAt(q);plane.scale.setScalar(Math.max(1,d*0.85));tg.setDrawRange(0,Math.floor(ue*TRAIL)+1);}
     let ci=-1;caps.forEach((c,i)=>{if(t>=c[0])ci=i;});if(ci!==capI){capI=ci;cap.classList.remove('show');setTimeout(()=>{if(!END||card)return;cap.innerHTML=esc(caps[ci][1])+'<small>'+esc(caps[ci][2])+'</small>';cap.classList.add('show');},180);}
-    if(t>=10.8&&!card){card=true;cap.classList.remove('show');const ec=document.createElement('div');ec.className='endcard';ec.innerHTML=`<div class="band"><span>World Cup Bound</span><span>Enactus YM</span></div><div class="body"><div class="hand" style="font-size:30px">네 옆자리 ${esc(nm)}${josa(state.name,'이','가')} 세상을 바꾼다</div><div class="h-en" style="font-size:28px">Enactus YM</div><p>원주에서 전국 26개 대학으로, 세계 36개국의 무대로</p><p class="small" style="color:#5E6779">A head for business. A heart for the world.</p><p class="small" style="color:#5E6779">히든 엔딩 · 진짜 발자국은 지금부터.</p><div class="row" style="justify-content:center;margin-top:6px"><button class="btn" id="endAgain">다시 보기</button><button class="btn ghost" id="endDone">닫기</button></div></div>`;box.appendChild(ec);ec.querySelector('#endDone').addEventListener('click',endClose);ec.querySelector('#endAgain').addEventListener('click',()=>{endClose();ending();});sfx('done');if(!state.flags.endingSeen){state.flags.endingSeen=true;save();}}
+    if(t>=10.8&&!card){card=true;cap.classList.remove('show');const ec=document.createElement('div');ec.className='endcard';ec.innerHTML=`<div class="band"><span>World Cup Bound</span><span>Enactus YM</span></div><div class="body"><div class="hand" style="font-size:30px">네 옆자리 ${esc(nm)}${josa(state.name,'이','가')} 세상을 바꾼다</div><div class="h-en" style="font-size:28px">Enactus YM</div><p>원주에서 전국 26개 대학으로, 세계 36개국의 무대로</p><p class="small" style="color:#5E6779">A head for business. A heart for the world.</p><p class="small" style="color:#5E6779">히든 엔딩 · 진짜 발자국은 지금부터.</p><div class="row" style="justify-content:center;margin-top:6px"><button class="btn" id="endAgain">다시 보기</button><button class="btn ghost" id="endDone">닫기</button></div></div>`;box.appendChild(ec);ec.querySelector('#endDone').addEventListener('click',endClose);ec.querySelector('#endAgain').addEventListener('click',()=>{endClose(true);ending();});sfx('done');if(!state.flags.endingSeen){state.flags.endingSeen=true;save();}}
     if(Math.abs(box.clientWidth-renderer.domElement.width/renderer.getPixelRatio())>2)resize();
     renderer.render(scene,camera);END.raf=requestAnimationFrame(tick);};
   tick();
@@ -1495,7 +1560,9 @@ function startEnding(box){
 function boot(data){
   state=(data&&data.v===3&&MAPS[data.map])?data:(load()||fresh());
   if(!state.nc)state.nc={met:false,q:{},perfect:false};if(!state.feet)state.feet=[];if(!state.btried)state.btried={};
-  if(/debug=1/.test(location.search))window.__ff={get state(){return state;},tp:(x,y,d,m)=>{if(m)state.map=m;state.x=x*T;state.y=y*T;state.dir=d||'u';hud();},act,ENT,MAPS,CH,SOLID,newFor,interact,stage:n=>setStage(n),addPart,hud,objective,ending};
+  if(!state.cos)state.cos={};if(!COSTUMES[state.costume])state.costume='default';
+  if(state.map==='nc'||state.nc.met||state.flags.ncWon)state.cos.suit=true;if(state.flags.endingSeen)state.cos.aloha=true;   /* saves from before costumes existed */
+  if(/debug=1/.test(location.search))window.__ff={get state(){return state;},tp:(x,y,d,m)=>{if(m)state.map=m;state.x=x*T;state.y=y*T;state.dir=d||'u';hud();},act,ENT,MAPS,CH,SOLID,newFor,interact,stage:n=>setStage(n),addPart,hud,objective,ending,COSTUMES,wearing,costumes,unlockCostume,drawPerson};
   recalc();hud();requestAnimationFrame(loop);
   if(!state.started)cover();else if(!state.flags.opened)opening();
 }

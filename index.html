@@ -99,10 +99,10 @@ tr:first-child td,tr:first-child th{border-top:0}
 .toast.show{opacity:1}
 
 /* overlay */
-.ov{position:absolute;inset:0;z-index:5;background:rgba(8,16,32,.62);display:flex;align-items:flex-end;justify-content:center;padding:max(10px,env(safe-area-inset-top,0px)) max(10px,env(safe-area-inset-right,0px)) max(10px,env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px))}
+.ov{position:absolute;inset:0;z-index:5;background:rgba(8,16,32,.62);display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:10px;padding:max(10px,env(safe-area-inset-top,0px)) max(10px,env(safe-area-inset-right,0px)) max(10px,env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px))}
 .ov[hidden]{display:none}
-@media (min-width:700px){.ov{align-items:center}}
-.panel{background:var(--paper);color:var(--fg);border-radius:14px;width:100%;max-width:640px;max-height:100%;overflow:auto;padding:16px 16px 14px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow)}
+@media (min-width:700px){.ov{justify-content:center}}
+.panel{background:var(--paper);color:var(--fg);border-radius:14px;width:100%;max-width:640px;max-height:100%;min-height:0;flex:0 1 auto;overflow:auto;padding:16px 16px 14px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow)}
 .who{display:flex;align-items:center;gap:10px}
 .who .face{width:36px;height:36px;border-radius:8px;background:var(--soft);image-rendering:pixelated;flex:0 0 auto}
 .who .nm{font-weight:900;font-size:14px}
@@ -297,6 +297,26 @@ button.pins{appearance:none;border:0;background:transparent;padding:2px;margin:0
 .cosc .cs{font-size:11.5px;color:var(--muted);line-height:1.35;word-break:keep-all;min-height:2.7em}
 .cosc .btn{justify-content:center;min-width:64px}
 .cosc .clock{font-size:12px;font-weight:700;color:var(--muted);padding:7px 0}
+/* ---- 안내 창: narration, signs, objects and how-to-play lines. Never a character speaking,
+   so it has no face and no name: a yellow-banded window of its own, apart from the dialogue window ---- */
+.ov.nt{justify-content:center}
+.panel.notice,.side{width:100%;padding:0;gap:0;overflow:hidden;border-radius:12px;background:var(--paper);color:var(--fg);box-shadow:0 0 0 2px #15223B,var(--shadow);display:flex;flex-direction:column}
+.panel.notice{max-width:440px;animation:ntpop .18s ease-out both}
+.panel.notice.wide{max-width:560px}
+.side{max-width:640px;flex:0 0 auto;animation:ntpop .2s .1s ease-out both}
+.side[hidden]{display:none}
+.nt-band{display:flex;align-items:center;gap:8px;background:#FFC222;color:#15223B;padding:7px 12px;font-size:12.5px;font-weight:800;letter-spacing:.1em;flex:0 0 auto}
+.nt-band i{font-style:normal;width:18px;height:18px;border-radius:50%;background:#15223B;color:#FFC222;display:grid;place-items:center;font-size:12px;font-weight:900;letter-spacing:0;line-height:1;font-family:Georgia,'Times New Roman',serif}
+.nt-band em{font-style:normal;margin-left:auto;font-weight:700;font-size:11.5px;letter-spacing:.04em;opacity:.72}
+.nt-body{padding:14px 16px;display:flex;flex-direction:column;gap:12px;min-height:0;overflow:auto}
+.side .nt-body{padding:10px 14px 11px}
+.nt-title{font-weight:800;font-size:16px;line-height:1.35}
+.nt-text{font-size:15px;line-height:1.6;word-break:keep-all;overflow-wrap:anywhere}
+.nt-text>*+*{margin-top:10px}
+.side .nt-text{font-size:13.5px;line-height:1.55}
+.nt-body .pipe span{background:var(--soft)}
+.nt-body .pipe span.on{background:var(--yellow)}
+@keyframes ntpop{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
 </style>
 
 </head>
@@ -324,7 +344,7 @@ button.pins{appearance:none;border:0;background:transparent;padding:2px;margin:0
   </div>
   <button class="abtn" id="abtn">말하기</button>
   <div class="fade" id="fade"></div>
-  <div class="ov" id="ov" hidden><div class="panel" id="panel"></div></div>
+  <div class="ov" id="ov" hidden><div class="side" id="side" role="note" hidden></div><div class="panel" id="panel"></div></div>
 </div>
 
 <script>
@@ -1039,15 +1059,23 @@ function objective(){
   return {k:'nc3',t:'사무국 직원에게 결과 듣기'};
 }
 /* ================= OVERLAY ================= */
-let ovOpen=false,ovClosable=true;const ov=$('ov'),panel=$('panel');
-function openOv(html,closable){if(!ovOpen)sfx('open');ovOpen=true;ovClosable=closable!==false;ov.hidden=false;$('float').classList.remove('show');panel.innerHTML=html;panel.querySelectorAll('img.photo').forEach(i=>{const kill=()=>{PHOTO_MISSING.add(i.dataset.key);i.remove();};if(i.complete&&i.naturalWidth===0)kill();else i.addEventListener('error',kill);});for(const k in keys)keys[k]=false;panel.scrollTop=0;drawFaces();panel.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',closeOv));}
+let ovOpen=false,ovClosable=true;const ov=$('ov'),panel=$('panel'),side=$('side');
+function openOv(html,closable){if(!ovOpen)sfx('open');ovOpen=true;ovClosable=closable!==false;ov.hidden=false;ov.classList.remove('nt');panel.classList.remove('notice','wide');side.hidden=true;side.innerHTML='';$('float').classList.remove('show');panel.innerHTML=html;panel.querySelectorAll('img.photo').forEach(i=>{const kill=()=>{PHOTO_MISSING.add(i.dataset.key);i.remove();};if(i.complete&&i.naturalWidth===0)kill();else i.addEventListener('error',kill);});for(const k in keys)keys[k]=false;panel.scrollTop=0;drawFaces();panel.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',closeOv));}
 function drawFaces(){panel.querySelectorAll('canvas.face').forEach(c=>{if(c.dataset.done)return;c.dataset.done='1';c.width=16;c.height=16;drawPerson(c.getContext('2d'),0,0,(c.dataset.pal==='player'?playerPal():PAL[c.dataset.pal])||PAL.player,0,'d');});}
-function closeOv(){ovOpen=false;ov.hidden=true;panel.innerHTML='';enc=null;mg=null;setTimeout(afterClose,0);}
+function closeOv(){ovOpen=false;ov.hidden=true;panel.innerHTML='';side.hidden=true;side.innerHTML='';enc=null;mg=null;setTimeout(afterClose,0);}
 /* after any overlay closes: queued post-it cards first, then a one-line "next" hint */
 function afterClose(){if(ovOpen||traveling||!state||!state.started)return;if(cardQ.length){cardQ.shift()();return;}if(objDirty){objDirty=false;toast('다음: '+objective().t,4200);}}
 function who(e){return photoHtml(e)+`<div class="who"><canvas class="face" data-pal="${e.kind==='npc'?npcPal(e):(e.pal||'player')}"></canvas><div><div class="nm">${esc(e.kind?entName(e):e.name)}</div><div class="rl">${esc(e.kind?entRole(e):(e.role||''))}</div></div></div>`;}
 function nextBtn(label,id){return `<div class="row end"><button class="btn primary" id="${id||'next'}">${label||'계속'}</button></div>`;}
 function fbBox(ok,title,body,extra){return `<div class="fb ${ok===null?'':ok?'good':'bad'}"><div class="head"><span class="postit">${ok===false?'?':'!'}</span><span class="verdict">${esc(title)}</span></div>${body||''}${extra||''}</div>`;}
+/* ---- 안내 창 ----
+   Whatever is not a character speaking (narration, signs, objects, how-to-play lines) never borrows a face
+   or the dialogue window. It gets its own yellow-banded window:
+   notice()/note pages = a popup on its own, sideNote() = a second window floating above a character's line. */
+function ntInner(body,o,foot){o=o||{};return `<div class="nt-band"><i>i</i><span>안내</span>${o.where?`<em>${esc(o.where)}</em>`:''}</div><div class="nt-body">${o.title?`<div class="nt-title">${esc(o.title)}</div>`:''}<div class="nt-text">${body}</div>${o.extra||''}${foot||''}</div>`;}
+function noticeOpen(body,o,foot,closable){if(!ovOpen){ovOpen=true;}sfx('note');openOv(ntInner(body,o,foot),closable);panel.classList.add('notice');if(o&&o.wide)panel.classList.add('wide');ov.classList.add('nt');}
+function notice(body,o){noticeOpen(body,o,`<div class="row end"><button class="btn primary" data-close>${(o&&o.btn)||'확인'}</button></div>`,true);}
+function sideNote(body,o){side.innerHTML=ntInner(body,o);side.hidden=false;}
 let enc=null;
 function runEnc(pages,onEnd){enc={pages,i:0,onEnd,sub:null};showPage();}
 function showPage(){
@@ -1055,11 +1083,12 @@ function showPage(){
   if(pg===undefined){const f=enc.onEnd;enc=null;closeOv();if(f)f();hud();return;}
   if(typeof pg==='function'){pg();if(!enc)return;enc.i++;showPage();return;}
   enc.sub=null;
-  if(pg.say){openOv(`${who(pg.e)}<p class="say">${pg.say}</p>${pg.extra||''}${nextBtn(pg.btn)}`,false);panel.querySelector('#next').addEventListener('click',()=>{enc.i++;showPage();});}
+  if(pg.say){openOv(`${who(pg.e)}<p class="say">${pg.say}</p>${pg.extra||''}${nextBtn(pg.btn)}`,false);if(pg.aside)sideNote(pg.aside);panel.querySelector('#next').addEventListener('click',()=>{enc.i++;showPage();});}
   else if(pg.step){openOv(`${pg.e?who(pg.e):''}<div id="step"></div>`,false);renderStep(panel.querySelector('#step'),pg.step,(p,m)=>{if(pg.step.key)addPart(pg.step.key,p,m);if(pg.onDone)pg.onDone(p,m);enc.i++;showPage();});}
+  else if(pg.note){noticeOpen(pg.note,pg,nextBtn(pg.btn||'확인'),false);panel.querySelector('#next').addEventListener('click',()=>{enc.i++;showPage();});}
   else if(pg.html){openOv(pg.html+nextBtn(pg.btn),false);panel.querySelector('#next').addEventListener('click',()=>{enc.i++;showPage();});}
 }
-function simple(e,text,extra){openOv(`${who(e)}<p class="say">${text}</p>${extra||''}<div class="row end"><button class="btn primary" data-close>닫기</button></div>`,true);}
+function simple(e,text,extra,aside){openOv(`${who(e)}<p class="say">${text}</p>${extra||''}<div class="row end"><button class="btn primary" data-close>닫기</button></div>`,true);if(aside)sideNote(aside);}
 function setStage(n){state.sim.stage=n;save();hud();}
 /* the post-it a chapter leaves behind: '?' flips to '!' with what was learned written on it */
 function postitHtml(id,big){const c=CH.find(x=>x.id===id),s=SUMMARY[id];return `<div class="pcard ${big?'big':''}"><div class="pm">!</div><div class="pt">${esc(s.t)}</div>${s.l.map(x=>`<div class="pl">· ${esc(x)}</div>`).join('')}<div class="pc">Ch.${c.num} ${esc(c.ko)}</div></div>`;}
@@ -1180,21 +1209,21 @@ function newFor(e){
   }
   return null;
 }
-const NARR={name:'3월의 캠퍼스',role:'연세대 미래캠퍼스',pal:'player'};
 function opening(){
   const me={name:state.name,role:'3월 · 독수리상 앞',pal:'player'};   /* the player thinking out loud */
   runEnc([
     {e:me,say:'새 학기인데, 이번엔 스펙이 되는 동아리에 한번 들어가 볼까?'},
     {e:me,say:'마침 오늘 동아리 박람회를 한다던데. 가 봐야겠다.'},
-    {e:NARR,say:'동아리 박람회는 <b>오른쪽 큰 광장</b>에서 열리고 있어요. 부스 세 개가 나란히 있어요. 봉사동아리, 창업동아리, 그리고 인액터스.'},
-    {e:NARR,say:'셋 다 세상에 도움이 되는 일을 한다는데, 뭐가 다를까요? 박람회 광장에 떨어진 <b>말풍선 8개</b>를 하나씩 주워서, 그 말을 할 법한 부스에 건네 보세요. 주운 말은 화면 위에 계속 떠 있어요. 헷갈리면 부스 사람에게 먼저 말을 걸어 봐요.'},
-    {e:NARR,say:'화면 위 포스트잇 여섯 장이 이번 학기의 물음표예요. 한 장을 마칠 때마다 느낌표로 바뀌고, 배운 내용이 그 포스트잇에 정리돼요.'},
+    {note:'동아리 박람회는 <b>오른쪽 큰 광장</b>에서 열리고 있어요. 부스 세 개가 나란히 있어요. 봉사동아리, 창업동아리, 그리고 인액터스.',title:'동아리 박람회',btn:'계속'},
+    {note:'셋 다 세상에 도움이 되는 일을 한다는데, 뭐가 다를까요? 박람회 광장에 떨어진 <b>말풍선 8개</b>를 하나씩 주워서, 그 말을 할 법한 부스에 건네 보세요. 주운 말은 화면 위에 계속 떠 있어요. 헷갈리면 부스 사람에게 먼저 말을 걸어 봐요.',title:'말풍선 8개',btn:'계속'},
+    {note:'화면 위 포스트잇 여섯 장이 이번 학기의 물음표예요. 한 장을 마칠 때마다 느낌표로 바뀌고, 배운 내용이 그 포스트잇에 정리돼요.',title:'포스트잇 여섯 장',btn:'시작하기'},
   ],()=>{state.flags.opened=true;save();hud();objDirty=true;});   /* point the way to the fair */
 }
 function giveBubble(e,b){
   const ok=b.a===e.booth;
   if(!ok){state.btried[b.id]=true;save();sfx('no');
-    openOv(`${who(e)}<div class="bubblebig">“${esc(b.t)}”</div>${fbBox(false,'우리 말이 아니에요',`<p>${esc(BOOTH_NO[e.booth])}</p><p class="small muted">말풍선은 그대로 들고 있어요. 다른 부스에 가져가 보세요. 처음 건넨 부스가 맞아야 발자국 1개를 받아요.</p>`)}<div class="row end"><button class="btn primary" data-close>알겠어요</button></div>`,true);return;}
+    openOv(`${who(e)}<div class="bubblebig">“${esc(b.t)}”</div>${fbBox(false,'우리 말이 아니에요',`<p>${esc(BOOTH_NO[e.booth])}</p>`)}<div class="row end"><button class="btn primary" data-close>알겠어요</button></div>`,true);
+    sideNote('말풍선은 그대로 들고 있어요. 다른 부스에 가져가 보세요. 처음 건넨 부스가 맞아야 발자국 1개를 받아요.');return;}
   const first=!state.btried[b.id];sfx('ok');state.delivered[b.id]=true;state.carrying=null;
   const pages=[{html:`${who(e)}<div class="bubblebig">“${esc(b.t)}”</div>${fbBox(true,first?'우리 말 맞아요':'이번엔 맞아요',`<p>${esc(b.why)}</p>`)}`}];
   if(BUBBLES.every(x=>state.delivered[x.id])){const en=E('bn2');
@@ -1240,7 +1269,7 @@ function cheer(){
   const n=esc(state.name);
   [['pres','d'],['phyco','r'],['jeje','l'],['mush','l'],['pr','d']].forEach(([id,d])=>{const x=E(id);if(x)x.dir=d;});
   runEnc([
-    {e:{name:'원주',role:'인액터스 YM 동아리방',pal:'player'},say:'동아리방 문을 열자마자 박수가 터져요. 다들 자리에서 일어나 기다리고 있었어요.'},
+    {note:'동아리방 문을 열자마자 박수가 터져요. 다들 자리에서 일어나 기다리고 있었어요.',title:'인액터스 YM 동아리방',where:'원주',btn:'계속'},
     {e:E('pres'),say:`왔다! ${n}, 진짜 고생했어. 발표 다섯 장, 한 장도 안 흔들리더라. 객석에서 깃발 흔들다가 팔 빠지는 줄 알았어.`},
     {e:E('phyco'),say:'심사위원 질문에 답할 때 소름 돋았어요. 현장에서 들은 얘기가 그대로 답이 되더라고요. 정말 수고했어요.'},
     {e:E('mush'),say:'밤늦게까지 대본 고치던 거 다 봤어요. 그 시간이 무대에서 전부 보였어요. 자랑스러워요.'},
@@ -1253,13 +1282,13 @@ function cheer(){
 function interact(e){
   const st=state.sim.stage,P=state.parts;
   switch(e.key){
-    case 'sign':simple({name:entName(e),role:e.kind==='statue'?e.role:'표지판',pal:'player'},isPlane(e)?'인액터스 월드컵행 탑승구. 36개국 챔피언이 모이는 무대로.':esc(e.text));return;
+    case 'sign':notice(isPlane(e)?'인액터스 월드컵행 탑승구. 36개국 챔피언이 모이는 무대로.':esc(e.text),{title:entName(e),where:e.kind==='statue'?e.role:'표지판'});return;
     case 'bus':busTalk(e);return;
     case 'booth':{
       if(chDone('three')){simple(e,BOOTH_AFTER[e.booth]);return;}
-      if(state.carrying===null){simple(e,esc(BOOTH_HINT[e.booth]),'<p class="small muted">말풍선을 주워 오면 우리가 할 법한 말인지 봐 줄게요.</p>');return;}
+      if(state.carrying===null){simple(e,esc(BOOTH_HINT[e.booth])+' 말풍선을 주워 오면 우리가 할 법한 말인지 봐 줄게요.');return;}
       const b=BUBBLES[state.carrying-1];
-      openOv(`${who(e)}<div class="bubblebig">“${esc(b.t)}”</div><p class="say">이 말을 <b>${BOOTHS[e.booth]}</b> 부스에 건넬까요?</p><div class="row end"><button class="btn ghost" data-close>다시 생각하기</button><button class="btn primary" id="give">건네기</button></div>`,true);
+      noticeOpen(`<div class="bubblebig">“${esc(b.t)}”</div><p>이 말을 <b>${BOOTHS[e.booth]}</b> 부스에 건넬까요?</p>`,{where:'들고 있는 말'},`<div class="row end"><button class="btn ghost" data-close>다시 생각하기</button><button class="btn primary" id="give">건네기</button></div>`,true);
       panel.querySelector('#give').addEventListener('click',()=>giveBubble(e,b));return;}
     case 'alum':
       if(!P['what.def']){runEnc([{e,say:'SC에 온 걸 환영해요. 저는 10기 선배예요. 인액터스가 뭔지, 이름부터 풀어 볼까요?'},{e,step:Q.name},{e,step:Q.def},{e,say:'<span class="quote">“치열하게 고민하고, 시원하게 실패를 맞이하고, 뜨겁게 일어나십쇼.”<span>10기 선배의 말</span></span>'}],null);return;}
@@ -1279,17 +1308,17 @@ function interact(e){
       if(!chDone('what')){simple(e,'SC부터 다녀와. 큰길 오른쪽 끝 정류장에서 서울행 버스를 타면 돼. 다녀오면 첫 회의 하자.');return;}
       if(state.flags.ncWon){if(!planeReady()){cheer();return;}simple(e,state.flags.endingSeen?'월드컵 이야기는 다음 GM에서 천천히 들려줘.':'국가대표라니. 다시 생각해도 고생했어. 비행기 타기 전에 사진 한 장 찍자.');return;}
       if(state.flags.reported){simple(e,hiddenReady()?'발자국을 다 찾았다고? 그럼 정류장으로 가 봐. 기사님이 알아볼 거야.':'소문 들었어? 요즘 원주 곳곳에 <b>노란 발자국</b>이 찍혀 있대. 다섯 개를 다 찾으면 버스 기사님이 특별한 데로 데려다준다던데.');return;}
-      simple(e,`지금 할 일: <b>${esc(objective().t)}</b><br><span class="small muted">퀘스트 버튼을 누르면 여섯 장의 상태가 다 보여.</span>`);return;
+      simple(e,`지금 할 일: <b>${esc(objective().t)}</b>`,'','<b>퀘스트</b> 버튼을 누르면 여섯 장의 상태가 다 보여요.');return;
     case 'field':{
       const pr=PROBLEMS[e.problem];
       if(st===2){runEnc([{e,say:esc(pr.line)},()=>{state.sim.problem=e.problem;save();},{e,step:SIM.r2},{e,say:'…그래요, 또 와요. 다음엔 뭘 들고 올지 보죠.'}],()=>setStage(3));return;}
       if(st>=3&&state.sim.problem===e.problem){simple(e,st<10?'또 왔네요. 지난번 얘기는 팀에 잘 전했어요?':'덕분에 요즘은 좀 달라요. 학생들, 고마워요.');return;}
-      simple(e,esc(pr.line)+(st<3?'':`<br><span class="small muted">(지금은 ${esc(PROBLEMS[state.sim.problem]?PROBLEMS[state.sim.problem].place:'다른 현장')} 프로젝트가 진행 중이에요)</span>`));return;}
+      simple(e,esc(pr.line),'',st<3?'':`지금은 <b>${esc(PROBLEMS[state.sim.problem]?PROBLEMS[state.sim.problem].place:'다른 현장')}</b> 프로젝트가 진행 중이에요.`);return;}
     case 'whiteboard':{
-      const wb={name:'화이트보드',role:'동아리방',pal:'player'};
+      const wb={title:'화이트보드',where:'동아리방'};
       if(st===3){runEnc([{step:SIM.r3}],()=>setStage(4));return;}
       if(st===4){runEnc([{step:{type:'simbuild',key:'sim.build'}}],()=>setStage(5));return;}
-      simple(wb,st<3?'마커 자국만 남아 있어요. 맨 위에 작게: <b>문제가 먼저.</b>':'BM 한 장이 붙어 있어요. 누가 돈을 내는지, 대상자에게 무엇이 남는지, 우리가 떠나면 어떻게 되는지.');return;}
+      notice(st<3?'마커 자국만 남아 있어요. 맨 위에 작게: <b>문제가 먼저.</b>':'BM 한 장이 붙어 있어요. 누가 돈을 내는지, 대상자에게 무엇이 남는지, 우리가 떠나면 어떻게 되는지.',wb);return;}
     case 'mentor':
       if(st===5){runEnc([{e,say:'왔어요? 기다렸어요. 어젯밤에 자료 다시 읽다가 질문 두 개가 생겼거든요. 시작하죠.'},{e,step:SIM.r5},{e,say:'이 질문, 무대에서 심사위원이 똑같이 물을 거예요. 오늘처럼 답하면 돼요. 다음 주에도 여기 있을게요. 그 전에 동아리방부터 들러요, 회장이 찾아요.'}],()=>setStage(6));return;}
       simple(e,st<5?'BM 한 장 들고 와요. 빈 종이여도 괜찮아요. 같이 채우면 되니까.':'데이터 더 모아 와요. 만나야 할 사람은 제가 소개할게요. 혼자 뛰게 두진 않아요.');return;
@@ -1298,10 +1327,10 @@ function interact(e){
       simple(e,freeRoam()?'오늘도 멘토링? 아메리카노 한 잔은 제가 살게요. 열심히 하는 팀한텐 늘 그래요.':'어서 와요! 멘토링 하러 왔어요? 멘토 선배는 안쪽 자리에 있어요.');return;
     case 'seat':simple(e,esc(e.line));return;
     case 'bboard':{
-      const bb={name:'게시판',role:'캠퍼스',pal:'player'};
-      if(!freeRoam()){simple(bb,'게시판이 비어 있어요. 한 해의 행사 포스터가 붙을 자리예요.');return;}
-      if(P['rhythm.order']){simple(bb,'한 해의 리듬이 순서대로 붙어 있어요. SC → PIC → ETC·씨앗 → NC → 월드컵.');return;}
-      if(state.posters.length<5){simple(bb,`포스터가 ${state.posters.length}/5장. 다섯 장을 다 모아 오면 순서대로 붙일 수 있어요.`,'<p class="small muted">캠퍼스 잔디, 카페 안, 시장, 밭, 벤처 거리에 한 장씩 떨어져 있어요. 주우면 무슨 행사인지 바로 보여요.</p>');return;}
+      const bb={title:'게시판',where:'캠퍼스'};
+      if(!freeRoam()){notice('게시판이 비어 있어요. 한 해의 행사 포스터가 붙을 자리예요.',bb);return;}
+      if(P['rhythm.order']){notice('한 해의 리듬이 순서대로 붙어 있어요. SC → PIC → ETC·씨앗 → NC → 월드컵.',bb);return;}
+      if(state.posters.length<5){notice(`<p>포스터가 <b>${state.posters.length}/5장</b>. 다섯 장을 다 모아 오면 순서대로 붙일 수 있어요.</p><p class="small muted">캠퍼스 잔디, 카페 안, 시장, 밭, 벤처 거리에 한 장씩 떨어져 있어요. 주우면 무슨 행사인지 바로 보여요.</p>`,bb);return;}
       runEnc([{step:Q.rhythm},{step:Q.sc}],null);return;}
     case 'phyco':
       if(freeRoam()&&!P['community.phyco']){runEnc([{e,say:'Phyco-Lab이에요. 우리 팀이 무슨 문제를 다루는지 알아요?'},{e,step:Q.phyco}],null);return;}
@@ -1317,12 +1346,12 @@ function interact(e){
         runEnc([{e,say:`${esc(v.name)}이에요. ${esc(v.sub)}에서 시작했죠. 우리가 뭘 하는 회사인지 아세요?`},{e,step:{type:'quiz',key:'venture.'+e.v,q:`${v.name}의 비즈니스는?`,options:opts}}],null);return;}
       simple(e,esc(v.more));return;}
     case 'pboard':{
-      const pb={name:'Venture Pipeline 안내판',role:'벤처 거리',pal:'player'};
-      if(!freeRoam()){simple(pb,'거리 끝에 세워진 안내판이에요. 아직은 글씨가 흐릿해요. 프로젝트 한 바퀴를 돌고 나면 읽힐 것 같아요.');return;}
+      const pb={title:'Venture Pipeline 안내판',where:'벤처 거리'};
+      if(!freeRoam()){notice('거리 끝에 세워진 안내판이에요. 아직은 글씨가 흐릿해요. 프로젝트 한 바퀴를 돌고 나면 읽힐 것 같아요.',pb);return;}
       const n=[1,2,3,4,5].filter(k=>P['venture.'+k]).length;
-      if(n<5){simple(pb,`이 거리의 다섯 회사를 다 둘러보면 안내판의 글씨가 또렷해져요. (${n}/5)`);return;}
-      if(!P['venture.pipe']){runEnc([{e:pb,say:'다섯 회사가 걸어온 길에는 이름이 있어요. <b>Venture Pipeline</b>. 프로젝트가 회사가 되는 길이에요.'},{e:pb,step:Q.pipe}],null);return;}
-      simple(pb,'알럼나이 창업가 29명, 2024년 총 연매출 2,500억 원, 5년 이상 생존율 90%.',PIPE);return;}
+      if(n<5){notice(`이 거리의 다섯 회사를 다 둘러보면 안내판의 글씨가 또렷해져요. <b>(${n}/5)</b>`,pb);return;}
+      if(!P['venture.pipe']){runEnc([{note:'다섯 회사가 걸어온 길에는 이름이 있어요. <b>Venture Pipeline</b>. 프로젝트가 회사가 되는 길이에요.',title:pb.title,where:pb.where,btn:'계속'},{step:Q.pipe}],null);return;}
+      notice('알럼나이 창업가 29명, 2024년 총 연매출 2,500억 원, 5년 이상 생존율 90%.',{title:pb.title,where:pb.where,extra:PIPE,wide:true});return;}
     case 'treasurer':
       if(st===7){runEnc([{e,say:'시험 끝! 오늘 놀GM이야. 근데 PIC도 겹쳤잖아. 팀은 어떻게 할래?'},{e,step:SIM.r7},{e,say:'자, 들어가자. 오늘 랜덤배달은 내가 정한다. 다음은 동아리방 홍보부원한테 가 봐, 리포트 얘기가 있대.'}],()=>setStage(8));return;}
       simple(e,st<7?'놀GM은 시험 끝나고! 지금은 프로젝트 하러 가요.':'다음 놀GM 메뉴는 네가 정해.');return;
@@ -1351,9 +1380,9 @@ function interact(e){
         {e,step:{type:'quiz',q:base.q,options:shuffle(base.options)},onDone:p=>{if(p>=1){state.nc.q[j]=true;save();hud();}}},
         ()=>{enc.pages.push({e,say:state.nc.q[j]?(judgesLeft()?`통과입니다. 남은 질문은 ${judgesLeft()}개.`:'세 질문 모두 통과입니다. 이제 무대 위 발표대로 올라가세요.'):'아쉽네요. 다음 팀 질의가 끝나면 다시 오세요. 한 번 더 물어볼게요.'});}],null);return;}
     case 'podium':{
-      const pd={name:'발표대',role:'NC 무대',pal:'player'};
-      if(state.flags.ncWon||state.nc.perfect){simple(pd,'방금 발표의 여운이 아직 남아 있어요.');return;}
-      if(!state.nc.met||judgesLeft()){simple(pd,'발표 전에 심사위원 세 분의 질문부터 통과해야 해요. 심사위원석은 무대 앞 긴 테이블이에요.');return;}
+      const pd={title:'발표대',where:'NC 무대'};
+      if(state.flags.ncWon||state.nc.perfect){notice('방금 발표의 여운이 아직 남아 있어요.',pd);return;}
+      if(!state.nc.met||judgesLeft()){notice('발표 전에 심사위원 세 분의 질문부터 통과해야 해요. 심사위원석은 무대 앞 긴 테이블이에요.',pd);return;}
       ncMiniGame(()=>{state.nc.perfect=true;save();hud();ncWin(E('nchost'));});return;}
   }
 }
@@ -1512,6 +1541,7 @@ function sfx(name){if(!SND.ctx||!SND.on)return;const t=SND.ctx.currentTime;try{s
   case 'flip':noise(t,0.14,0.12,2200,'bandpass');break;
   case 'done':[523.25,659.25,783.99,1046.5].forEach((f,i)=>osc(f,t+i*0.1,0.24,'triangle',0.08));break;
   case 'tap':osc(880,t,0.03,'square',0.025);break;
+  case 'note':osc(880,t,0.07,'triangle',0.05);osc(1174.66,t+0.07,0.15,'triangle',0.05);break;
   case 'travel':noise(t,0.55,0.07,900,'bandpass');osc(180,t,0.5,'sine',0.05,90);break;
   case 'ending':[392,523.25,659.25,783.99,1046.5].forEach((f,i)=>osc(f,t+i*0.16,0.5,'sine',0.07));break;
 }}catch(e){}}

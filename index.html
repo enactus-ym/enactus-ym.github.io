@@ -631,7 +631,7 @@ const COSTUMES={
 };
 const COS_ORDER=['default','suit','aloha'];
 const ENT=[];
-const SOLID_KINDS=new Set(['npc','sign','whiteboard','postwall','bboard','pboard','podium','bus','booth','shop','desk']);
+const SOLID_KINDS=new Set(['npc','sign','whiteboard','postwall','bboard','pboard','podium','bus','booth','shop','desk','statue']);
 const RESERVED={wonju:new Set(),sc:new Set(),nc:new Set()};
 function add(mapId,list){const m=MAPS[mapId];list.forEach(e=>{e.map=mapId;e.w=e.w||1;e.h=e.h||1;if(SOLID_KINDS.has(e.kind))e.solid=true;if(e.kind==='npc')e.dir=e.face||'d';
   for(let j=e.y;j<e.y+e.h;j++)for(let i=e.x;i<e.x+e.w;i++){RESERVED[mapId].add(i+','+j);if(e.solid)m.esol[i+','+j]=e;}
@@ -651,6 +651,7 @@ add('wonju',[
  {id:'s1',kind:'sign',x:5,y:13,name:'인액터스 YM 동아리방',key:'sign',text:'연세대 미래캠퍼스. 인액터스 YM 동아리방. 벽에 옐로 포스트잇이 붙어 있어요.'},
  /* bulletin square */
  {id:'bb',kind:'bboard',x:28,y:6,w:2,h:1,name:'게시판',key:'bboard'},
+ {id:'eagle',kind:'statue',x:29,y:8,w:1,h:2,name:'독수리상',role:'연세대학교 미래캠퍼스',key:'sign',text:'연세대학교 미래캠퍼스의 독수리상이에요. 날개를 활짝 펴고 광장을 내려다보고 있어요.'},
  /* club fair plaza */
  {id:'bo0',kind:'booth',x:42,y:3,w:3,h:2,name:'봉사동아리 부스',color:'#7A9E6D'},
  {id:'bo1',kind:'booth',x:49,y:3,w:3,h:2,name:'창업동아리 부스',color:'#B06A3B'},
@@ -808,6 +809,36 @@ function drawPlane(c,x,y,w,h){
   px(c,'#D8D0BD',x+18,y+21,18,6);px(c,'#C9C0AA',x+20,y+22,14,4);            /* near wing */
   px(c,'#2B2F3A',x+14,y+27,4,3);px(c,'#2B2F3A',x+w-18,y+27,4,3);            /* wheels */
 }
+/* the eagle statue: stepped stone base, a column with a plaque, a bronze eagle with raised wings */
+const EAGLE=[
+ '##........................##',
+ '###......................###',
+ '.###....................###.',
+ '.####..................####.',
+ '..####................####..',
+ '..#####......##......#####..',
+ '...#####....####....#####...',
+ '...######...####...######...',
+ '....######..####..######....',
+ '....####################....',
+ '.....##################.....',
+ '......################......',
+ '.......##############.......',
+ '.........##########.........',
+ '..........########..........',
+ '..........########..........',
+ '...........######...........',
+ '..........###..###..........'];
+function drawEagle(c,x,y){
+  px(c,'rgba(0,0,0,.18)',x-1,y+30,18,3);
+  px(c,'#D9D4C7',x,y+27,16,5);px(c,'#ECE8DD',x,y+27,16,1);px(c,'#B5AE9E',x,y+31,16,1);px(c,'#B5AE9E',x+15,y+28,1,3);
+  px(c,'#D9D4C7',x+2,y+23,12,4);px(c,'#ECE8DD',x+2,y+23,12,1);px(c,'#B5AE9E',x+13,y+24,1,3);
+  px(c,'#D9D4C7',x+4,y+8,8,15);px(c,'#ECE8DD',x+4,y+8,1,15);px(c,'#B5AE9E',x+11,y+8,1,15);
+  px(c,'#D9D4C7',x+3,y+6,10,2);px(c,'#ECE8DD',x+3,y+6,10,1);px(c,'#B5AE9E',x+3,y+7,10,1);
+  px(c,'#0E4A84',x+6,y+13,4,5);px(c,'#F3EEE2',x+7,y+14,2,1);px(c,'#F3EEE2',x+7,y+16,2,1);
+  EAGLE.forEach((row,j)=>{for(let i=0;i<row.length;i++){if(row[i]!=='#')continue;const edge=j===0||EAGLE[j-1][i]!=='#';px(c,edge?'#6F8C80':(j>12?'#2B3A35':'#405750'),x-6+i,y-12+j,1,1);}});
+  px(c,'#FFC222',x+5,y-6,1,2);px(c,'#C9D6CF',x+7,y-6,1,1);
+}
 function drawEntity(c,e,ox,oy,t){
   const x=e.x*T-ox,y=e.y*T-oy;
   switch(e.kind){
@@ -822,6 +853,7 @@ function drawEntity(c,e,ox,oy,t){
     case 'bus':if(isPlane(e)){drawPlane(c,x,y,e.w*T,e.h*T);break;}
       px(c,'#2E4A7A',x,y+2,e.w*T,e.h*T-6);px(c,'#8FBCE6',x+4,y+5,e.w*T-8,9);px(c,'#15223B',x+6,y+e.h*T-6,8,5);px(c,'#15223B',x+e.w*T-14,y+e.h*T-6,8,5);px(c,'#FFC222',x+2,y+e.h*T-10,e.w*T-4,2);break;
     case 'sign':px(c,'#7A5A3A',x+7,y+8,2,8);px(c,'#C9A777',x+1,y+2,14,7);px(c,'#7A5A3A',x+1,y+2,14,1);break;
+    case 'statue':drawEagle(c,x,y);break;
     case 'banner':px(c,'#15223B',x,y+2,e.w*T,12);px(c,'#FFC222',x+1,y+3,e.w*T-2,10);break;
     case 'podium':px(c,'rgba(0,0,0,.2)',x+3,y+14,e.w*T-6,2);px(c,'#7A5A3A',x+5,y+3,e.w*T-10,12);px(c,'#8E6B47',x+3,y+1,e.w*T-6,4);px(c,'#FFC222',x+9,y+7,e.w*T-18,6);px(c,'#2B2F3A',x+e.w*T/2-1,y-4,2,5);px(c,'#2B2F3A',x+e.w*T/2-2,y-6,4,3);break;
     case 'poster':{if(!state||!postersActive()||state.posters.includes(e.n))return;const b=Math.round(Math.sin(t/300)*1.5);px(c,'#15223B',x+3,y+2+b,10,12);px(c,'#F3EEE2',x+4,y+3+b,8,10);px(c,'#FFC222',x+4,y+3+b,8,2);px(c,'#15223B',x+5,y+7+b,6,1);px(c,'#15223B',x+5,y+9+b,4,1);break;}
@@ -835,7 +867,7 @@ function drawCarry(c,x,y,t){const b=Math.round(Math.sin(t/220)*1);px(c,'#15223B'
 function drawMarker(c,e,ox,oy,t){const x=Math.round(e.x*T-ox+e.w*T/2),y=e.y*T-oy-(e.kind==='bus'&&isPlane(e)?19:8)+Math.round(Math.sin(t/250)*2);px(c,'#15223B',x-4,y-5,8,9);px(c,'#FFC222',x-3,y-4,6,7);px(c,'#15223B',x-1,y-3,2,3);px(c,'#15223B',x-1,y+1,2,1);}
 /* ================= STATE ================= */
 let state=null;
-function fresh(){return {v:3,name:'',started:false,map:'wonju',x:50*T,y:12*T,dir:'u',parts:{},ch:{},miss:{},sim:{stage:0,trust:40,sustain:40,energy:60,problem:null,best:{}},posters:[],delivered:{},btried:{},carrying:null,feet:[],nc:{met:false,q:{},perfect:false},flags:{},costume:'default',cos:{}};}
+function fresh(){return {v:3,name:'',started:false,map:'wonju',x:29*T,y:11*T,dir:'d',parts:{},ch:{},miss:{},sim:{stage:0,trust:40,sustain:40,energy:60,problem:null,best:{}},posters:[],delivered:{},btried:{},carrying:null,feet:[],nc:{met:false,q:{},perfect:false},flags:{},costume:'default',cos:{}};}
 function load(){try{const r=localStorage.getItem(KEY);if(r){const s=JSON.parse(r);if(s&&s.v===3&&MAPS[s.map])return s;}}catch(e){}return null;}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
 function recalc(){CH.forEach(c=>{let sc=0,all=true;c.parts.forEach(k=>{const p=state.parts[k];if(p)sc+=p.p;else all=false;});state.ch[c.id]={score:Math.min(sc,c.max),max:c.max,done:all};});}
@@ -930,14 +962,14 @@ function draw(t){
 }
 const LBL=$('labels');const lblPool={};
 function lbl(id,cls){let d=lblPool[id];if(!d){d=document.createElement('div');LBL.appendChild(d);lblPool[id]=d;}if(d.className!=='lbl '+cls)d.className='lbl '+cls;return d;}
-const LABEL_KINDS=new Set(['shop','booth','bus','sign','banner','pboard']);
+const LABEL_KINDS=new Set(['shop','booth','bus','sign','banner','pboard','statue']);
 function updateLabels(camx,camy){
   const k=cv.clientWidth/VW,offx=cv.offsetLeft,offy=cv.offsetTop;const seen={};
   M().ents.forEach(e=>{if(!LABEL_KINDS.has(e.kind))return;
     const cx=e.x*T+e.w*T/2-camx,cy=e.y*T-camy;if(cx<-80||cx>VW+80||cy<-30||cy>VH+30)return;
-    const d=lbl(e.id,e.kind==='sign'||e.kind==='pboard'?'sign':e.kind==='banner'?'bn':'nm');seen[e.id]=1;
+    const d=lbl(e.id,e.kind==='sign'||e.kind==='pboard'||e.kind==='statue'?'sign':e.kind==='banner'?'bn':'nm');seen[e.id]=1;
     const nm=entName(e);const txt=e.kind==='booth'?nm.replace(' 부스',''):e.kind==='bus'?(isPlane(e)?'WC행 비행기':nm.replace(' 버스','')):e.kind==='pboard'?'Venture Pipeline':(e.short||nm);if(d.textContent!==txt)d.textContent=txt;
-    const yy=e.kind==='sign'||e.kind==='pboard'?cy-3:e.kind==='bus'?(isPlane(e)?cy-5:cy+16):e.kind==='banner'?cy+8:cy+(e.kind==='booth'?7:4);
+    const yy=e.kind==='statue'?cy+36:e.kind==='sign'||e.kind==='pboard'?cy-3:e.kind==='bus'?(isPlane(e)?cy-5:cy+16):e.kind==='banner'?cy+8:cy+(e.kind==='booth'?7:4);
     d.style.transform=`translate(${Math.round(offx+cx*k)}px,${Math.round(offy+yy*k)}px) translate(-50%,-50%)`;d.style.display='block';});
   const tg=(!ovOpen&&!traveling&&state.started)?target():null;
   if(tg){const d=lbl('__tip','tip');seen.__tip=1;const nm=entName(tg);if(d.textContent!==nm)d.textContent=nm;const cx=tg.x*T+tg.w*T/2-camx,cy=tg.y*T-camy-(newFor(tg)?14:6);d.style.transform=`translate(${Math.round(offx+cx*k)}px,${Math.round(offy+cy*k)}px) translate(-50%,-100%)`;d.style.display='block';}
@@ -986,7 +1018,7 @@ function statBump(d){const sw=$('statw');if(sw.hidden)return;STAT_ROWS.forEach(r
 function statsHtml(s){return [['대상자 신뢰',s.trust],['지속가능성',s.sustain],['팀 에너지',s.energy]].map(r=>`<div class="stat"><div class="t"><span>${r[0]}</span><span class="v num">${r[1]}<small>/100</small></span></div><div class="bar"><i style="width:${r[1]}%"></i></div></div>`).join('');}
 function objective(){
   const P=state.parts,st=state.sim.stage,m=state.map,back={k:'back-'+m,t:'버스를 타고 원주로 돌아가기'};
-  if(!chDone('three')){const n=Object.keys(state.delivered).length;return {k:'ch1',t:state.carrying!==null?'들고 있는 말풍선을 맞는 부스에 건네기':`광장의 말풍선을 주워 맞는 부스에 건네기 (${n}/8)`};}
+  if(!chDone('three')){const n=Object.keys(state.delivered).length;return {k:'ch1',t:state.carrying!==null?'들고 있는 말풍선을 맞는 부스에 건네기':(n===0?'오른쪽 박람회 광장에서 말풍선을 주워 맞는 부스에 건네기 (0/8)':`박람회 광장의 말풍선을 주워 맞는 부스에 건네기 (${n}/8)`)};}
   if(!chDone('what')){if(m!=='sc')return {k:'tosc',t:'큰길 오른쪽 끝 정류장에서 서울행 버스 타고 SC 가기'};return {k:'sc',t:!P['what.def']?'강당 무대 위 10기 선배와 이야기하기':'강당의 OB 선배와 이야기하기'};}
   if(st<10){if(m!=='wonju')return back;
     const S_={1:'동아리방의 회장과 첫 회의 하기',2:'현장으로 가서 사람들을 만나기 (전통시장 · 밭 · 골목 중 한 곳)',3:'동아리방 화이트보드에서 해결 방식 정하기',4:'화이트보드에서 BM 한 장 조립하기',5:'멘토링 카페에서 시크한 멘토 선배 만나기',6:'동아리방으로 돌아가 회장과 이야기하기',7:'시험 끝. 벤처 거리의 놀GM 앞에서 총무 만나기',8:'동아리방 홍보부원과 성과 리포트 쓰기',9:'동아리방 포스트잇 벽 앞에서 1년 돌아보기'};
@@ -1148,13 +1180,16 @@ function newFor(e){
   }
   return null;
 }
-const NARR={name:'3월의 캠퍼스',role:'동아리 박람회',pal:'player'};
+const NARR={name:'3월의 캠퍼스',role:'연세대 미래캠퍼스',pal:'player'};
 function opening(){
+  const me={name:state.name,role:'3월 · 독수리상 앞',pal:'player'};   /* the player thinking out loud */
   runEnc([
-    {e:NARR,say:`새 학기, 연세대 미래캠퍼스. ${esc(state.name)}${josa(state.name,'은','는')} 동아리 박람회 한가운데에 서 있어요. 부스 세 개가 나란히 보여요. 봉사동아리, 창업동아리, 그리고 인액터스.`},
-    {e:NARR,say:'셋 다 세상에 도움이 되는 일을 한다는데, 뭐가 다를까요? 광장에 떨어진 <b>말풍선 8개</b>를 하나씩 주워서, 그 말을 할 법한 부스에 건네 보세요. 주운 말은 화면 위에 계속 떠 있어요. 헷갈리면 부스 사람에게 먼저 말을 걸어 봐요.'},
+    {e:me,say:'새 학기인데, 이번엔 스펙이 되는 동아리에 한번 들어가 볼까?'},
+    {e:me,say:'마침 오늘 동아리 박람회를 한다던데. 가 봐야겠다.'},
+    {e:NARR,say:'동아리 박람회는 <b>오른쪽 큰 광장</b>에서 열리고 있어요. 부스 세 개가 나란히 있어요. 봉사동아리, 창업동아리, 그리고 인액터스.'},
+    {e:NARR,say:'셋 다 세상에 도움이 되는 일을 한다는데, 뭐가 다를까요? 박람회 광장에 떨어진 <b>말풍선 8개</b>를 하나씩 주워서, 그 말을 할 법한 부스에 건네 보세요. 주운 말은 화면 위에 계속 떠 있어요. 헷갈리면 부스 사람에게 먼저 말을 걸어 봐요.'},
     {e:NARR,say:'화면 위 포스트잇 여섯 장이 이번 학기의 물음표예요. 한 장을 마칠 때마다 느낌표로 바뀌고, 배운 내용이 그 포스트잇에 정리돼요.'},
-  ],()=>{state.flags.opened=true;save();hud();});
+  ],()=>{state.flags.opened=true;save();hud();objDirty=true;});   /* point the way to the fair */
 }
 function giveBubble(e,b){
   const ok=b.a===e.booth;
@@ -1218,7 +1253,7 @@ function cheer(){
 function interact(e){
   const st=state.sim.stage,P=state.parts;
   switch(e.key){
-    case 'sign':simple({name:entName(e),role:'표지판',pal:'player'},isPlane(e)?'인액터스 월드컵행 탑승구. 36개국 챔피언이 모이는 무대로.':esc(e.text));return;
+    case 'sign':simple({name:entName(e),role:e.kind==='statue'?e.role:'표지판',pal:'player'},isPlane(e)?'인액터스 월드컵행 탑승구. 36개국 챔피언이 모이는 무대로.':esc(e.text));return;
     case 'bus':busTalk(e);return;
     case 'booth':{
       if(chDone('three')){simple(e,BOOTH_AFTER[e.booth]);return;}
@@ -1369,7 +1404,7 @@ const MAPCOL={g:'#86B85C',f:'#86B85C',T:'#2F6B3A',p:'#D9C48E',d:'#A4825A',z:'#CF
 function showMap(){
   const m=M(),s=m.id==='wonju'?2:6;const mc=document.createElement('canvas');mc.width=m.w*s;mc.height=m.h*s;const c=mc.getContext('2d');
   for(let y=0;y<m.h;y++)for(let x=0;x<m.w;x++){c.fillStyle=MAPCOL[m.g[y][x]]||'#86B85C';c.fillRect(x*s,y*s,s,s);}
-  m.ents.forEach(e=>{if(e.kind==='shop'||e.kind==='booth'||e.kind==='bus'||e.kind==='podium'||e.kind==='banner'){c.fillStyle=e.kind==='banner'||e.kind==='podium'?'#FFC222':(e.kind==='bus'&&isPlane(e)?'#F3EEE2':(e.color||'#2E3A55'));c.fillRect(e.x*s,e.y*s,e.w*s,e.h*s);}});
+  m.ents.forEach(e=>{if(e.kind==='shop'||e.kind==='booth'||e.kind==='bus'||e.kind==='podium'||e.kind==='banner'||e.kind==='statue'){c.fillStyle=e.kind==='statue'?'#415750':e.kind==='banner'||e.kind==='podium'?'#FFC222':(e.kind==='bus'&&isPlane(e)?'#F3EEE2':(e.color||'#2E3A55'));c.fillRect(e.x*s,e.y*s,e.w*s,e.h*s);}});
   m.ents.forEach(e=>{if(newFor(e)){c.fillStyle='#FFC222';c.fillRect(e.x*s-1,e.y*s-1,s+2,s+2);}else if(e.kind==='npc'){c.fillStyle='#F3EEE2';c.fillRect(e.x*s,e.y*s,s,s);}});
   const [tx,ty]=ptile();
   openOv(`<span class="lab">Map · ${esc(m.name)}</span><div style="position:relative"><img class="mini" src="${mc.toDataURL()}" alt="${esc(m.name)} 지도"><div id="lbls" style="position:absolute;inset:0;pointer-events:none"></div></div>
